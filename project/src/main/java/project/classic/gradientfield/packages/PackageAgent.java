@@ -13,10 +13,8 @@ public class PackageAgent implements TickListener, SimulatorUser, VirtualEntity 
 	private SimulatorAPI simulator;
 	private GradientFieldAPI gfApi;
 	private Package myPackage;
-	private double priority;
 
 	public PackageAgent(Package myPackage) {
-		this.priority = 1;
 		this.myPackage = myPackage;
 	}
 
@@ -58,7 +56,7 @@ public class PackageAgent implements TickListener, SimulatorUser, VirtualEntity 
 
 			@Override
 			public double getStrength() {
-				return priority;
+				return myPackage.getPriority();
 			}
 		};
 	}

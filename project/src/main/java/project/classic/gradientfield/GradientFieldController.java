@@ -1,11 +1,13 @@
 package project.classic.gradientfield;
 
 import org.apache.commons.math.random.MersenneTwister;
-import org.eclipse.swt.graphics.RGB;
 
 import project.classic.gradientfield.packages.DeliveryLocation;
 import project.classic.gradientfield.packages.Package;
 import project.classic.gradientfield.packages.PackageAgent;
+import project.classic.gradientfield.renderers.AbstractRenderer;
+import project.classic.gradientfield.renderers.PackageRenderer;
+import project.classic.gradientfield.renderers.TruckRenderer;
 import project.classic.gradientfield.trucks.Truck;
 import project.classic.gradientfield.trucks.TruckAgent;
 import rinde.sim.core.Simulator;
@@ -21,8 +23,6 @@ import rinde.sim.scenario.ScenarioController;
 import rinde.sim.serializers.DotGraphSerializer;
 import rinde.sim.serializers.SelfCycleFilter;
 import rinde.sim.ui.View;
-import rinde.sim.ui.renderers.ObjectRenderer;
-import rinde.sim.ui.renderers.UiSchema;
 
 public class GradientFieldController extends ScenarioController {
 
@@ -34,7 +34,8 @@ public class GradientFieldController extends ScenarioController {
 	private int packageID = 0;
 	private Graph<MultiAttributeEdgeData> graph;
 
-	private ObjectRenderer renderer;
+	private AbstractRenderer truckRenderer;
+	private PackageRenderer packageRenderer;
 
 	public GradientFieldController(Scenario scenario, int nbTicks, String map) throws ConfigurationException {
 		super(scenario, nbTicks);
@@ -62,11 +63,8 @@ public class GradientFieldController extends ScenarioController {
 
 	@Override
 	protected boolean createUserInterface() {
-		UiSchema schema = new UiSchema();
-		schema.add(Truck.class, new RGB(0, 0, 255));
-		schema.add(Package.class, new RGB(255, 0, 0));
-		schema.add(DeliveryLocation.class, new RGB(0, 255, 0));
-		renderer = new ObjectRenderer(roadModel, schema, false);
+		truckRenderer = new TruckRenderer(roadModel);
+		packageRenderer = new PackageRenderer(roadModel);
 
 		return true;
 	}
@@ -95,6 +93,6 @@ public class GradientFieldController extends ScenarioController {
 	}
 
 	public void dispatch() {
-		View.startGui(getSimulator(), 3, renderer);
+		View.startGui(getSimulator(), 3, packageRenderer, truckRenderer);
 	}
 }

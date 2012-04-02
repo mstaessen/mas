@@ -1,5 +1,7 @@
 package project.classic.gradientfield.packages;
 
+import java.util.Random;
+
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
 import rinde.sim.core.graph.Point;
@@ -7,19 +9,19 @@ import rinde.sim.core.model.RoadModel;
 import rinde.sim.core.model.RoadUser;
 
 public class Package implements SimulatorUser, RoadUser {
+	private static final Random random = new Random(1);
 	public final String packageID;
 	private Point pickupLocation;
 	private DeliveryLocation deliveryLocation;
-	private boolean pickedUp;
-	private boolean delivered;
+	private boolean pickedUp = false;
+	private boolean delivered = false;
 	private SimulatorAPI simulator;
+	private double priority = random.nextInt(3);
 
 	public Package(String packageID, Point pickupLocation, DeliveryLocation deliveryLocation) {
 		this.packageID = packageID;
 		this.pickupLocation = pickupLocation;
 		this.deliveryLocation = deliveryLocation;
-		this.pickedUp = false;
-		this.delivered = false;
 	}
 
 	public boolean needsPickUp() {
@@ -65,6 +67,10 @@ public class Package implements SimulatorUser, RoadUser {
 	@Override
 	public void initRoadUser(RoadModel model) {
 		model.addObjectAt(this, pickupLocation);
+	}
+
+	public double getPriority() {
+		return priority;
 	}
 
 }
