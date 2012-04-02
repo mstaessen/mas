@@ -6,11 +6,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import project.classic.gradientfield.packages.Package;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.MovingRoadUser;
 import rinde.sim.core.model.RoadModel;
 import rinde.sim.core.model.RoadModel.PathProgress;
-import project.classic.gradientfield.packages.Package;
 
 public class Truck implements MovingRoadUser {
 
