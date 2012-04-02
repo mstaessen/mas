@@ -33,8 +33,10 @@ public class GradientFieldController extends ScenarioController {
 	private int packageID = 0;
 	private Graph<MultiAttributeEdgeData> graph;
 
-	public GradientFieldController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
-		super(scen, numberOfTicks);
+	private ObjectRenderer renderer;
+
+	public GradientFieldController(Scenario scenario, int nbTicks, String map) throws ConfigurationException {
+		super(scenario, nbTicks);
 		this.map = map;
 
 		initialize();
@@ -61,8 +63,7 @@ public class GradientFieldController extends ScenarioController {
 		schema.add(Truck.class, new RGB(0, 0, 255));
 		schema.add(Package.class, new RGB(255, 0, 0));
 		schema.add(DeliveryLocation.class, new RGB(0, 255, 0));
-
-		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));
+		renderer = new ObjectRenderer(roadModel, schema, false);
 
 		return true;
 	}
@@ -88,6 +89,10 @@ public class GradientFieldController extends ScenarioController {
 		PackageAgent agent = new PackageAgent(p);
 		getSimulator().register(agent);
 		return true;
+	}
+
+	public void dispatch() {
+		View.startGui(getSimulator(), 3, renderer);
 	}
 
 }
