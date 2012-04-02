@@ -18,4 +18,7 @@ public class Field {
 		return distance;
 	}
 
+	public double getHeuristicValue() {
+		return fieldData.getStrength()/(distance*distance);
+	}
 }

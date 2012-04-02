@@ -13,6 +13,7 @@ import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.RoadModel;
+import rinde.sim.core.model.virtual.GradientFieldModel;
 import rinde.sim.event.Event;
 import rinde.sim.scenario.ConfigurationException;
 import rinde.sim.scenario.Scenario;
@@ -50,10 +51,12 @@ public class GradientFieldController extends ScenarioController {
 			throw new ConfigurationException("e:", e);
 		}
 		roadModel = new RoadModel(graph);
+		GradientFieldModel gfModel = new GradientFieldModel(roadModel);
 
 		MersenneTwister rand = new MersenneTwister(123);
 		Simulator s = new Simulator(rand, 10000);
 		s.register(roadModel);
+		s.register(gfModel);
 		return s;
 	}
 
@@ -94,5 +97,4 @@ public class GradientFieldController extends ScenarioController {
 	public void dispatch() {
 		View.startGui(getSimulator(), 3, renderer);
 	}
-
 }

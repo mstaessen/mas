@@ -28,6 +28,11 @@ public class GradientFieldDemo {
 
 		Scenario scenario = builder.build();
 		
+		/**
+		 * Trucks are blue,
+		 * Packages are red,
+		 * DeliveryLocations are green.
+		 */
 		GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
 		controller.dispatch();
 	}
