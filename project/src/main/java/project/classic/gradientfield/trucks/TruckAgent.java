@@ -20,6 +20,7 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 	private GradientFieldAPI gfApi;
 	private SimulatorAPI simulator;
 
+	private double currentFieldsValue = 0;
 	private double lastKnownFieldValue = 0;
 	private Queue<Point> path = new LinkedList<Point>();
 
@@ -27,6 +28,7 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 
 	public TruckAgent(Truck truck, int timerInterval) {
 		this.truck = truck;
+		truck.setAgent(this);
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 		}
 		// We don't have a load. We are driving towards one.
 		else {
-			double currentFieldsValue = calculateFieldsValue();
+			currentFieldsValue = calculateFieldsValue();
 
 			// Somebody else is coming too close (too much negativity)
 			if (currentFieldsValue < lastKnownFieldValue) {
@@ -104,6 +106,8 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 		return value;
 	}
 
+	// TODO: Trucks should drive towards the packages with the highest
+	// attraction, not the packages closest by
 	protected void pickNewPickupLocation() {
 		Package p = Graphs.findClosestObject(truck.getPosition(), truck.getRoadModel(), Package.class);
 		if (p != null) {
@@ -136,5 +140,9 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 				return -truck.getSpeed();
 			}
 		};
+	}
+
+	public double getCurrentFieldsValue() {
+		return currentFieldsValue;
 	}
 }
