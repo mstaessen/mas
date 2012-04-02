@@ -9,7 +9,7 @@
 		<module>core</module>
 		<module>ui</module>
 		<module>example</module>
-		
+		<module>project</module>
 	</modules>
 	<build>
 		<plugins>
