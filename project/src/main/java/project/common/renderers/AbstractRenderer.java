@@ -1,4 +1,4 @@
-package project.classic.gradientfield.renderers;
+package project.common.renderers;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.GC;

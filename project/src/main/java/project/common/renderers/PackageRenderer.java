@@ -1,4 +1,4 @@
-package project.classic.gradientfield.renderers;
+package project.common.renderers;
 
 import java.util.Set;
 
