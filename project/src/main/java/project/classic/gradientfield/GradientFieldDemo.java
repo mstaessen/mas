@@ -33,7 +33,8 @@ public class GradientFieldDemo {
 		 * Packages are red,
 		 * DeliveryLocations are green.
 		 */
-		GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
+		//GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
+		GradientFieldController controller = new GradientFieldController(scenario, -1, "files/maps/grid-10x10.dot");
 		controller.dispatch();
 	}
 }
