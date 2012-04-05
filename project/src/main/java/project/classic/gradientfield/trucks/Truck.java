@@ -14,12 +14,13 @@ import rinde.sim.core.model.RoadModel.PathProgress;
 
 public class Truck implements MovingRoadUser {
 
+	protected static final Logger LOGGER = LoggerFactory.getLogger(Truck.class);
 	private RoadModel rm;
 	private Point startLocation;
 	private String truckID;
 	private double speed;
 	private Package load;
-	protected static final Logger LOGGER = LoggerFactory.getLogger(Truck.class);
+	private TruckAgent agent;
 
 	public Truck(String truckID, Point startLocation, double speed) {
 		this.truckID = truckID;
@@ -90,5 +91,13 @@ public class Truck implements MovingRoadUser {
 			}
 		}
 		return false;
+	}
+
+	public void setAgent(TruckAgent agent) {
+		this.agent = agent;
+	}
+
+	public double getAttraction() {
+		return agent.getCurrentFieldsValue();
 	}
 }

@@ -131,7 +131,11 @@ public class GradientFieldModelTest {
 		@Override
 		public FieldData getFieldData() {
 			return new FieldData() {
-				
+
+				@Override
+				public double getStrength() {
+					return 0;
+				}
 			};		
 		}
 		

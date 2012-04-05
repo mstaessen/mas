@@ -6,6 +6,7 @@ import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rinde.sim.core.graph.Graphs;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.Model;
 import rinde.sim.core.model.RoadModel;
@@ -21,14 +22,22 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 		this.entities = new HashSet<VirtualEntity>();
 	}
 	
-	public GradientFieldModel(RoadModel rm){
-		//TODO exercise
+	public GradientFieldModel(RoadModel roadModel){
+		this();
+		this.rm = roadModel;
 	}
 
 	@Override
 	public Collection<Field> getFields(Point point) {
-		//TODO exercise
-		return null;
+		Collection<Field> fields = new HashSet<Field>();
+
+		for (VirtualEntity entity : entities) {
+			if (entity.isEmitting()) {
+				fields.add(new Field(entity.getFieldData(), Graphs.pathLength(rm.getShortestPathTo(point, entity.getPosition()))));
+			}
+		}
+
+		return fields;
 	}
 
 	@Override
@@ -65,5 +74,4 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 	public Class<VirtualEntity> getSupportedType() {
 		return VirtualEntity.class;
 	}
-	
 }

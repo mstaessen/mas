@@ -14,7 +14,6 @@ public class GradientFieldDemo {
 	private static final String MAP = "leuven-simple.dot";
 	private static final String MAP_URI = MAP_DIR + MAP;
 
-	@SuppressWarnings("unused")
 	public static void main(String[] args) throws Exception {
 
 		ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_TRUCK, StandardType.ADD_PACKAGE);
@@ -27,20 +26,14 @@ public class GradientFieldDemo {
 		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 10,
 				new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 
-		// int timeStep = 50000000;
-		//
-		// builder.add(
-		// new ScenarioBuilder.TimeSeries<TimedEvent>(
-		// 0, // start time
-		// 20*timeStep, // end time
-		// timeStep, // step
-		// new ScenarioBuilder.EventTypeFunction(
-		// StandardType.ADD_PACKAGE
-		// )
-		// )
-		// );
-
 		Scenario scenario = builder.build();
-		new GradientFieldController(scenario, -1, MAP_URI);
+		
+		/**
+		 * Trucks are blue,
+		 * Packages are red,
+		 * DeliveryLocations are green.
+		 */
+		GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
+		controller.dispatch();
 	}
 }
