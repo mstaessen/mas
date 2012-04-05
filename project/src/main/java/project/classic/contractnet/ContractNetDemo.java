@@ -35,16 +35,16 @@ public class ContractNetDemo {
 		
 		int timeStep = 100000000;
 		
-		builder.add(
-				new ScenarioBuilder.TimeSeries<TimedEvent>(
-						0, // start time
-						20*timeStep, // end time
-						timeStep, // step
-						new ScenarioBuilder.EventTypeFunction(
-								StandardType.ADD_PACKAGE
-						)
-				)
-		);
+//		builder.add(
+//				new ScenarioBuilder.TimeSeries<TimedEvent>(
+//						0, // start time
+//						20*timeStep, // end time
+//						timeStep, // step
+//						new ScenarioBuilder.EventTypeFunction(
+//								StandardType.ADD_PACKAGE
+//						)
+//				)
+//		);
 		
 		
 		Scenario scenario = builder.build();

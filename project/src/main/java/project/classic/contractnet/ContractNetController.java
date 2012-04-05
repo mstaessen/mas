@@ -3,8 +3,10 @@ package project.classic.contractnet;
 import org.apache.commons.math.random.MersenneTwister;
 import org.eclipse.swt.graphics.RGB;
 
+import project.classic.contractnet.renderers.PackageRenderer;
 import project.common.packages.DeliveryLocation;
 import project.common.packages.Package;
+import project.common.renderers.TruckRenderer;
 import project.common.trucks.Truck;
 
 import rinde.sim.core.Simulator;
@@ -59,12 +61,8 @@ public class ContractNetController extends ScenarioController{
 	
 	@Override
 	protected boolean createUserInterface() {
-		UiSchema schema = new UiSchema();
-		schema.add(Truck.class, new RGB(0,0,255));
-		schema.add(Package.class, new RGB(255,0,0));
-		schema.add(DeliveryLocation.class, new RGB(0,255,0));
 
-		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));
+		View.startGui(getSimulator(), 3, new PackageRenderer(roadModel),new TruckRenderer(roadModel));
 
 		return true;
 	}
