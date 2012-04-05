@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  2 APR 2012 16:53
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  2 APR 2012 17:07
 entering extended mode
  %&-line parsing enabled.
 **wrapper.tex
@@ -121,11 +121,11 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 (./approach.tex) [2] (./development.tex) [3] (./evaluation.tex) [4]
 (./conclusion.tex) [5] (./wrapper.aux) ) 
 Here is how much of TeX's memory you used:
- 1548 strings out of 495069
- 18579 string characters out of 1182887
+ 1546 strings out of 495069
+ 18546 string characters out of 1182887
  67791 words of memory out of 3000000
- 4729 multiletter control sequences out of 15000+50000
- 8399 words of font info for 32 fonts, out of 3000000 for 9000
+ 4727 multiletter control sequences out of 15000+50000
+ 7794 words of font info for 30 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  25i,4n,24p,208b,258s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/share/texmf-texlive/fonts/type1/p
@@ -133,7 +133,7 @@ ublic/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
 nts/cm/cmcsc10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr
 10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
 /share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on wrapper.pdf (6 pages, 537308 bytes).
+Output written on wrapper.pdf (6 pages, 537285 bytes).
 PDF statistics:
  42 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

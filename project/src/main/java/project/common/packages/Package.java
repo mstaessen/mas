@@ -35,6 +35,12 @@ public class Package implements SimulatorUser, RoadUser{
 		this.simulator.unregister(this);
 	}
 	
+	public void drop(Point point) {
+		this.pickedUp = false;
+		this.pickupLocation = point;
+		this.simulator.register(this);
+	}
+	
 	public void deliver(){
 		this.delivered = true;
 		this.simulator.unregister(deliveryLocation);
