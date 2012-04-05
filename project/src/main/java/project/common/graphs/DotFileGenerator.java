@@ -14,8 +14,8 @@ public class DotFileGenerator {
 	private static final String BASE_PATH = "files/maps/";
 	private static final int DEFAULT_WIDTH = 10;
 	private static final int DEFAULT_HEIGHT = 10;
-	private static final int NODE_DISTANCE = 50;
-	private static final int EDGE_MAX_SPEED = 3000;
+	private static final int NODE_DISTANCE = 500;
+	private static final int EDGE_MAX_SPEED = 300;
 
 	public DotFileGenerator(int width, int height, File outputFile) {
 		this.width = width;
@@ -27,13 +27,13 @@ public class DotFileGenerator {
 		final PrintWriter writer = new PrintWriter(outputFile);
 
 		System.out.println("Generating a " + width + "x" + height + " grid...");
-		
+
 		writer.println("digraph mapgraph {");
 		writeNodes(writer);
 		writeEdges(writer);
 		writer.println("}");
 		writer.flush();
-		
+
 		System.out.println(width + "x" + height + " grid generated.");
 	}
 
@@ -49,12 +49,12 @@ public class DotFileGenerator {
 			}
 		}
 	}
-	
+
 	private void writeEdges(PrintWriter writer) {
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				// there is a node in the north
-				if (row - 1 > 0) {
+				if (row - 1 >= 0) {
 					writer.println(getEdge(row, col, row - 1, col));
 				}
 
@@ -69,20 +69,20 @@ public class DotFileGenerator {
 				}
 
 				// there is a node in the west
-				if (col - 1 > 0) {
+				if (col - 1 >= 0) {
 					writer.println(getEdge(row, col, row, col - 1));
 				}
 			}
 		}
 	}
 
-	
 	private String getEdge(int fromRow, int fromCol, int toRow, int toCol) {
-		return getNodeName(fromRow, fromCol) + " -> " + getNodeName(toRow, toCol) + "[d=\"" + calculateDistance(fromRow, toCol, toRow, toCol) + "\", s=\"" + EDGE_MAX_SPEED + "\"]";
+		return getNodeName(fromRow, fromCol) + " -> " + getNodeName(toRow, toCol) + "[d=\""
+				+ calculateDistance(fromRow, fromCol, toRow, toCol) + "\", s=\"" + EDGE_MAX_SPEED + "\"]";
 	}
 
 	private int calculateDistance(int fromRow, int fromCol, int toRow, int toCol) {
-		return Math.abs(fromRow - toRow) + Math.abs(fromCol - toCol);
+		return (Math.abs(fromRow - toRow) + Math.abs(fromCol - toCol)) * NODE_DISTANCE;
 	}
 
 	private String getNodeName(int row, int col) {

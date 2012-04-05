@@ -11,6 +11,7 @@ import project.common.renderers.AbstractRenderer;
 import project.common.renderers.PackageRenderer;
 import project.common.renderers.TruckRenderer;
 import rinde.sim.core.Simulator;
+import rinde.sim.core.graph.Connection;
 import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
 import rinde.sim.core.graph.Point;
@@ -48,6 +49,9 @@ public class GradientFieldController extends ScenarioController {
 	protected Simulator createSimulator() throws Exception {
 		try {
 			graph = DotGraphSerializer.getMultiAttributeGraphSerializer(new SelfCycleFilter()).read(map);
+			for (Connection<MultiAttributeEdgeData> conn : graph.getConnections()) {
+				System.out.println(conn);
+			}
 		} catch (Exception e) {
 			throw new ConfigurationException("e:", e);
 		}
@@ -55,7 +59,7 @@ public class GradientFieldController extends ScenarioController {
 		GradientFieldModel gfModel = new GradientFieldModel(roadModel);
 
 		MersenneTwister rand = new MersenneTwister(123);
-		Simulator s = new Simulator(rand, 10000);
+		Simulator s = new Simulator(rand, 100);
 		s.register(roadModel);
 		s.register(gfModel);
 		return s;
