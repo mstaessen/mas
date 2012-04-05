@@ -59,7 +59,7 @@ public class GradientFieldController extends ScenarioController {
 		GradientFieldModel gfModel = new GradientFieldModel(roadModel);
 
 		MersenneTwister rand = new MersenneTwister(123);
-		Simulator s = new Simulator(rand, 100);
+		Simulator s = new Simulator(rand, 10000);
 		s.register(roadModel);
 		s.register(gfModel);
 		return s;
