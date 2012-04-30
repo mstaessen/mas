@@ -4,7 +4,6 @@ public class Field {
 
 	private FieldData fieldData;
 	private double distance;
-	private static final double AMPLIFIER = 1000;
 
 	public Field(FieldData fieldData, double distance) {
 		this.fieldData = fieldData;
@@ -17,9 +16,5 @@ public class Field {
 
 	public double getDistance() {
 		return distance;
-	}
-
-	public double getHeuristicValue() {
-		return fieldData.getStrength() / (distance) * AMPLIFIER;
 	}
 }

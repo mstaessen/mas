@@ -1,14 +1,12 @@
 package project.classic.contractnet;
 
 import org.apache.commons.math.random.MersenneTwister;
-import org.eclipse.swt.graphics.RGB;
 
 import project.common.packages.DeliveryLocation;
 import project.common.packages.Package;
 import project.common.renderers.PackageRenderer;
 import project.common.renderers.TruckRenderer;
 import project.common.trucks.Truck;
-
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
@@ -22,8 +20,6 @@ import rinde.sim.scenario.ScenarioController;
 import rinde.sim.serializers.DotGraphSerializer;
 import rinde.sim.serializers.SelfCycleFilter;
 import rinde.sim.ui.View;
-import rinde.sim.ui.renderers.ObjectRenderer;
-import rinde.sim.ui.renderers.UiSchema;
 
 public class ContractNetController extends ScenarioController{
 
@@ -68,7 +64,7 @@ public class ContractNetController extends ScenarioController{
 
 //		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));
 
-		View.startGui(getSimulator(), 3, new PackageRenderer(roadModel),new TruckRenderer(roadModel));
+		View.startGui(getSimulator(), 3, new PackageRenderer(roadModel), new TruckRenderer(roadModel));
 		
 		return true;
 	}

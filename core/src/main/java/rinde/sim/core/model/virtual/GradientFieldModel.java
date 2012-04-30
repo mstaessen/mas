@@ -1,7 +1,10 @@
 package rinde.sim.core.model.virtual;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,18 +14,21 @@ import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.Model;
 import rinde.sim.core.model.RoadModel;
 
-public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAPI{
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
+
+public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAPI {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(GradientFieldModel.class);
 
 	private RoadModel rm;
-	
+
 	protected volatile Collection<VirtualEntity> entities;
-	
-	public GradientFieldModel(){
+
+	public GradientFieldModel() {
 		this.entities = new HashSet<VirtualEntity>();
 	}
-	
-	public GradientFieldModel(RoadModel roadModel){
+
+	public GradientFieldModel(RoadModel roadModel) {
 		this();
 		this.rm = roadModel;
 	}
@@ -31,9 +37,12 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 	public Collection<Field> getFields(Point point) {
 		Collection<Field> fields = new HashSet<Field>();
 
-		for (VirtualEntity entity : entities) {
-			if (entity.isEmitting()) {
-				fields.add(new Field(entity.getFieldData(), Graphs.pathLength(rm.getShortestPathTo(point, entity.getPosition()))));
+		synchronized (entities) {
+			for (VirtualEntity entity : entities) {
+				if (entity.isEmitting()) {
+					fields.add(new Field(entity.getFieldData(), Graphs.pathLength(rm.getShortestPathTo(point, entity
+							.getPosition()))));
+				}
 			}
 		}
 
@@ -42,16 +51,16 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 
 	@Override
 	public Collection<Field> getSimpleFields(Point point) {
-	
+
 		Collection<Field> fields = new HashSet<Field>();
-		
-		for(VirtualEntity entity: entities){
-			if(entity.isEmitting()){
+
+		for (VirtualEntity entity : entities) {
+			if (entity.isEmitting()) {
 				double distance = Point.distance(point, entity.getPosition());
 				fields.add(new Field(entity.getFieldData(), distance));
 			}
 		}
-		
+
 		return fields;
 	}
 
@@ -63,7 +72,7 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 
 	@Override
 	public boolean unregister(VirtualEntity entity) {
-		if(entities.contains(entity)) {
+		if (entities.contains(entity)) {
 			entities.remove(entity);
 			return true;
 		}
@@ -73,5 +82,51 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 	@Override
 	public Class<VirtualEntity> getSupportedType() {
 		return VirtualEntity.class;
+	}
+
+	public Collection<VirtualEntity> getEntities() {
+		return Collections.unmodifiableCollection(entities);
+	}
+
+	/**
+	 * This method returns a set of {@link VirtualEntity} objects which exist in
+	 * this model and are instances of the specified {@link Class}. The returned
+	 * set is not a live view on the set, but a new created copy.
+	 * @param type The type of returned objects.
+	 * @return A set of {@link VirtualEntity} objects.
+	 */
+	@SuppressWarnings("unchecked")
+	public <Y extends VirtualEntity> Set<Y> getObjectsOfType(final Class<Y> type) {
+		return (Set<Y>) getObjects(new Predicate<VirtualEntity>() {
+			@Override
+			public boolean apply(VirtualEntity input) {
+				return type.isInstance(input);
+			}
+		});
+	}
+
+	/**
+	 * This method returns the set of {@link VirtualEntity} objects which exist
+	 * in this model. The returned set is not a live view on the set, but a new
+	 * created copy.
+	 * @return The set of {@link VirtualEntity} objects.
+	 */
+	public Set<VirtualEntity> getObjects() {
+		synchronized (entities) {
+			Set<VirtualEntity> copy = new LinkedHashSet<VirtualEntity>();
+			copy.addAll(entities);
+			return copy;
+		}
+	}
+
+	/**
+	 * This method returns a set of {@link VirtualEntity} objects which exist in
+	 * this model and satisfy the given {@link Predicate}. The returned set is
+	 * not a live view on this model, but a new created copy.
+	 * @param predicate The predicate that decides which objects to return.
+	 * @return A set of {@link VirtualEntity} objects.
+	 */
+	public Set<VirtualEntity> getObjects(Predicate<VirtualEntity> predicate) {
+		return Sets.filter(getObjects(), predicate);
 	}
 }

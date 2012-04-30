@@ -25,7 +25,7 @@ public class PackageAgent implements TickListener, SimulatorUser, VirtualEntity 
 
 	@Override
 	public void tick(long currentTime, long timeStep) {
-		if (this.myPackage.delivered())
+		if (this.myPackage.isDelivered())
 			this.simulator.unregister(this);
 
 	}
@@ -42,7 +42,7 @@ public class PackageAgent implements TickListener, SimulatorUser, VirtualEntity 
 
 	@Override
 	public boolean isEmitting() {
-		return myPackage.needsPickUp();
+		return !myPackage.isPickedUp();
 	}
 
 	@Override
@@ -53,10 +53,9 @@ public class PackageAgent implements TickListener, SimulatorUser, VirtualEntity 
 	@Override
 	public FieldData getFieldData() {
 		return new FieldData() {
-
 			@Override
 			public double getStrength() {
-				return myPackage.getPriority();
+				return myPackage.getPriority().getValue();
 			}
 		};
 	}

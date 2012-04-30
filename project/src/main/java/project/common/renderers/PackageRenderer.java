@@ -3,14 +3,17 @@ package project.common.renderers;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 
 import project.classic.gradientfield.packages.Package;
 import rinde.sim.core.model.RoadModel;
 
 public class PackageRenderer extends AbstractRenderer {
 
+	private final RoadModel model;
+
 	public PackageRenderer(RoadModel roadModel) {
-		super(roadModel);
+		this.model = roadModel;
 	}
 
 	@Override
@@ -20,13 +23,13 @@ public class PackageRenderer extends AbstractRenderer {
 		Set<Package> packages = model.getObjectsOfType(Package.class);
 		synchronized (packages) {
 			for (Package p : packages) {
-
-				if (p.needsPickUp()) {
+				if (!p.isPickedUp()) {
 					renderPickupLocation(p, gc, xOrigin, yOrigin, minX, minY, scale);
-				}
+				} else {
 
-				if (!p.delivered()) {
-					renderDeliveryLocation(p, gc, xOrigin, yOrigin, minX, minY, scale);
+					if (!p.isDelivered()) {
+						renderDeliveryLocation(p, gc, xOrigin, yOrigin, minX, minY, scale);
+					}
 				}
 			}
 		}
@@ -34,34 +37,31 @@ public class PackageRenderer extends AbstractRenderer {
 
 	private void renderDeliveryLocation(Package p, GC gc, double xOrigin, double yOrigin, double minX, double minY,
 			double scale) {
-		final int x = (int) (xOrigin + (p.getDeliveryLocation().x - minX) * scale) - 4;
-		final int y = (int) (yOrigin + (p.getDeliveryLocation().y - minY) * scale) - 4;
+		final int x = (int) (xOrigin + (p.getDeliveryLocation().x - minX) * scale) - 8;
+		final int y = (int) (yOrigin + (p.getDeliveryLocation().y - minY) * scale) - 8;
 
-		int offsetX = x - dropzoneImage.getBounds().width / 2;
-		int offsetY = y - dropzoneImage.getBounds().height / 2;
-		gc.drawImage(dropzoneImage, offsetX, offsetY);
+		gc.drawImage(dropOffImage, x, y);
+		gc.drawText(String.valueOf(p.getId()), x + 18, y);
 	}
 
 	private void renderPickupLocation(Package p, GC gc, double xOrigin, double yOrigin, double minX, double minY,
 			double scale) {
-		final int x = (int) (xOrigin + (p.getPickupLocation().x - minX) * scale) - 4;
-		final int y = (int) (yOrigin + (p.getPickupLocation().y - minY) * scale) - 4;
+		final int x = (int) (xOrigin + (p.getPickupLocation().x - minX) * scale) - 8;
+		final int y = (int) (yOrigin + (p.getPickupLocation().y - minY) * scale) - 8;
 
-		int offsetX = x - lowPriorityImage.getBounds().width / 2;
-		int offsetY = y - lowPriorityImage.getBounds().height / 2;
+		gc.drawImage(getImage(p), x, y);
+		gc.drawText(String.valueOf(p.getId()), x + 18, y);
+	}
 
-		switch ((int) p.getPriority()) {
-		case 0:
-			gc.drawImage(lowPriorityImage, offsetX, offsetY);
-			break;
-
-		case 1:
-			gc.drawImage(mediumPriorityImage, offsetX, offsetY);
-			break;
-
-		case 2:
-			gc.drawImage(highPriorityImage, offsetX, offsetY);
-			break;
+	private Image getImage(Package p) {
+		switch (p.getPriority()) {
+		case LOW:
+			return greenFlagImage;
+		case MEDIUM:
+			return yellowFlagImage;
+		case HIGH:
+			return redFlagImage;
 		}
+		return null;
 	}
 }

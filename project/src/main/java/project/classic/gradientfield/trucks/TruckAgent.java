@@ -3,11 +3,12 @@ package project.classic.gradientfield.trucks;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import project.classic.gradientfield.packages.Package;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
 import rinde.sim.core.TickListener;
-import rinde.sim.core.graph.Graphs;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.virtual.Field;
 import rinde.sim.core.model.virtual.FieldData;
@@ -16,19 +17,17 @@ import rinde.sim.core.model.virtual.VirtualEntity;
 
 public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger("TruckAgent");
 	private final Truck truck;
 	private GradientFieldAPI gfApi;
 	private SimulatorAPI simulator;
 
-	private double currentFieldsValue = 0;
-	private double lastKnownFieldValue = 0;
 	private Queue<Point> path = new LinkedList<Point>();
 
 	private boolean emitting = true;
 
 	public TruckAgent(Truck truck, int timerInterval) {
 		this.truck = truck;
-		truck.setAgent(this);
 	}
 
 	@Override
@@ -47,73 +46,79 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 	 */
 	@Override
 	public void tick(long currentTime, long timeStep) {
-		// We have a load, we are delivering
-		if (truck.hasLoad()) {
-			if (path == null || path.isEmpty()) {
-				// We have arrived. Drop the load and find a new one.
-				truck.tryDelivery();
+		if (!path.isEmpty()) {
+			followPath(timeStep);
+		} else {
+			if (truck.hasLoad()) {
+				tryDelivery();
 			} else {
-				truck.drive(path, timeStep);
+				tryPickup();
 			}
-		}
-		// We don't have a load. We are driving towards one.
-		else {
-			currentFieldsValue = calculateFieldsValue();
-
-			// Somebody else is coming too close (too much negativity)
-			if (currentFieldsValue < lastKnownFieldValue) {
-				pickNewPickupLocation();
-			} else {
-				if (path == null || path.isEmpty()) {
-					// Maybe there is something to pickup here?
-					if (truck.tryPickup()) {
-						navigateToDeliveryLocation();
-					}
-					// There is not. Find me a load to pick up!
-					else {
-						// Drive somewhere new...
-						pickNewPickupLocation();
-					}
-				} else {
-					truck.drive(path, timeStep);
-				}
-			}
-
-			// Replace old value with current.
-			lastKnownFieldValue = currentFieldsValue;
 		}
 	}
 
-	private void navigateToDeliveryLocation() {
-		setEmitting(false);
+	private void tryPickup() {
+		if (truck.tryPickup()) {
+			setEmitting(false);
+			setPathToDeliveryLocation();
+		} else {
+			// Try next node
+			setPathToBestNode();
+		}
+	}
+
+	private void tryDelivery() {
+		if (truck.tryDelivery()) {
+			setEmitting(true);
+			setPathToBestNode();
+		} else {
+			setPathToDeliveryLocation();
+		}
+	}
+
+	private void followPath(long timeStep) {
+		truck.drive(path, timeStep);
+	}
+
+	private void setPathToBestNode() {
+		double maxStrength = Double.NEGATIVE_INFINITY;
+		Point highestStrengthNode = null;
+		for (Point node : truck.getRoadModel().getGraph().getOutgoingConnections(truck.getPosition())) {
+			double strength = calculateFieldStrength(node);
+			LOGGER.info(truck.getId() + ": Strength(" + node + ") = " + strength);
+			if (strength > maxStrength) {
+				maxStrength = strength;
+				highestStrengthNode = node;
+			}
+		}
+		if (highestStrengthNode != null) {
+			path = new LinkedList<Point>(truck.getRoadModel().getShortestPathTo(truck, highestStrengthNode));
+		}
+	}
+
+	private void setPathToDeliveryLocation() {
 		this.path = new LinkedList<Point>(truck.getRoadModel().getShortestPathTo(truck, truck.getLoad()
 				.getDeliveryLocation()));
 	}
 
 	private void setEmitting(boolean b) {
-		this.emitting = false;
+		this.emitting = b;
 	}
 
-	private void setEmitting() {
-		this.emitting = true;
-	}
-
-	protected double calculateFieldsValue() {
+	protected double calculateFieldStrength(Point node) {
 		double value = 0;
-		for (Field field : gfApi.getFields(truck.getPosition())) {
-			value += field.getHeuristicValue();
+		for (Field field : gfApi.getFields(node)) {
+			value += field.getFieldData().getStrength() / field.getDistance();
 		}
 		return value;
 	}
 
-	// TODO: Trucks should drive towards the packages with the highest
-	// attraction, not the packages closest by
+	public double getFieldStrength() {
+		return calculateFieldStrength(getPosition());
+	}
+
 	protected void pickNewPickupLocation() {
-		Package p = Graphs.findClosestObject(truck.getPosition(), truck.getRoadModel(), Package.class);
-		if (p != null) {
-			this.path = new LinkedList<Point>(truck.getRoadModel().getShortestPathTo(truck, p));
-			setEmitting();
-		}
+		setPathToBestNode();
 	}
 
 	@Override
@@ -134,15 +139,15 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 	@Override
 	public FieldData getFieldData() {
 		return new FieldData() {
-
 			@Override
 			public double getStrength() {
-				return -truck.getSpeed();
+				return -1d;
 			}
 		};
 	}
 
-	public double getCurrentFieldsValue() {
-		return currentFieldsValue;
+	@Override
+	public String toString() {
+		return "truckAgent-" + truck.getId();
 	}
 }
