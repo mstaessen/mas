@@ -13,6 +13,7 @@ public class Package implements SimulatorUser, RoadUser{
 	private boolean pickedUp;
 	private boolean delivered;
 	private SimulatorAPI simulator;
+	private RoadModel roadModel;
 
 	public Package(String packageID, Point pickupLocation, DeliveryLocation deliveryLocation ) {
 		this.packageID = packageID;
@@ -70,7 +71,12 @@ public class Package implements SimulatorUser, RoadUser{
 
 	@Override
 	public void initRoadUser(RoadModel model) {
+		this.roadModel = model;
 		model.addObjectAt(this, pickupLocation);
+	}
+	
+	public RoadModel getRoadModel() {
+		return roadModel;
 	}
 
 }
