@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import project.common.packages.Package;
-
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.MovingRoadUser;
 import rinde.sim.core.model.RoadModel;

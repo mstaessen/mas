@@ -19,71 +19,71 @@ import rinde.sim.core.model.RoadModel;
 import rinde.sim.serializers.DotGraphSerializer;
 import rinde.sim.serializers.SelfCycleFilter;
 
-
 public class GradientFieldModelTest {
-	
+
 	GradientFieldModel gradientFieldModel;
 	RoadModel roadModel;
 	RandomGenerator rand;
-	
+
 	@Before
-	public void setup() throws Exception{
+	public void setup() throws Exception {
 		String MAP_DIR = "../core/files/maps/";
 		rand = new MersenneTwister(1235);
-		Graph<MultiAttributeEdgeData> graph = DotGraphSerializer.getMultiAttributeGraphSerializer(new SelfCycleFilter()).read(MAP_DIR + "leuven-simple.dot");
+		Graph<MultiAttributeEdgeData> graph = DotGraphSerializer
+				.getMultiAttributeGraphSerializer(new SelfCycleFilter()).read(MAP_DIR + "leuven-simple.dot");
 		roadModel = new RoadModel(graph);
 		gradientFieldModel = new GradientFieldModel(roadModel);
 	}
-	
+
 	@Test
-	public void registerAndUnregisterVirtualEntity(){
+	public void registerAndUnregisterVirtualEntity() {
 		VirtualEntity entity = new SimpleVirtualEntity();
 		assertTrue(gradientFieldModel.register(entity));
 		assertFalse(gradientFieldModel.register(entity));
 		assertTrue(gradientFieldModel.unregister(entity));
 		assertFalse(gradientFieldModel.unregister(entity));
 	}
-	
-	@Test
-	public void singleSimpleField(){
-		VirtualEntity entity = new SimpleVirtualEntity(new Point(0,0));
-		gradientFieldModel.register(entity);
-		Collection<Field> fields = gradientFieldModel.getSimpleFields(new Point(0,0));
-		assertEquals(1,fields.size());
-		Field field = (Field) fields.toArray()[0];
-		assertEquals(0,field.getDistance(),0);
 
-		fields = gradientFieldModel.getSimpleFields(new Point(5,0));
-		assertEquals(1,fields.size());
-		field = (Field) fields.toArray()[0];
-		assertEquals(5,field.getDistance(),0);
-	}
-	
 	@Test
-	public void multipleSimpleFields(){
-		VirtualEntity entity1 = new SimpleVirtualEntity(new Point(0,0));
-		VirtualEntity entity2 = new SimpleVirtualEntity(new Point(10,0));
+	public void singleSimpleField() {
+		VirtualEntity entity = new SimpleVirtualEntity(new Point(0, 0));
+		gradientFieldModel.register(entity);
+		Collection<Field> fields = gradientFieldModel.getSimpleFields(new Point(0, 0));
+		assertEquals(1, fields.size());
+		Field field = (Field) fields.toArray()[0];
+		assertEquals(0, field.getDistance(), 0);
+
+		fields = gradientFieldModel.getSimpleFields(new Point(5, 0));
+		assertEquals(1, fields.size());
+		field = (Field) fields.toArray()[0];
+		assertEquals(5, field.getDistance(), 0);
+	}
+
+	@Test
+	public void multipleSimpleFields() {
+		VirtualEntity entity1 = new SimpleVirtualEntity(new Point(0, 0));
+		VirtualEntity entity2 = new SimpleVirtualEntity(new Point(10, 0));
 		gradientFieldModel.register(entity1);
 		gradientFieldModel.register(entity2);
-		Collection<Field> fields = gradientFieldModel.getSimpleFields(new Point(5,0));
-		assertEquals(2,fields.size());
+		Collection<Field> fields = gradientFieldModel.getSimpleFields(new Point(5, 0));
+		assertEquals(2, fields.size());
 	}
-	
+
 	@Test
-	public void singleField(){
+	public void singleField() {
 		Point p1 = roadModel.getGraph().getRandomNode(rand);
 		Point p2 = roadModel.getGraph().getRandomNode(rand);
 		double distance = Graphs.pathLength(roadModel.getShortestPathTo(p2, p1));
 		VirtualEntity entity = new SimpleVirtualEntity(p1);
 		gradientFieldModel.register(entity);
 		Collection<Field> fields = gradientFieldModel.getFields(p2);
-		assertEquals(1, fields.size(),0);
+		assertEquals(1, fields.size(), 0);
 		Field field = (Field) fields.toArray()[0];
-		assertEquals(distance, field.getDistance(),0);
+		assertEquals(distance, field.getDistance(), 0);
 	}
 
 	@Test
-	public void MultipleField(){
+	public void MultipleField() {
 		Point p1 = roadModel.getGraph().getRandomNode(rand);
 		Point p2 = roadModel.getGraph().getRandomNode(rand);
 		Point p3 = roadModel.getGraph().getRandomNode(rand);
@@ -92,30 +92,30 @@ public class GradientFieldModelTest {
 		gradientFieldModel.register(entity1);
 		gradientFieldModel.register(entity2);
 		Collection<Field> fields = gradientFieldModel.getFields(p3);
-		assertEquals(2,fields.size());
+		assertEquals(2, fields.size());
 	}
-	
-	class SimpleVirtualEntity implements VirtualEntity{
+
+	class SimpleVirtualEntity implements VirtualEntity {
 		private Point position;
 		private boolean isEmitting;
 
-		public SimpleVirtualEntity(){
-			this(new Point(0,0));
+		public SimpleVirtualEntity() {
+			this(new Point(0, 0));
 		}
-		
-		public SimpleVirtualEntity(Point position){
+
+		public SimpleVirtualEntity(Point position) {
 			this.position = position;
 			this.isEmitting = true;
 		}
-		
-		public void setEmitting(boolean emitting){
+
+		public void setEmitting(boolean emitting) {
 			this.isEmitting = emitting;
 		}
-		
+
 		@Override
 		public void init(GradientFieldAPI api) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
@@ -131,14 +131,13 @@ public class GradientFieldModelTest {
 		@Override
 		public FieldData getFieldData() {
 			return new FieldData() {
-
 				@Override
 				public double getStrength() {
 					return 0;
 				}
-			};		
+			};
 		}
-		
+
 	}
 
 }

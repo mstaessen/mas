@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import project.classic.contractnet.messages.ContractNetMessage;
 import project.classic.contractnet.messages.ContractNetMessageType;
 import project.common.trucks.Truck;
-
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
 import rinde.sim.core.TickListener;

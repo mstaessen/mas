@@ -6,6 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import project.classic.gradientfield.exceptions.AlreadyPickedUpException;
 import project.classic.gradientfield.packages.Package;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.MovingRoadUser;
@@ -17,19 +18,18 @@ public class Truck implements MovingRoadUser {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(Truck.class);
 	private RoadModel rm;
 	private Point startLocation;
-	private String truckID;
+	private int id;
 	private double speed;
 	private Package load;
-	private TruckAgent agent;
 
-	public Truck(String truckID, Point startLocation, double speed) {
-		this.truckID = truckID;
+	public Truck(int id, Point startLocation, double speed) {
+		this.id = id;
 		this.startLocation = startLocation;
 		this.speed = speed;
 	}
 
-	public String getTruckID() {
-		return truckID;
+	public int getId() {
+		return id;
 	}
 
 	@Override
@@ -68,14 +68,18 @@ public class Truck implements MovingRoadUser {
 	}
 
 	public boolean tryPickup() {
-		if (load == null) {
+		if (!hasLoad()) {
 			Set<Package> packages = rm.getObjectsAt(this, Package.class);
 			if (!packages.isEmpty()) {
 				Package p = (Package) packages.toArray()[0];
-				load = p;
-				p.pickup();
-				LOGGER.info(this.truckID + " picked up " + p);
-				return true;
+				try {
+					p.pickup();
+					load = p;
+					LOGGER.info(this + " picked up " + p);
+					return true;
+				} catch (AlreadyPickedUpException e) {
+					LOGGER.info("Package " + p.getId() + " is already picked up");
+				}
 			}
 		}
 		return false;
@@ -84,7 +88,7 @@ public class Truck implements MovingRoadUser {
 	public boolean tryDelivery() {
 		if (load != null) {
 			if (load.getDeliveryLocation().equals(this.getPosition())) {
-				LOGGER.info(this.truckID + " delivered " + load);
+				LOGGER.info(this + " delivered " + load);
 				load.deliver();
 				load = null;
 				return true;
@@ -93,11 +97,8 @@ public class Truck implements MovingRoadUser {
 		return false;
 	}
 
-	public void setAgent(TruckAgent agent) {
-		this.agent = agent;
-	}
-
-	public double getAttraction() {
-		return agent.getCurrentFieldsValue();
+	@Override
+	public String toString() {
+		return "truck-" + getId();
 	}
 }

@@ -19,22 +19,17 @@ public class GradientFieldDemo {
 		ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_TRUCK, StandardType.ADD_PACKAGE);
 
 		// Add 3 trucks at time 0
-		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 3, 
-				new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
+		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 10, new ScenarioBuilder.EventTypeFunction(
+				StandardType.ADD_TRUCK)));
 
 		// Add 10 packages at time 0
-		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 10,
+		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 20,
 				new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 
 		Scenario scenario = builder.build();
-		
-		/**
-		 * Trucks are blue,
-		 * Packages are red,
-		 * DeliveryLocations are green.
-		 */
-		//GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
-		GradientFieldController controller = new GradientFieldController(scenario, -1, "files/maps/grid-10x10.dot");
+
+		GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
+		//GradientFieldController controller = new GradientFieldController(scenario, -1, "files/maps/grid-10x10.dot");
 		controller.dispatch();
 	}
 }
