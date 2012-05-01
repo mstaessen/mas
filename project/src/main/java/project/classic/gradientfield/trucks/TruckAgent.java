@@ -22,7 +22,7 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 
 	private boolean emitting = true;
 
-	public TruckAgent(Truck truck, int timerInterval) {
+	public TruckAgent(Truck truck) {
 		this.truck = truck;
 	}
 

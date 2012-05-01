@@ -6,19 +6,34 @@ import rinde.sim.core.SimulatorUser;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.RoadModel;
 import rinde.sim.core.model.RoadUser;
+import rinde.sim.event.Event;
+import rinde.sim.event.EventDispatcher;
+import rinde.sim.event.Events;
+import rinde.sim.event.Listener;
 
-public class Package implements SimulatorUser, RoadUser {
-	public final int id;
+public class Package implements SimulatorUser, RoadUser, Events {
+	private static int counter = 0;
+
+	private final int id;
+	public final EventDispatcher events = new EventDispatcher(Package.EventType.values());
+
 	private Point pickupLocation;
 	private Point deliveryLocation;
 	private boolean pickedUp = false;
 	private boolean delivered = false;
 	private SimulatorAPI simulator;
-	// TODO: use the random generator of the simulator
 	private Priority priority = Priority.LOW;
 
-	public Package(int id, Point pickupLocation, Point deliveryLocation) {
-		this.id = id;
+	public enum EventType {
+		PACKAGE_CREATION, PACKAGE_PICKUP, PACKAGE_DELIVERY;
+
+		public static EventType valueOf(int ordinal) {
+			return values()[ordinal];
+		}
+	}
+
+	public Package(Point pickupLocation, Point deliveryLocation) {
+		this.id = counter++;
 		this.pickupLocation = pickupLocation;
 		this.deliveryLocation = deliveryLocation;
 	}
@@ -43,7 +58,7 @@ public class Package implements SimulatorUser, RoadUser {
 		}
 
 		setPickedUp();
-		//this.simulator.unregister(this);
+		events.dispatchEvent(new Event(Package.EventType.PACKAGE_PICKUP, this));
 	}
 
 	private void setPickedUp() {
@@ -52,6 +67,8 @@ public class Package implements SimulatorUser, RoadUser {
 
 	public void deliver() {
 		setDelivered();
+		events.dispatchEvent(new Event(Package.EventType.PACKAGE_DELIVERY, this));
+		this.simulator.unregister(this);
 	}
 
 	private void setDelivered() {
@@ -78,13 +95,9 @@ public class Package implements SimulatorUser, RoadUser {
 	@Override
 	public void setSimulator(SimulatorAPI api) {
 		this.simulator = api;
-
-		if (simulator != null) {
-			setPriority(Priority.valueOf(simulator.getRandomGenerator().nextInt()));
-		}
 	}
 
-	private void setPriority(Priority priority) {
+	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
 
@@ -95,5 +108,20 @@ public class Package implements SimulatorUser, RoadUser {
 
 	public Priority getPriority() {
 		return priority;
+	}
+
+	@Override
+	public void addListener(Listener l, Enum<?>... eventTypes) {
+		events.addListener(l, eventTypes);
+	}
+
+	@Override
+	public void removeListener(Listener l, Enum<?>... eventTypes) {
+		events.removeListener(l, eventTypes);
+	}
+
+	@Override
+	public boolean containsListener(Listener l, Enum<?> eventType) {
+		return events.containsListener(l, eventType);
 	}
 }

@@ -144,7 +144,6 @@ public class SimulationViewer extends Composite implements TickListener, Control
 		this.layout();
 
 		timeLabel = new Label(canvas, SWT.NONE);
-		timeLabel.setText("hello world");
 		timeLabel.setBounds(20, 20, 200, 20);
 		timeLabel.setBackground(colorRegistry.get(COLOR_WHITE));
 

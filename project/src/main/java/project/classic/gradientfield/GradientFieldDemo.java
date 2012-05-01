@@ -25,9 +25,9 @@ public class GradientFieldDemo {
 		// Add 10 packages at time 0
 		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 20,
 				new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-
+		
 		Scenario scenario = builder.build();
-
+		
 		GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
 		//GradientFieldController controller = new GradientFieldController(scenario, -1, "files/maps/grid-10x10.dot");
 		controller.dispatch();

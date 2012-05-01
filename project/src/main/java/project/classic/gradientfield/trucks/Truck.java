@@ -3,9 +3,6 @@ package project.classic.gradientfield.trucks;
 import java.util.Queue;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import project.classic.gradientfield.exceptions.AlreadyPickedUpException;
 import project.classic.gradientfield.packages.Package;
 import rinde.sim.core.graph.Point;
@@ -14,22 +11,26 @@ import rinde.sim.core.model.RoadModel;
 import rinde.sim.core.model.RoadModel.PathProgress;
 
 public class Truck implements MovingRoadUser {
+	private static int counter = 0;
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(Truck.class);
-	private RoadModel rm;
-	private Point startLocation;
 	private int id;
-	private double speed;
+	private Point startLocation;
+	/**
+	 * 30km/h = 30000/3600 ~ 7
+	 */
+	private double speed = 7d;
 	private Package load;
 
-	public Truck(int id, Point startLocation, double speed) {
-		this.id = id;
+	private RoadModel rm;
+
+	public Truck(Point startLocation) {
+		this.id = counter++;
 		this.startLocation = startLocation;
-		this.speed = speed;
 	}
 
-	public int getId() {
-		return id;
+	public Truck(Point startLocation, double speed) {
+		this(startLocation);
+		setSpeed(speed);
 	}
 
 	@Override
@@ -38,25 +39,35 @@ public class Truck implements MovingRoadUser {
 		this.rm.addObjectAt(this, startLocation);
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	@Override
 	public double getSpeed() {
 		return speed;
 	}
 
-	public RoadModel getRoadModel() {
+	public void setSpeed(double speed) {
+		if (speed >= 0) {
+			this.speed = speed;
+		}
+	}
+
+	protected RoadModel getRoadModel() {
 		return rm;
 	}
 
 	public PathProgress drive(Queue<Point> path, long time) {
-		return this.rm.followPath(this, path, time);
+		return getRoadModel().followPath(this, path, time);
 	}
 
 	public Point getPosition() {
-		return rm.getPosition(this);
+		return getRoadModel().getPosition(this);
 	}
 
 	public Point getLastCrossRoad() {
-		return rm.getLastCrossRoad(this);
+		return getRoadModel().getLastCrossRoad(this);
 	}
 
 	public boolean hasLoad() {
@@ -67,6 +78,11 @@ public class Truck implements MovingRoadUser {
 		return this.load;
 	}
 
+	@Override
+	public String toString() {
+		return "truck-" + getId();
+	}
+
 	public boolean tryPickup() {
 		if (!hasLoad()) {
 			Set<Package> packages = rm.getObjectsAt(this, Package.class);
@@ -75,10 +91,9 @@ public class Truck implements MovingRoadUser {
 				try {
 					p.pickup();
 					load = p;
-					LOGGER.info(this + " picked up " + p);
 					return true;
 				} catch (AlreadyPickedUpException e) {
-					LOGGER.info("Package " + p.getId() + " is already picked up");
+					// No package for you!
 				}
 			}
 		}
@@ -88,17 +103,11 @@ public class Truck implements MovingRoadUser {
 	public boolean tryDelivery() {
 		if (load != null) {
 			if (load.getDeliveryLocation().equals(this.getPosition())) {
-				LOGGER.info(this + " delivered " + load);
 				load.deliver();
 				load = null;
 				return true;
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public String toString() {
-		return "truck-" + getId();
 	}
 }

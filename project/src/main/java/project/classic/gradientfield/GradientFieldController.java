@@ -2,8 +2,10 @@ package project.classic.gradientfield;
 
 import org.apache.commons.math.random.MersenneTwister;
 
+import project.classic.gradientfield.listeners.PackageListener;
 import project.classic.gradientfield.packages.Package;
 import project.classic.gradientfield.packages.PackageAgent;
+import project.classic.gradientfield.packages.Priority;
 import project.classic.gradientfield.trucks.Truck;
 import project.classic.gradientfield.trucks.TruckAgent;
 import project.common.renderers.AbstractRenderer;
@@ -28,9 +30,9 @@ public class GradientFieldController extends ScenarioController {
 	String map;
 	private RoadModel roadModel;
 	private GradientFieldModel gradientFieldModel;
-	private int truckID = 0;
-	private int packageID = 0;
 	private Graph<MultiAttributeEdgeData> graph;
+
+	private PackageListener pListener;
 
 	private AbstractRenderer truckRenderer;
 	private PackageRenderer packageRenderer;
@@ -53,9 +55,15 @@ public class GradientFieldController extends ScenarioController {
 		gradientFieldModel = new GradientFieldModel(roadModel);
 
 		MersenneTwister rand = new MersenneTwister(321);
-		Simulator s = new Simulator(rand, 10000);
+		// Create a new simulator with a timestep in millis
+		// Time step = 1 minute
+		Simulator s = new Simulator(rand, 1 * 60 * 1000);
 		s.register(roadModel);
 		s.register(gradientFieldModel);
+
+		pListener = new PackageListener(s);
+		s.events.addListener(pListener, Simulator.EventTypes.STOPPED);
+
 		return s;
 	}
 
@@ -69,10 +77,10 @@ public class GradientFieldController extends ScenarioController {
 
 	@Override
 	protected boolean handleAddTruck(Event e) {
-		Truck truck = new Truck(truckID++, graph.getRandomNode(getSimulator().getRandomGenerator()), 7);
+		Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
 		getSimulator().register(truck);
 
-		TruckAgent agent = new TruckAgent(truck, 5);
+		TruckAgent agent = new TruckAgent(truck);
 		getSimulator().register(agent);
 
 		return true;
@@ -83,7 +91,11 @@ public class GradientFieldController extends ScenarioController {
 		Point pl = graph.getRandomNode(getSimulator().getRandomGenerator());
 		Point dl = graph.getRandomNode(getSimulator().getRandomGenerator());
 
-		Package p = new Package(packageID++, pl, dl);
+		Package p = new Package(pl, dl);
+		p.setPriority(Priority.random(getSimulator().getRandomGenerator()));
+		p.addListener(pListener, Package.EventType.values());
+		// TODO: this is kinda ugly
+		p.events.dispatchEvent(new Event(Package.EventType.PACKAGE_CREATION, p));
 		getSimulator().register(p);
 
 		PackageAgent agent = new PackageAgent(p);
