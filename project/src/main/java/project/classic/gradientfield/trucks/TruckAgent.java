@@ -3,9 +3,6 @@ package project.classic.gradientfield.trucks;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
 import rinde.sim.core.TickListener;
@@ -17,7 +14,6 @@ import rinde.sim.core.model.virtual.VirtualEntity;
 
 public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger("TruckAgent");
 	private final Truck truck;
 	private GradientFieldAPI gfApi;
 	private SimulatorAPI simulator;
@@ -85,7 +81,6 @@ public class TruckAgent implements TickListener, SimulatorUser, VirtualEntity {
 		Point highestStrengthNode = null;
 		for (Point node : truck.getRoadModel().getGraph().getOutgoingConnections(truck.getPosition())) {
 			double strength = calculateFieldStrength(node);
-			LOGGER.info(truck.getId() + ": Strength(" + node + ") = " + strength);
 			if (strength > maxStrength) {
 				maxStrength = strength;
 				highestStrengthNode = node;

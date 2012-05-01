@@ -19,11 +19,11 @@ public class GradientFieldDemo {
 		ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_TRUCK, StandardType.ADD_PACKAGE);
 
 		// Add 3 trucks at time 0
-		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 3, new ScenarioBuilder.EventTypeFunction(
+		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 10, new ScenarioBuilder.EventTypeFunction(
 				StandardType.ADD_TRUCK)));
 
 		// Add 10 packages at time 0
-		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 10,
+		builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 20,
 				new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 
 		Scenario scenario = builder.build();

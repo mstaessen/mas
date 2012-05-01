@@ -9,7 +9,6 @@ import project.classic.gradientfield.trucks.TruckAgent;
 import project.common.renderers.AbstractRenderer;
 import project.common.renderers.PackageRenderer;
 import project.common.renderers.TruckRenderer;
-import project.common.renderers.TruckAgentRenderer;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
@@ -35,7 +34,6 @@ public class GradientFieldController extends ScenarioController {
 
 	private AbstractRenderer truckRenderer;
 	private PackageRenderer packageRenderer;
-	private TruckAgentRenderer truckAgentRenderer;
 
 	public GradientFieldController(Scenario scenario, int nbTicks, String map) throws ConfigurationException {
 		super(scenario, nbTicks);
@@ -65,7 +63,6 @@ public class GradientFieldController extends ScenarioController {
 	protected boolean createUserInterface() {
 		truckRenderer = new TruckRenderer(roadModel);
 		packageRenderer = new PackageRenderer(roadModel);
-		truckAgentRenderer = new TruckAgentRenderer(gradientFieldModel);
 
 		return true;
 	}
@@ -96,6 +93,9 @@ public class GradientFieldController extends ScenarioController {
 	}
 
 	public void dispatch() {
-		View.startGui(getSimulator(), 3, packageRenderer, truckRenderer, truckAgentRenderer);
+		// The TruckAgentRenderer is reponsible for the
+		// ConcurrentModificationException,
+		// it is therefore disabled
+		View.startGui(getSimulator(), 3, packageRenderer, truckRenderer);
 	}
 }
