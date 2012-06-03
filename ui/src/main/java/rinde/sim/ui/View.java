@@ -45,9 +45,9 @@ public class View  {
 			display =  new Display();
 		}
 	
-		final Shell shell = new Shell(display/*, SWT.TITLE | SWT.CLOSE | SWT.RESIZE */);
+		final Shell shell = new Shell(display, SWT.TITLE | SWT.CLOSE | SWT.RESIZE );
 		shell.setText("RinSim - Simulator");
-		//shell.setSize(new org.eclipse.swt.graphics.Point(1024, 768));
+		shell.setSize(new org.eclipse.swt.graphics.Point(800, 800));
 		
 		//simulator viewer is run in here
 		new SimulationViewer(shell, simulator, speedup, renderers);

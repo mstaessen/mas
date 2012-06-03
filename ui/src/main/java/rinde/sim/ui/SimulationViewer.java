@@ -136,7 +136,7 @@ public class SimulationViewer extends Composite implements TickListener, Control
 		initColors();
 		canvas = new Canvas(this, SWT.DOUBLE_BUFFERED | SWT.NONE | SWT.NO_REDRAW_RESIZE | SWT.V_SCROLL | SWT.H_SCROLL);
 		canvas.setBackground(colorRegistry.get(COLOR_WHITE));
-		origin = new org.eclipse.swt.graphics.Point(0, 0);
+		origin = new org.eclipse.swt.graphics.Point(10, 10);
 		size = new org.eclipse.swt.graphics.Point(800, 500);
 		canvas.addPaintListener(this);
 		canvas.addControlListener(this);
@@ -327,7 +327,7 @@ public class SimulationViewer extends Composite implements TickListener, Control
 
 	public Image drawRoads() {
 		size = new org.eclipse.swt.graphics.Point((int) (m * deltaX), (int) (m * deltaY));
-		final Image img = new Image(getDisplay(), size.x + 10, size.y + 10);
+		final Image img = new Image(getDisplay(), size.x + 20, size.y + 20);
 		final GC gc = new GC(img);
 
 		Graph<? extends EdgeData> graph = roadModel.getGraph();

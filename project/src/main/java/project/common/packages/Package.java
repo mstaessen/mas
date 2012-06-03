@@ -1,67 +1,95 @@
 package project.common.packages;
 
+import project.common.exceptions.AlreadyPickedUpException;
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.RoadModel;
 import rinde.sim.core.model.RoadUser;
+import rinde.sim.event.Event;
+import rinde.sim.event.EventDispatcher;
+import rinde.sim.event.Events;
+import rinde.sim.event.Listener;
 
-public class Package implements SimulatorUser, RoadUser{
-	public final String packageID;
+public class Package implements SimulatorUser, RoadUser, Events {
+	private static int counter = 0;
+
+	private final int id;
+	public final EventDispatcher events = new EventDispatcher(Package.EventType.values());
+
 	private Point pickupLocation;
-	private DeliveryLocation deliveryLocation;
-	private boolean pickedUp;
-	private boolean delivered;
+	private Point deliveryLocation;
+	private boolean pickedUp = false;
+	private boolean delivered = false;
 	private SimulatorAPI simulator;
-	private RoadModel roadModel;
+	private Priority priority = Priority.LOW;
 
-	public Package(String packageID, Point pickupLocation, DeliveryLocation deliveryLocation ) {
-		this.packageID = packageID;
+	public enum EventType {
+		PACKAGE_CREATION, PACKAGE_PICKUP, PACKAGE_DELIVERY;
+
+		public static EventType valueOf(int ordinal) {
+			return values()[ordinal];
+		}
+	}
+
+	public Package(Point pickupLocation, Point deliveryLocation) {
+		this.id = counter++;
 		this.pickupLocation = pickupLocation;
 		this.deliveryLocation = deliveryLocation;
-		this.pickedUp = false;
-		this.delivered = false;
-	}
-	
-	public boolean needsPickUp(){
-		return !pickedUp;
 	}
 
-	public boolean delivered(){
+	public boolean isPickedUp() {
+		return pickedUp;
+	}
+
+	public boolean isDelivered() {
 		return delivered;
 	}
-	
-	public void pickup(){
-		this.pickedUp = true;
-		this.simulator.unregister(this);
-	}
-	
-	public void drop(Point point) {
-		this.pickedUp = false;
-		this.pickupLocation = point;
-		this.simulator.register(this);
-	}
-	
-	public void deliver(){
-		this.delivered = true;
-		this.simulator.unregister(deliveryLocation);
-	}
-	
-	public String getPackageID(){
-		return packageID;
-	}
-	
-	@Override
-	public String toString() {
-		return packageID;
+
+	/**
+	 * The object is removed after afterTick(). You have to check whether a
+	 * package is already picked up because two agents can pickup the same
+	 * package otherwise.
+	 * @throws AlreadyPickedUpException if a package is already picked up
+	 */
+	public void pickup() throws AlreadyPickedUpException {
+		if (isPickedUp()) {
+			throw new AlreadyPickedUpException();
+		}
+
+		setPickedUp();
+		events.dispatchEvent(new Event(Package.EventType.PACKAGE_PICKUP, this));
 	}
 
-	public Point getPickupLocation(){
+	private void setPickedUp() {
+		this.pickedUp = true;
+	}
+
+	public void deliver() {
+		setDelivered();
+		events.dispatchEvent(new Event(Package.EventType.PACKAGE_DELIVERY, this));
+		this.simulator.unregister(this);
+	}
+
+	private void setDelivered() {
+		this.delivered = true;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "package-" + id;
+	}
+
+	public Point getPickupLocation() {
 		return pickupLocation;
 	}
-	
-	public Point getDeliveryLocation(){
-		return deliveryLocation.getPosition();
+
+	public Point getDeliveryLocation() {
+		return deliveryLocation;
 	}
 
 	@Override
@@ -69,14 +97,31 @@ public class Package implements SimulatorUser, RoadUser{
 		this.simulator = api;
 	}
 
-	@Override
-	public void initRoadUser(RoadModel model) {
-		this.roadModel = model;
-		model.addObjectAt(this, pickupLocation);
-	}
-	
-	public RoadModel getRoadModel() {
-		return roadModel;
+	public void setPriority(Priority priority) {
+		this.priority = priority;
 	}
 
+	@Override
+	public void initRoadUser(RoadModel model) {
+		model.addObjectAt(this, pickupLocation);
+	}
+
+	public Priority getPriority() {
+		return priority;
+	}
+
+	@Override
+	public void addListener(Listener l, Enum<?>... eventTypes) {
+		events.addListener(l, eventTypes);
+	}
+
+	@Override
+	public void removeListener(Listener l, Enum<?>... eventTypes) {
+		events.removeListener(l, eventTypes);
+	}
+
+	@Override
+	public boolean containsListener(Listener l, Enum<?> eventType) {
+		return events.containsListener(l, eventType);
+	}
 }

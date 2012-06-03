@@ -5,7 +5,7 @@ import java.util.Set;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
-import project.classic.gradientfield.packages.Package;
+import project.common.packages.Package;
 import rinde.sim.core.model.RoadModel;
 
 public class PackageRenderer extends AbstractRenderer {

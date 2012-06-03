@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Sat Jun 02 12:30:34 CEST 2012
+markTmpDer=true
+builderNum=2
+outputDir=verslag/
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=verslag
+mainTexFile=wrapper.tex
+outputFile=wrapper.pdf
+langSpell=
+markDer=true
+srcDir=verslag/

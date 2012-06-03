@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.eclipse.swt.graphics.GC;
 
-import project.classic.gradientfield.trucks.Truck;
+import project.common.trucks.Truck;
 import rinde.sim.core.model.RoadModel;
 
 public class TruckRenderer extends AbstractRenderer {

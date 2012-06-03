@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.eclipse.swt.graphics.GC;
 
-import project.classic.gradientfield.trucks.TruckAgent;
+import project.strategies.gradientfield.agents.TruckAgent;
 import rinde.sim.core.model.virtual.GradientFieldModel;
 
 public class TruckAgentRenderer extends AbstractRenderer {
