@@ -43,13 +43,13 @@ public class PackageAgent implements TickListener, SimulatorUser {
 	}
 
 	public void sendFeasibilityAnts() {
-
-		Collection<Point> points = myPackage.getRoadModel().getGraph()
-				.getOutgoingConnections(myPackage.getPickupLocation());
-
-		for (Point point : points) {
-			FeasibilityAnt ant = new FeasibilityAnt(myPackage.getPickupLocation(), point, 10, myPackage.getRoadModel());
-			ant.setSimulator(simulator);
-		}
+//
+//		Collection<Point> points = myPackage.getRoadModel().getGraph()
+//				.getOutgoingConnections(myPackage.getPickupLocation());
+//
+//		for (Point point : points) {
+//			FeasibilityAnt ant = new FeasibilityAnt(myPackage.getPickupLocation(), point, 10, myPackage.getRoadModel());
+//			ant.setSimulator(simulator);
+//		}
 	}
 }

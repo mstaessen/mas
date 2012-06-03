@@ -25,14 +25,12 @@ import rinde.sim.ui.renderers.UiSchema;
 public class DelegateMasController extends ScenarioController {
 
 	String map;
-	
+
 	private RoadModel roadModel;
 	private CommunicationModel communicationModel;
-	
-	private int truckID = 0;
-	private int packageID = 0;
+
 	private Graph<MultiAttributeEdgeData> graph;
-	
+
 	public DelegateMasController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
 		super(scen, numberOfTicks);
 		this.map = map;
@@ -52,38 +50,35 @@ public class DelegateMasController extends ScenarioController {
 		Simulator s = new Simulator(rand, 1000000);
 		s.register(roadModel);
 		s.register(communicationModel);
-		return s;	
+		return s;
 	}
-	
+
 	@Override
 	protected boolean createUserInterface() {
 		UiSchema schema = new UiSchema();
-		schema.add(Truck.class, new RGB(0,0,255));
-		schema.add(Ant.class, new RGB(0,255,0));
-		schema.add(Package.class, new RGB(255,0,0));
-		schema.add(DeliveryLocation.class, new RGB(0,255,0));
-		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));		
+		schema.add(Truck.class, new RGB(0, 0, 255));
+		schema.add(Ant.class, new RGB(0, 255, 0));
+		schema.add(Package.class, new RGB(255, 0, 0));
+		schema.add(DeliveryLocation.class, new RGB(0, 255, 0));
+		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));
 		return true;
 	}
 
 	@Override
 	protected boolean handleAddTruck(Event e) {
-		Truck truck = new Truck("Truck-"+truckID++, graph.getRandomNode(getSimulator().getRandomGenerator()), 7);
+		Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
 		getSimulator().register(truck);
 		TruckAgent agent = new TruckAgent(truck);
 		getSimulator().register(agent);
-//		agent.setSimulator(getSimulator());
 		return true;
-	}	
+	}
 
 	@Override
-	protected boolean handleAddPackage(Event e){
+	protected boolean handleAddPackage(Event e) {
 		Point pl = graph.getRandomNode(getSimulator().getRandomGenerator());
-		DeliveryLocation dl = new DeliveryLocation(graph.getRandomNode(getSimulator().getRandomGenerator()));
-		getSimulator().register(pl);
-//		getSimulator().register(dl);
-		
-		Package p = new Package("Package-"+packageID++, pl, dl);
+		Point dl = graph.getRandomNode(getSimulator().getRandomGenerator());
+
+		Package p = new Package(pl, dl);
 		getSimulator().register(p);
 		PackageAgent agent = new PackageAgent(p);
 		getSimulator().register(agent);
@@ -91,6 +86,4 @@ public class DelegateMasController extends ScenarioController {
 		return true;
 	}
 
-	
-	
 }

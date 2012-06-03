@@ -16,6 +16,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -44,8 +46,10 @@ import rinde.sim.util.TimeFormatter;
  * @author Bartosz Michalik <bartosz.michalik@cs.kuleuven.be>
  * 
  */
-public class SimulationViewer extends Composite implements TickListener, ControlListener, PaintListener, SelectionListener {
+public class SimulationViewer extends Composite implements TickListener, ControlListener, PaintListener,
+		SelectionListener {
 
+	public static final double MARGIN = 16;
 	public static final String COLOR_WHITE = "white";
 	public static final String COLOR_GREEN = "green";
 	public static final String COLOR_BLACK = "black";
@@ -89,8 +93,14 @@ public class SimulationViewer extends Composite implements TickListener, Control
 
 		this.renderers = renderers;
 		this.speedUp = speedUp;
+
+		final GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.verticalSpacing = 1;
+		setLayout(layout);
 		shell.setLayout(new FillLayout());
-		setLayout(new FillLayout());
+
 		bindToSimulator(simulator);
 
 		display = shell.getDisplay();
@@ -102,8 +112,7 @@ public class SimulationViewer extends Composite implements TickListener, Control
 			@Override
 			public void handleEvent(Event event) {
 				SimulationViewer.this.simulator.stop();
-				while (SimulationViewer.this.simulator.isPlaying()) {
-				}
+				while (SimulationViewer.this.simulator.isPlaying()) {}
 
 				if (!display.isDisposed()) {
 					display.dispose();
@@ -134,18 +143,32 @@ public class SimulationViewer extends Composite implements TickListener, Control
 	 */
 	protected void createContent() {
 		initColors();
+
 		canvas = new Canvas(this, SWT.DOUBLE_BUFFERED | SWT.NONE | SWT.NO_REDRAW_RESIZE | SWT.V_SCROLL | SWT.H_SCROLL);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.verticalAlignment = SWT.FILL;
+		gridData.grabExcessVerticalSpace = true;
+		canvas.setLayoutData(gridData);
+
 		canvas.setBackground(colorRegistry.get(COLOR_WHITE));
-		origin = new org.eclipse.swt.graphics.Point(10, 10);
+		origin = new org.eclipse.swt.graphics.Point(0, 0);
 		size = new org.eclipse.swt.graphics.Point(800, 500);
 		canvas.addPaintListener(this);
 		canvas.addControlListener(this);
-//		canvas.redraw();
-		this.layout();
+		// canvas.redraw();
 
-		timeLabel = new Label(canvas, SWT.NONE);
-		timeLabel.setBounds(20, 20, 200, 20);
-		timeLabel.setBackground(colorRegistry.get(COLOR_WHITE));
+		timeLabel = new Label(this, SWT.BORDER);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalIndent = 1;
+		timeLabel.setLayoutData(gridData);
+		// timeLabel.setBounds(20, 20, 200, 20);
+		// timeLabel.setBackground(colorRegistry.get(COLOR_WHITE));
+
+		this.layout();
 
 		hBar = canvas.getHorizontalBar();
 		hBar.addSelectionListener(this);
@@ -334,16 +357,17 @@ public class SimulationViewer extends Composite implements TickListener, Control
 		for (Connection<? extends EdgeData> e : graph.getConnections()) {
 			int x1 = (int) ((e.from.x - minX) * m);
 			int y1 = (int) ((e.from.y - minY) * m);
-			//			gc.setForeground(colorRegistry.get(COLOR_GREEN));
-			//			gc.drawOval(x1 - 2, y1 - 2, 4, 4);
+			// gc.setForeground(colorRegistry.get(COLOR_GREEN));
+			// gc.drawOval(x1 - 2, y1 - 2, 4, 4);
 
 			int x2 = (int) ((e.to.x - minX) * m);
 			int y2 = (int) ((e.to.y - minY) * m);
 			gc.setForeground(colorRegistry.get(COLOR_BLACK));
 			gc.drawLine(x1, y1, x2, y2);
 
-			//			gc.setBackground(colorRegistry.get(COLOR_WHITE));
-			//			gc.drawText(Math.round(e.edgeData.getLength() * 10.0) / 10.0 + "m", (x1 + x2) / 2, (y1 + y2) / 2, false);
+			// gc.setBackground(colorRegistry.get(COLOR_WHITE));
+			// gc.drawText(Math.round(e.edgeData.getLength() * 10.0) / 10.0 +
+			// "m", (x1 + x2) / 2, (y1 + y2) / 2, false);
 		}
 		gc.dispose();
 
@@ -361,7 +385,7 @@ public class SimulationViewer extends Composite implements TickListener, Control
 
 		if (image == null) {
 			image = drawRoads();
-			updateScrollbars(false);
+			updateScrollbars(true);
 		}
 
 		gc.drawImage(image, origin.x, origin.y);
@@ -420,12 +444,18 @@ public class SimulationViewer extends Composite implements TickListener, Control
 		minY = Double.POSITIVE_INFINITY;
 		double maxY = Double.NEGATIVE_INFINITY;
 
+		// Create some margins -- mstaessen
 		for (Point p : nodes) {
-			minX = Math.min(minX, p.x);
-			maxX = Math.max(maxX, p.x);
-			minY = Math.min(minY, p.y);
-			maxY = Math.max(maxY, p.y);
+			minX = Math.min(minX, p.x - MARGIN);
+			maxX = Math.max(maxX, p.x + MARGIN);
+			minY = Math.min(minY, p.y - MARGIN);
+			maxY = Math.max(maxY, p.y + MARGIN);
 		}
+
+		System.out.println(minX);
+		System.out.println(minY);
+		System.out.println(maxX);
+		System.out.println(maxY);
 
 		deltaX = maxX - minX;
 		deltaY = maxY - minY;
@@ -441,7 +471,6 @@ public class SimulationViewer extends Composite implements TickListener, Control
 		zoomRatio = 1;
 
 		// m *= 2;
-
 	}
 
 	@Override
@@ -490,7 +519,7 @@ public class SimulationViewer extends Composite implements TickListener, Control
 			return;
 		}
 		display.syncExec(new Runnable() {
-			//			 getDisplay().asyncExec(new Runnable() {
+			// getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if (!canvas.isDisposed()) {

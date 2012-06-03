@@ -11,12 +11,12 @@ import rinde.sim.scenario.TimedEvent;
 public class GradientFieldDemo {
 
 	// Leuven
-	// private static final String MAP_DIR = "../core/files/maps/";
-	// private static final String MAP = "leuven-simple.dot";
+	private static final String MAP_DIR = "../core/files/maps/";
+	private static final String MAP = "leuven-simple.dot";
 
 	// Manhattan
-	private static final String MAP_DIR = "files/maps/";
-	private static final String MAP = "grid-10x10.dot";
+	// private static final String MAP_DIR = "files/maps/";
+	// private static final String MAP = "grid-10x10.dot";
 
 	private static final String MAP_URI = MAP_DIR + MAP;
 
