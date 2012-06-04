@@ -1,6 +1,5 @@
 package project.strategies.delegatemas;
 
-import project.strategies.contractnet.ContractNetController;
 import rinde.sim.event.pdp.StandardType;
 import rinde.sim.scenario.Scenario;
 import rinde.sim.scenario.ScenarioBuilder;
@@ -20,27 +19,15 @@ public class DelegateMasDemo {
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, // at
 									      // time
 									      // 0
-		1, // amount of packages to be added
+		14, // amount of packages to be added
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 
-	int timeStep = 100000000;
-
-	// builder.add(
-	// new ScenarioBuilder.TimeSeries<TimedEvent>(
-	// 0, // start time
-	// 20*timeStep, // end time
-	// timeStep, // step
-	// new ScenarioBuilder.EventTypeFunction(
-	// StandardType.ADD_PACKAGE
-	// )
-	// )
-	// );
 
 	Scenario scenario = builder.build();
 
-	final String MAP_DIR = "../core/files/maps/";
+	final String MAP_DIR = "./files/maps/";
 
-	new DelegateMasController(scenario, -1, MAP_DIR + "leuven-simple.dot");
+	new DelegateMasController(scenario, -1, MAP_DIR + "grid-10x10.dot");
     }
 
 }
