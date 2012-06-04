@@ -24,14 +24,14 @@ public class DelegateMasDemo {
 		builder.add(
 				new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(
 						0, //at time 0
-						1, //amount of packages to be added
+						5, //amount of packages to be added
 						new ScenarioBuilder.EventTypeFunction(
 								StandardType.ADD_PACKAGE
 						)
 				)
 		);
 		
-		int timeStep = 100000000;
+		int timeStep = 100;
 		
 //		builder.add(
 //				new ScenarioBuilder.TimeSeries<TimedEvent>(
@@ -47,9 +47,9 @@ public class DelegateMasDemo {
 		
 		Scenario scenario = builder.build();
 		
-		final String MAP_DIR = "../core/files/maps/";
+		final String MAP_DIR = "./files/maps/";
 
-		new DelegateMasController(scenario, -1, MAP_DIR + "leuven-simple.dot");		
+		new DelegateMasController(scenario, -1, MAP_DIR + "grid-10x10.dot");		
 	}
 	
 }
