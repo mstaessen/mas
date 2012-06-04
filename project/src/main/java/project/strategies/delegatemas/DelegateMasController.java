@@ -1,11 +1,13 @@
 package project.strategies.delegatemas;
 
 import org.apache.commons.math.random.MersenneTwister;
-import org.eclipse.swt.graphics.RGB;
 
-import project.common.packages.DeliveryLocation;
 import project.common.packages.Package;
 import project.common.trucks.Truck;
+import project.strategies.delegatemas.colony.PackageAgent;
+import project.strategies.delegatemas.colony.PackageDestination;
+import project.strategies.delegatemas.colony.TruckAgent;
+import project.strategies.delegatemas.colony.renderers.PackageAgentRenderer;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
@@ -19,8 +21,7 @@ import rinde.sim.scenario.ScenarioController;
 import rinde.sim.serializers.DotGraphSerializer;
 import rinde.sim.serializers.SelfCycleFilter;
 import rinde.sim.ui.View;
-import rinde.sim.ui.renderers.ObjectRenderer;
-import rinde.sim.ui.renderers.UiSchema;
+
 
 public class DelegateMasController extends ScenarioController {
 
@@ -30,7 +31,7 @@ public class DelegateMasController extends ScenarioController {
     private CommunicationModel communicationModel;
 
     private int truckID = 0;
-    private int packageID = 0;
+
     private Graph<MultiAttributeEdgeData> graph;
 
     public DelegateMasController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
@@ -47,9 +48,9 @@ public class DelegateMasController extends ScenarioController {
 	    throw new ConfigurationException("e:", e);
 	}
 	roadModel = new RoadModel(graph);
-	MersenneTwister rand = new MersenneTwister(123);
-	communicationModel = new CommunicationModel(rand, true);
-	Simulator s = new Simulator(rand, 1000000);
+	MersenneTwister rand = new MersenneTwister(169);
+	communicationModel = new CommunicationModel(rand, false);
+	Simulator s = new Simulator(rand, 1000000); // timestep
 	s.register(roadModel);
 	s.register(communicationModel);
 	return s;
@@ -57,12 +58,7 @@ public class DelegateMasController extends ScenarioController {
 
     @Override
     protected boolean createUserInterface() {
-	UiSchema schema = new UiSchema();
-	schema.add(Truck.class, new RGB(0, 0, 255));
-	schema.add(Ant.class, new RGB(0, 255, 0));
-	schema.add(Package.class, new RGB(255, 0, 0));
-	schema.add(DeliveryLocation.class, new RGB(0, 255, 0));
-	View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));
+	View.startGui(getSimulator(), 3, new PackageAgentRenderer(getSimulator()));
 	return true;
     }
 
@@ -81,10 +77,10 @@ public class DelegateMasController extends ScenarioController {
 	Point dl = graph.getRandomNode(getSimulator().getRandomGenerator());
 
 	Package p = new Package(pl, dl);
-	getSimulator().register(p);
-	PackageAgent agent = new PackageAgent(p);
+	PackageAgent agent = new PackageAgent(p.getId(),p);
+	PackageDestination destination = agent.getDestination();
 	getSimulator().register(agent);
-	agent.setSimulator(getSimulator());
+	getSimulator().register(destination);	
 	return true;
     }
 
