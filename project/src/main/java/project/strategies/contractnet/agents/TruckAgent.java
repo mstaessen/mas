@@ -1,12 +1,11 @@
 package project.strategies.contractnet.agents;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import project.common.packages.Package;
 import project.common.trucks.AbstractTruckAgent;
 import project.common.trucks.Truck;
 import project.strategies.contractnet.messages.ContractNetMessage;
@@ -20,166 +19,163 @@ import rinde.sim.core.model.communication.Message;
 
 public class TruckAgent extends AbstractTruckAgent implements CommunicationUser {
 
-	private double reliability;
-	private double radius;
-	private Mailbox mailbox = new Mailbox();
-	private CommunicationAPI communicationAPI;
-	private PackageAgent targetedPackage;
+    private double reliability;
+    private double radius;
+    private Mailbox mailbox = new Mailbox();
+    private CommunicationAPI communicationAPI;
 
-	private List<CommunicationUser> lostProposers = new ArrayList<CommunicationUser>();
-	private CommunicationUser bestProposer;
-	private double bestDistance;
+    private ContractNetMessage assignedProposal = null;
 
-	public TruckAgent(Truck truck, double radius, double reliability) {
-		super(truck);
+    private static final Logger LOGGER = LoggerFactory.getLogger("CONTRACTNET");
 
-		this.radius = radius;
-		this.reliability = reliability;
-	}
+    public TruckAgent(Truck truck, double radius, double reliability) {
+	super(truck);
 
-	@Override
-	public void tick(long currentTime, long timeStep) {
+	this.radius = radius;
+	this.reliability = reliability;
+    }
 
-		handleIncomingMessages(mailbox.getMessages());
+    @Override
+    public void tick(long currentTime, long timeStep) {
+	handleIncomingMessages();
 
-		// Drive when possible
-		if (targetedPackage != null) {
-			if (!getPath().isEmpty()) {
-				getTruck().drive(getPath(), timeStep);
-			} else {
-				if (targetedPackage.needsPickUp())
-					pickUpAndGo();
-				else
-					deliver();
-			}
+	// Drive when possible
+	if (!getPath().isEmpty()) {
+	    getTruck().drive(getPath(), timeStep);
+	} else {
+	    if (getTruck().hasLoad()) {
+		tryDelivery();
+	    } else {
+		if (assignedProposal != null) {
+		    tryPickup();
 		}
+	    }
 	}
+    }
 
-	@SuppressWarnings("incomplete-switch")
-	private void handleIncomingMessages(Collection<Message> messages) {
-		bestProposer = null;
-		lostProposers.clear();
-
-		for (Message m : messages) {
-			ContractNetMessage message = (ContractNetMessage) m;
-			switch (message.getType()) {
-			case CALL_FOR_PROPOSAL:
-				calledForProposal(message.getSender());
-				break;
-			case ACCEPT_PROPOSAL:
-				acceptedProposal(message.getSender());
-				break;
-			case REJECT_PROPOSAL:
-				// Do Nothing;
-				break;
-			}
-		}
-
-		if (bestProposer != null && targetedPackage == null)
-			sendProposal();
+    private void handleIncomingMessages() {
+	for (Message m : mailbox.getMessages()) {
+	    ContractNetMessage message = (ContractNetMessage) m;
+	    switch (message.getType()) {
+		case CALL_FOR_PROPOSAL:
+		    handleCallForProposal(message);
+		    break;
+		case ACCEPT_PROPOSAL:
+		    handleAcceptedProposal(message);
+		    break;
+		case REJECT_PROPOSAL:
+		    handleRejectedProposal(message);
+		    break;
+		default:
+		    break;
+	    }
 	}
+    }
 
-	private void calledForProposal(CommunicationUser sender) {
+    private void handleRejectedProposal(ContractNetMessage message) {
+	// do nothing
+    }
 
-		if (targetedPackage != null) {
-			lostProposers.add(sender);
-		} else if (bestProposer == null) {
-			bestProposer = sender;
-			bestDistance = Graphs.pathLength(getTruck().getRoadModel().getShortestPathTo(getTruck(), sender
-					.getPosition()));
+    private void handleCallForProposal(ContractNetMessage callForProposal) {
+	// if (getTruck().hasLoad()) {
+	// sendRefusal(callForProposal);
+	// } else {
+	sendProposal(callForProposal);
+	// }
+    }
+
+    // private void sendRefusal(ContractNetMessage callForProposal) {
+    // ContractNetMessage refusal = new ContractNetMessage(this,
+    // ContractNetMessageType.REFUSAL);
+    // communicationAPI.send(callForProposal.getSender(), refusal);
+    // LOGGER.info(callForProposal.getSender() + " <- REFUSAL <- " + this);
+    // }
+
+    private void sendProposal(ContractNetMessage callForProposal) {
+	ContractNetMessage proposal = new ContractNetMessage(this, ContractNetMessageType.PROPOSAL, callForProposal);
+	double distance = Graphs.pathLength(getTruck().getRoadModel().getShortestPathTo(getTruck(),
+		callForProposal.getSender().getPosition()));
+	proposal.setDistance(distance);
+	communicationAPI.send(callForProposal.getSender(), proposal);
+	LOGGER.info(callForProposal.getSender() + " <- PROPOSAL <- " + this);
+    }
+
+    private void handleAcceptedProposal(ContractNetMessage acceptedProposal) {
+	if (!getTruck().hasLoad()) {
+	    if (assignedProposal == null) {
+		assignedProposal = acceptedProposal;
+	    } else {
+		// update distance before reconsidering
+		acceptedProposal.setDistance(getDistanceTo(acceptedProposal.getPosition()));
+		if (acceptedProposal.getProposalValue() > assignedProposal.getProposalValue()) {
+		    sendFailure(assignedProposal);
+		    assignedProposal = acceptedProposal;
 		} else {
-			double distance = Graphs.pathLength(getTruck().getRoadModel().getShortestPathTo(getTruck(), sender
-					.getPosition()));
-			if (distance < bestDistance) {
-				lostProposers.add(bestProposer);
-				bestProposer = sender;
-				bestDistance = distance;
-			} else {
-				lostProposers.add(sender);
-			}
+		    sendFailure(acceptedProposal);
 		}
+	    }
+
+	    setPath(new LinkedList<Point>(getTruck().getRoadModel().getShortestPathTo(getTruck(),
+		    assignedProposal.getPosition())));
+	    LOGGER.info(this + " : starting path to " + assignedProposal.getSender());
+	} else {
+	    sendFailure(acceptedProposal);
 	}
+    }
 
-	private void sendProposal() {
+    private void sendFailure(ContractNetMessage acceptedProposal) {
+	ContractNetMessage failure = new ContractNetMessage(this, ContractNetMessageType.FAILURE);
+	communicationAPI.send(acceptedProposal.getSender(), failure);
+	LOGGER.info(acceptedProposal.getSender() + " <- FAILURE <- " + this);
+    }
 
-		for (CommunicationUser proposer : lostProposers) {
-			ContractNetMessage reply = new ContractNetMessage(this);
-			reply.setType(ContractNetMessageType.REFUSE);
-			communicationAPI.send(proposer, reply);
-			LoggerFactory.getLogger("CONTRACTNET").info(proposer.hashCode() + " <- REFUSE <- " + this.hashCode());
-		}
-
-		ContractNetMessage reply = new ContractNetMessage(this);
-		Point dest = bestProposer.getPosition();
-		double distance = Graphs.pathLength(getTruck().getRoadModel().getShortestPathTo(getTruck(), dest));
-		reply.setType(ContractNetMessageType.PROPOSE);
-		reply.setProposalValue(1 / distance);
-		communicationAPI.send(bestProposer, reply);
-		LoggerFactory.getLogger("CONTRACTNET").info(bestProposer.hashCode() + " <- PROPOSE <- " + this.hashCode());
+    private void tryPickup() {
+	if (getTruck().tryPickup()) {
+	    LOGGER.info(this + " picked up " + getTruck().getLoad());
+	    setPath(new LinkedList<Point>(getTruck().getRoadModel().getShortestPathTo(getTruck(),
+		    getTruck().getLoad().getDeliveryLocation())));
 	}
+    }
 
-	private void acceptedProposal(CommunicationUser sender) {
-
-		if (targetedPackage == null) {
-			Point dest = sender.getPosition();
-
-			setPath(new LinkedList<Point>(getTruck().getRoadModel().getShortestPathTo(getTruck(), dest)));
-			targetedPackage = (PackageAgent) sender;
-
-			LoggerFactory.getLogger("CONTRACTNET").info(this.hashCode() + " : starting path");
-		} else {
-			ContractNetMessage message = new ContractNetMessage(this);
-			message.setType(ContractNetMessageType.FAILURE);
-			communicationAPI.send(sender, message);
-			LoggerFactory.getLogger("CONTRACTNET").info(sender.hashCode() + " <- FAILURE <- " + this.hashCode());
-		}
-
+    private void tryDelivery() {
+	Package pkg = getTruck().getLoad();
+	if (getTruck().tryDelivery()) {
+	    assignedProposal = null;
+	    LOGGER.info(this + " delivered " + pkg);
 	}
+    }
 
-	private void pickUpAndGo() {
-		targetedPackage.pickUp();
-		Point dest = targetedPackage.getDeliveryLocation();
-		setPath(new LinkedList<Point>(getTruck().getRoadModel().getShortestPathTo(getTruck(), dest)));
-		LoggerFactory.getLogger("CONTRACTNET").info(toString() + " : picked up : " + targetedPackage.hashCode());
-	}
+    private double getDistanceTo(Point position) {
+	return Graphs.pathLength(getTruck().getRoadModel().getShortestPathTo(getTruck(), position));
+    }
 
-	private void deliver() {
-		ContractNetMessage m = new ContractNetMessage(this);
-		m.setType(ContractNetMessageType.INFORM_DONE);
-		communicationAPI.send(targetedPackage, m);
-		getTruck().tryDelivery();
-		LoggerFactory.getLogger("CONTRACTNET").info(toString() + " : delivered : " + targetedPackage.hashCode());
-		targetedPackage = null;
-	}
+    @Override
+    public void setCommunicationAPI(CommunicationAPI model) {
+	this.communicationAPI = model;
+    }
 
-	@Override
-	public void setCommunicationAPI(CommunicationAPI api) {
-		this.communicationAPI = api;
-	}
+    @Override
+    public Point getPosition() {
+	return getTruck().getPosition();
+    }
 
-	@Override
-	public Point getPosition() {
-		return getTruck().getPosition();
-	}
+    @Override
+    public double getRadius() {
+	return this.radius;
+    }
 
-	@Override
-	public double getRadius() {
-		return this.radius;
-	}
+    @Override
+    public double getReliability() {
+	return this.reliability;
+    }
 
-	@Override
-	public double getReliability() {
-		return this.reliability;
-	}
+    @Override
+    public void receive(Message message) {
+	mailbox.receive(message);
+    }
 
-	@Override
-	public void receive(Message message) {
-		this.mailbox.receive(message);
-	}
-
-	@Override
-	public String toString() {
-		return "PackageAgent-" + getTruck().getId();
-	}
-
+    @Override
+    public String toString() {
+	return "TruckAgent-" + getTruck().getId();
+    }
 }

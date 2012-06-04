@@ -451,12 +451,7 @@ public class SimulationViewer extends Composite implements TickListener, Control
 			minY = Math.min(minY, p.y - MARGIN);
 			maxY = Math.max(maxY, p.y + MARGIN);
 		}
-
-		System.out.println(minX);
-		System.out.println(minY);
-		System.out.println(maxX);
-		System.out.println(maxY);
-
+		
 		deltaX = maxX - minX;
 		deltaY = maxY - minY;
 

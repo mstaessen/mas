@@ -12,116 +12,118 @@ import rinde.sim.event.Events;
 import rinde.sim.event.Listener;
 
 public class Package implements SimulatorUser, RoadUser, Events {
-	private static int counter = 0;
+    private static int counter = 0;
 
-	private final int id;
-	public final EventDispatcher events = new EventDispatcher(Package.EventType.values());
+    private final int id;
+    public final EventDispatcher events = new EventDispatcher(Package.EventType.values());
 
-	private Point pickupLocation;
-	private Point deliveryLocation;
-	private boolean pickedUp = false;
-	private boolean delivered = false;
-	private SimulatorAPI simulator;
-	private Priority priority = Priority.LOW;
+    private Point pickupLocation;
+    private Point deliveryLocation;
+    private boolean pickedUp = false;
+    private boolean delivered = false;
+    private SimulatorAPI simulator;
+    private Priority priority = Priority.LOW;
 
-	public enum EventType {
-		PACKAGE_CREATION, PACKAGE_PICKUP, PACKAGE_DELIVERY;
+    public enum EventType {
+	PACKAGE_CREATION, PACKAGE_PICKUP, PACKAGE_DELIVERY;
 
-		public static EventType valueOf(int ordinal) {
-			return values()[ordinal];
-		}
+	public static EventType valueOf(int ordinal) {
+	    return values()[ordinal];
+	}
+    }
+
+    public Package(Point pickupLocation, Point deliveryLocation) {
+	this.id = counter++;
+	this.pickupLocation = pickupLocation;
+	this.deliveryLocation = deliveryLocation;
+    }
+
+    public boolean isPickedUp() {
+	return pickedUp;
+    }
+
+    public boolean isDelivered() {
+	return delivered;
+    }
+
+    /**
+     * The object is removed after afterTick(). You have to check whether a
+     * package is already picked up because two agents can pickup the same
+     * package otherwise.
+     * 
+     * @throws AlreadyPickedUpException
+     *             if a package is already picked up
+     */
+    public void pickup() throws AlreadyPickedUpException {
+	if (isPickedUp()) {
+	    throw new AlreadyPickedUpException();
 	}
 
-	public Package(Point pickupLocation, Point deliveryLocation) {
-		this.id = counter++;
-		this.pickupLocation = pickupLocation;
-		this.deliveryLocation = deliveryLocation;
-	}
+	setPickedUp();
+	events.dispatchEvent(new Event(Package.EventType.PACKAGE_PICKUP, this));
+    }
 
-	public boolean isPickedUp() {
-		return pickedUp;
-	}
+    private void setPickedUp() {
+	this.pickedUp = true;
+    }
 
-	public boolean isDelivered() {
-		return delivered;
-	}
+    public void deliver() {
+	setDelivered();
+	events.dispatchEvent(new Event(Package.EventType.PACKAGE_DELIVERY, this));
+	this.simulator.unregister(this);
+    }
 
-	/**
-	 * The object is removed after afterTick(). You have to check whether a
-	 * package is already picked up because two agents can pickup the same
-	 * package otherwise.
-	 * @throws AlreadyPickedUpException if a package is already picked up
-	 */
-	public void pickup() throws AlreadyPickedUpException {
-		if (isPickedUp()) {
-			throw new AlreadyPickedUpException();
-		}
+    private void setDelivered() {
+	this.delivered = true;
+    }
 
-		setPickedUp();
-		events.dispatchEvent(new Event(Package.EventType.PACKAGE_PICKUP, this));
-	}
+    public int getId() {
+	return id;
+    }
 
-	private void setPickedUp() {
-		this.pickedUp = true;
-	}
+    @Override
+    public String toString() {
+	return "package-" + id;
+    }
 
-	public void deliver() {
-		setDelivered();
-		events.dispatchEvent(new Event(Package.EventType.PACKAGE_DELIVERY, this));
-		this.simulator.unregister(this);
-	}
+    public Point getPickupLocation() {
+	return pickupLocation;
+    }
 
-	private void setDelivered() {
-		this.delivered = true;
-	}
+    public Point getDeliveryLocation() {
+	return deliveryLocation;
+    }
 
-	public int getId() {
-		return id;
-	}
+    @Override
+    public void setSimulator(SimulatorAPI api) {
+	this.simulator = api;
+    }
 
-	@Override
-	public String toString() {
-		return "package-" + id;
-	}
+    public void setPriority(Priority priority) {
+	this.priority = priority;
+    }
 
-	public Point getPickupLocation() {
-		return pickupLocation;
-	}
+    @Override
+    public void initRoadUser(RoadModel model) {
+	model.addObjectAt(this, pickupLocation);
+    }
 
-	public Point getDeliveryLocation() {
-		return deliveryLocation;
-	}
+    public Priority getPriority() {
+	return priority;
+    }
 
-	@Override
-	public void setSimulator(SimulatorAPI api) {
-		this.simulator = api;
-	}
+    @Override
+    public void addListener(Listener l, Enum<?>... eventTypes) {
+	events.addListener(l, eventTypes);
+    }
 
-	public void setPriority(Priority priority) {
-		this.priority = priority;
-	}
+    @Override
+    public void removeListener(Listener l, Enum<?>... eventTypes) {
+	events.removeListener(l, eventTypes);
+    }
 
-	@Override
-	public void initRoadUser(RoadModel model) {
-		model.addObjectAt(this, pickupLocation);
-	}
-
-	public Priority getPriority() {
-		return priority;
-	}
-
-	@Override
-	public void addListener(Listener l, Enum<?>... eventTypes) {
-		events.addListener(l, eventTypes);
-	}
-
-	@Override
-	public void removeListener(Listener l, Enum<?>... eventTypes) {
-		events.removeListener(l, eventTypes);
-	}
-
-	@Override
-	public boolean containsListener(Listener l, Enum<?> eventType) {
-		return events.containsListener(l, eventType);
-	}
+    @Override
+    public boolean containsListener(Listener l, Enum<?> eventType) {
+	return events.containsListener(l, eventType);
+    }
 }

@@ -24,66 +24,66 @@ import rinde.sim.ui.renderers.UiSchema;
 
 public class DelegateMasController extends ScenarioController {
 
-	String map;
+    String map;
 
-	private RoadModel roadModel;
-	private CommunicationModel communicationModel;
+    private RoadModel roadModel;
+    private CommunicationModel communicationModel;
 
-	private Graph<MultiAttributeEdgeData> graph;
+    private Graph<MultiAttributeEdgeData> graph;
 
-	public DelegateMasController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
-		super(scen, numberOfTicks);
-		this.map = map;
-		initialize();
+    public DelegateMasController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
+	super(scen, numberOfTicks);
+	this.map = map;
+	initialize();
+    }
+
+    @Override
+    protected Simulator createSimulator() throws Exception {
+	try {
+	    graph = DotGraphSerializer.getMultiAttributeGraphSerializer(new SelfCycleFilter()).read(map);
+	} catch (Exception e) {
+	    throw new ConfigurationException("e:", e);
 	}
+	roadModel = new RoadModel(graph);
+	MersenneTwister rand = new MersenneTwister(123);
+	communicationModel = new CommunicationModel(rand, true);
+	Simulator s = new Simulator(rand, 1000000);
+	s.register(roadModel);
+	s.register(communicationModel);
+	return s;
+    }
 
-	@Override
-	protected Simulator createSimulator() throws Exception {
-		try {
-			graph = DotGraphSerializer.getMultiAttributeGraphSerializer(new SelfCycleFilter()).read(map);
-		} catch (Exception e) {
-			throw new ConfigurationException("e:", e);
-		}
-		roadModel = new RoadModel(graph);
-		MersenneTwister rand = new MersenneTwister(123);
-		communicationModel = new CommunicationModel(rand, true);
-		Simulator s = new Simulator(rand, 1000000);
-		s.register(roadModel);
-		s.register(communicationModel);
-		return s;
-	}
+    @Override
+    protected boolean createUserInterface() {
+	UiSchema schema = new UiSchema();
+	schema.add(Truck.class, new RGB(0, 0, 255));
+	schema.add(Ant.class, new RGB(0, 255, 0));
+	schema.add(Package.class, new RGB(255, 0, 0));
+	schema.add(DeliveryLocation.class, new RGB(0, 255, 0));
+	View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));
+	return true;
+    }
 
-	@Override
-	protected boolean createUserInterface() {
-		UiSchema schema = new UiSchema();
-		schema.add(Truck.class, new RGB(0, 0, 255));
-		schema.add(Ant.class, new RGB(0, 255, 0));
-		schema.add(Package.class, new RGB(255, 0, 0));
-		schema.add(DeliveryLocation.class, new RGB(0, 255, 0));
-		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));
-		return true;
-	}
+    @Override
+    protected boolean handleAddTruck(Event e) {
+	Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
+	getSimulator().register(truck);
+	TruckAgent agent = new TruckAgent(truck);
+	getSimulator().register(agent);
+	return true;
+    }
 
-	@Override
-	protected boolean handleAddTruck(Event e) {
-		Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
-		getSimulator().register(truck);
-		TruckAgent agent = new TruckAgent(truck);
-		getSimulator().register(agent);
-		return true;
-	}
+    @Override
+    protected boolean handleAddPackage(Event e) {
+	Point pl = graph.getRandomNode(getSimulator().getRandomGenerator());
+	Point dl = graph.getRandomNode(getSimulator().getRandomGenerator());
 
-	@Override
-	protected boolean handleAddPackage(Event e) {
-		Point pl = graph.getRandomNode(getSimulator().getRandomGenerator());
-		Point dl = graph.getRandomNode(getSimulator().getRandomGenerator());
-
-		Package p = new Package(pl, dl);
-		getSimulator().register(p);
-		PackageAgent agent = new PackageAgent(p);
-		getSimulator().register(agent);
-		agent.setSimulator(getSimulator());
-		return true;
-	}
+	Package p = new Package(pl, dl);
+	getSimulator().register(p);
+	PackageAgent agent = new PackageAgent(p);
+	getSimulator().register(agent);
+	agent.setSimulator(getSimulator());
+	return true;
+    }
 
 }

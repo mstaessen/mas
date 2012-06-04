@@ -4,23 +4,23 @@ import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.communication.CommunicationUser;
 import rinde.sim.core.model.communication.Message;
 
-public class TransportRequest extends Message{
+public class TransportRequest extends Message {
 
-	private long flagID;
-	private Point location;
-	
-	public TransportRequest(CommunicationUser sender, Point location, long flagID) {
-		super(sender);
-		this.location = location;
-		this.flagID = flagID;
-	}
+    private long flagID;
+    private Point location;
 
-	public long getFlagID(){
-		return flagID;
-	}
-	
-	public Point getLocation(){
-		return location;
-	}
+    public TransportRequest(CommunicationUser sender, Point location, long flagID) {
+	super(sender);
+	this.location = location;
+	this.flagID = flagID;
+    }
+
+    public long getFlagID() {
+	return flagID;
+    }
+
+    public Point getLocation() {
+	return location;
+    }
 
 }

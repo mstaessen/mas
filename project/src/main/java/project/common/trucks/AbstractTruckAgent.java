@@ -10,43 +10,45 @@ import rinde.sim.core.graph.Point;
 
 public abstract class AbstractTruckAgent implements SimulatorUser, TickListener {
 
-	private final Truck truck;
-	private SimulatorAPI simulator;
-	private Queue<Point> path = new LinkedList<Point>();
+    private final Truck truck;
+    private SimulatorAPI simulator;
+    private Queue<Point> path = new LinkedList<Point>();
 
-	public AbstractTruckAgent(Truck truck) {
-		this.truck = truck;
+    public AbstractTruckAgent(Truck truck) {
+	this.truck = truck;
+    }
+
+    protected Truck getTruck() {
+	return truck;
+    }
+
+    protected Queue<Point> getPath() {
+	return path;
+    }
+
+    protected void setPath(Queue<Point> path) {
+	if (path == null) {
+	    this.path.clear();
+	} else {
+	    this.path = path;
 	}
+    }
 
-	protected Truck getTruck() {
-		return truck;
-	}
+    @Override
+    public void setSimulator(SimulatorAPI simulator) {
+	this.simulator = simulator;
+    }
 
-	protected Queue<Point> getPath() {
-		return path;
-	}
+    protected SimulatorAPI getSimulator() {
+	return simulator;
+    }
 
-	protected void setPath(Queue<Point> path) {
-		if (path == null) {
-			this.path.clear();
-		} else {
-			this.path = path;
-		}
-	}
+    @Override
+    public void tick(long currentTime, long timeStep) {
+    }
 
-	@Override
-	public void setSimulator(SimulatorAPI simulator) {
-		this.simulator = simulator;
-	}
-
-	protected SimulatorAPI getSimulator() {
-		return simulator;
-	}
-
-	@Override
-	public void tick(long currentTime, long timeStep) {}
-
-	@Override
-	public void afterTick(long currentTime, long timeStep) {}
+    @Override
+    public void afterTick(long currentTime, long timeStep) {
+    }
 
 }

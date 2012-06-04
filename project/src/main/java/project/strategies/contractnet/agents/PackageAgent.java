@@ -1,12 +1,11 @@
 package project.strategies.contractnet.agents;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import project.common.exceptions.AlreadyPickedUpException;
 import project.common.packages.AbstractPackageAgent;
 import project.common.packages.Package;
 import project.strategies.contractnet.messages.ContractNetMessage;
@@ -19,152 +18,169 @@ import rinde.sim.core.model.communication.Message;
 
 public class PackageAgent extends AbstractPackageAgent implements CommunicationUser {
 
-	private double radius;
-	private double reliability;
-	private Mailbox mailbox = new Mailbox();
-	private CommunicationAPI communicationAPI;
+    private double radius;
+    private double reliability;
+    private Mailbox mailbox = new Mailbox();
+    private CommunicationAPI communicationAPI;
 
-	private TruckAgent targetedTruck;
-	private ContractNetMessage bestProposal;
-	private List<CommunicationUser> lostProposals = new ArrayList<CommunicationUser>();
+    private boolean assigned = false;
+    private boolean voting = false;
+    private boolean response = false;
 
-	public PackageAgent(Package pkg, double radius, double reliability) {
-		super(pkg);
+    private ContractNetMessage bestProposal;
+    private Set<ContractNetMessage> lostProposals = new HashSet<ContractNetMessage>();
 
-		this.radius = radius;
-		this.reliability = reliability;
-		this.mailbox = new Mailbox();
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger("CONTRACTNET");
 
-	@Override
-	public void tick(long currentTime, long timeStep) {
-		if (!getPackage().isDelivered()) {
-			handleIncomingMessages(mailbox.getMessages());
-			if (targetedTruck == null) {
-				broadcastCallForProposal();
-			}
-		}
-	}
+    public PackageAgent(Package pkg, double radius, double reliability) {
+	super(pkg);
 
-	@SuppressWarnings("incomplete-switch")
-	private void handleIncomingMessages(Collection<Message> messages) {
-		bestProposal = null;
-		lostProposals.clear();
+	this.radius = radius;
+	this.reliability = reliability;
+	this.mailbox = new Mailbox();
+    }
 
-		for (Message m : messages) {
-			ContractNetMessage message = (ContractNetMessage) m;
-			switch (message.getType()) {
-			case PROPOSE:
-				proposed(message);
-				break;
-			case REFUSE:
-				// Do nothing;
-				break;
-			case FAILURE:
-				failed();
-				break;
-			case INFORM_DONE:
-				// Do nothing (TruckAgent does all the actions);
-				break;
-			}
-		}
+    @Override
+    public void tick(long currentTime, long timeStep) {
+	if (!getPackage().isPickedUp()) {
+	    handleIncomingMessages();
 
-		if (bestProposal != null)
-			sendAcceptProposal(bestProposal, lostProposals);
-
-	}
-
-	private void broadcastCallForProposal() {
-
-		ContractNetMessage broadcastMessage = new ContractNetMessage(this);
-		broadcastMessage.setType(ContractNetMessageType.CALL_FOR_PROPOSAL);
-		communicationAPI.broadcast(broadcastMessage);
-
-		LoggerFactory.getLogger("CONTRACTNET").info(this.hashCode() + " -> CALL_FOR_PROPOSAL");
-
-	}
-
-	private void failed() {
-		targetedTruck = null;
-	}
-
-	private void proposed(ContractNetMessage proposal) {
-
-		if (targetedTruck != null) {
-			lostProposals.add(proposal.getSender());
-		} else if (bestProposal == null) {
-			bestProposal = proposal;
-		} else if (bestProposal.getProposalValue() < proposal.getProposalValue()) {
-			lostProposals.add(bestProposal.getSender());
-			bestProposal = proposal;
+	    if (!assigned) {
+		if (voting) {
+		    stopVoting();
 		} else {
-			lostProposals.add(proposal.getSender());
+		    startVoting();
 		}
+	    }
 	}
+    }
 
-	private void sendAcceptProposal(ContractNetMessage bestProposal, List<CommunicationUser> lostProposals) {
+    private void startVoting() {
+	voting = true;
+	broadcastCallForProposal();
+    }
 
-		// Send the response to the winner
-		targetedTruck = (TruckAgent) bestProposal.getSender();
-		ContractNetMessage acceptMessage = new ContractNetMessage(this);
-		acceptMessage.setType(ContractNetMessageType.ACCEPT_PROPOSAL);
-		communicationAPI.send(targetedTruck, acceptMessage);
-		LoggerFactory.getLogger("CONTRACTNET").info(this.hashCode() + " -> ACCEPT_PROPOSAL -> "
-				+ targetedTruck.hashCode());
-
-		// Send responses to losers
-		for (CommunicationUser loser : lostProposals) {
-			ContractNetMessage rejectProposal = new ContractNetMessage(this);
-			rejectProposal.setType(ContractNetMessageType.REJECT_PROPOSAL);
-
-			LoggerFactory.getLogger("CONTRACTNET").info(this.hashCode() + " -> REJECT_PROPOSAL -> " + loser.hashCode());
-			communicationAPI.send(loser, rejectProposal);
-		}
+    private void handleIncomingMessages() {
+	resetProposals();
+	for (Message m : mailbox.getMessages()) {
+	    ContractNetMessage message = (ContractNetMessage) m;
+	    switch (message.getType()) {
+		case PROPOSAL:
+		    handleProposal(message);
+		    break;
+		case REFUSAL:
+		    handleRefusal(message);
+		    break;
+		case FAILURE:
+		    handleFailure(message);
+		    break;
+		case INFORM_DONE:
+		    handleInformDone(message);
+		    break;
+		default:
+		    break;
+	    }
 	}
+    }
 
-	@Override
-	public void setCommunicationAPI(CommunicationAPI api) {
-		this.communicationAPI = api;
-	}
+    private void stopVoting() {
+	if (response) {
+	    if (bestProposal != null) {
+		// Send an accept message to the winner
+		acceptProposal(bestProposal);
+		assigned = true;
+	    }
 
-	@Override
-	public Point getPosition() {
-		return getPackage().getPickupLocation();
+	    // Send a reject message to all the losers
+	    for (ContractNetMessage proposal : lostProposals) {
+		rejectProposal(proposal);
+	    }
+	    voting = false;
+	    response = false;
 	}
+    }
 
-	@Override
-	public double getRadius() {
-		return radius;
-	}
+    private void resetProposals() {
+	bestProposal = null;
+	lostProposals.clear();
+    }
 
-	@Override
-	public double getReliability() {
-		return reliability;
-	}
+    private void handleInformDone(ContractNetMessage message) {
+	// Do nothing, package is delivered. Redundant message.
+    }
 
-	@Override
-	public void receive(Message message) {
-		this.mailbox.receive(message);
-	}
+    private void handleRefusal(ContractNetMessage message) {
+	response = true;
+    }
 
-	public void pickUp() {
-		try {
-			getPackage().pickup();
-		} catch (AlreadyPickedUpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    private void handleFailure(ContractNetMessage message) {
+	assigned = false;
+    }
 
-	public void deliver() {
-		getPackage().deliver();
-	}
+    private void broadcastCallForProposal() {
+	ContractNetMessage broadcastMessage = new ContractNetMessage(this, ContractNetMessageType.CALL_FOR_PROPOSAL);
+	broadcastMessage.setPosition(getPosition());
+	broadcastMessage.setPriority(getPackage().getPriority());
+	communicationAPI.broadcast(broadcastMessage, TruckAgent.class);
+	LOGGER.info(this + " -> CALL_FOR_PROPOSAL");
+    }
 
-	public boolean needsPickUp() {
-		return !getPackage().isPickedUp();
+    private void handleProposal(ContractNetMessage proposal) {
+	response = true;
+	if (assigned) {
+	    lostProposals.add(proposal);
+	} else {
+	    if (bestProposal == null) {
+		bestProposal = proposal;
+	    } else if (bestProposal.getProposalValue() < proposal.getProposalValue()) {
+		lostProposals.add(bestProposal);
+		bestProposal = proposal;
+	    } else {
+		lostProposals.add(proposal);
+	    }
 	}
+    }
 
-	public Point getDeliveryLocation() {
-		return getPackage().getDeliveryLocation();
-	}
+    private void acceptProposal(ContractNetMessage proposal) {
+	ContractNetMessage acceptProposal = new ContractNetMessage(this, ContractNetMessageType.ACCEPT_PROPOSAL, proposal);
+	acceptProposal.setPriority(getPackage().getPriority());
+	communicationAPI.send(proposal.getSender(), acceptProposal);
+	LOGGER.info(this + " -> ACCEPT_PROPOSAL -> " + proposal.getSender());
+    }
+
+    private void rejectProposal(ContractNetMessage proposal) {
+	ContractNetMessage rejectProposal = new ContractNetMessage(this, ContractNetMessageType.REJECT_PROPOSAL);
+	communicationAPI.send(proposal.getSender(), rejectProposal);
+	LOGGER.info(this + " -> REJECT_PROPOSAL -> " + proposal.getSender());
+    }
+
+    @Override
+    public void setCommunicationAPI(CommunicationAPI api) {
+	this.communicationAPI = api;
+    }
+
+    @Override
+    public Point getPosition() {
+	return getPackage().getPickupLocation();
+    }
+
+    @Override
+    public double getRadius() {
+	return radius;
+    }
+
+    @Override
+    public double getReliability() {
+	return reliability;
+    }
+
+    @Override
+    public void receive(Message message) {
+	this.mailbox.receive(message);
+    }
+
+    @Override
+    public String toString() {
+	return "PackageAgent-" + getPackage().getId();
+    }
 }

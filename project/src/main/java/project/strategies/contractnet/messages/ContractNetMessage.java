@@ -1,40 +1,63 @@
 package project.strategies.contractnet.messages;
 
+import project.common.packages.Priority;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.communication.CommunicationUser;
 import rinde.sim.core.model.communication.Message;
 
 public class ContractNetMessage extends Message {
 
-	private ContractNetMessageType type;
-	private double proposalValue;
-	private Point resultPoint;
+    private ContractNetMessageType type;
+    private Point position;
+    private double distance;
+    private double priority;
 
-	public Point getResultPoint() {
-		return resultPoint;
-	}
+    public ContractNetMessage(CommunicationUser sender) {
+	super(sender);
+    }
 
-	public void setResultPoint(Point resultPoint) {
-		this.resultPoint = resultPoint;
-	}
+    public ContractNetMessage(CommunicationUser sender, ContractNetMessageType type) {
+	this(sender);
+	setType(type);
+    }
 
-	public ContractNetMessage(CommunicationUser sender) {
-		super(sender);
-	}
+    public ContractNetMessage(CommunicationUser sender, ContractNetMessageType type, ContractNetMessage original) {
+	this(sender, type);
 
-	public ContractNetMessageType getType() {
-		return type;
-	}
+	this.position = original.position;
+	this.distance = original.distance;
+	this.priority = original.priority;
+    }
 
-	public void setType(ContractNetMessageType type) {
-		this.type = type;
-	}
+    public Point getPosition() {
+	return position;
+    }
 
-	public void setProposalValue(double proposalValue) {
-		this.proposalValue = proposalValue;
-	}
+    public void setPosition(Point position) {
+	this.position = position;
+    }
 
-	public double getProposalValue() {
-		return proposalValue;
-	}
+    public ContractNetMessageType getType() {
+	return type;
+    }
+
+    public void setType(ContractNetMessageType type) {
+	this.type = type;
+    }
+
+    public void setDistance(double distance) {
+	this.distance = distance;
+    }
+
+    public double getProposalValue() {
+	return priority / distance;
+    }
+
+    public void setPriority(double priority) {
+	this.priority = priority;
+    }
+
+    public void setPriority(Priority priority) {
+	setPriority(priority.getValue());
+    }
 }
