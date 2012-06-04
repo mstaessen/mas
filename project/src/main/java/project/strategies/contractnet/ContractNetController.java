@@ -49,13 +49,13 @@ public class ContractNetController extends AbstractController {
 	getSimulator().register(pl);
 	getSimulator().register(dl);
 
-	Package p = new Package(pl, dl);
+	Package p = createPackage();
 	getSimulator().register(p);
-	
+
 	PackageAgent agent = new PackageAgent(p, -1, 1);
 	agent.setCommunicationAPI(communicationModel);
 	getSimulator().register(agent);
-	
+
 	return true;
     }
 }

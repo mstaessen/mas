@@ -26,7 +26,7 @@ public class TruckAgent extends AbstractTruckAgent implements CommunicationUser 
 
     private ContractNetMessage assignedProposal = null;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("CONTRACTNET");
+    private static final Logger LOGGER = LoggerFactory.getLogger("ContractNet");
 
     public TruckAgent(Truck truck, double radius, double reliability) {
 	super(truck);
@@ -97,7 +97,7 @@ public class TruckAgent extends AbstractTruckAgent implements CommunicationUser 
 		callForProposal.getSender().getPosition()));
 	proposal.setDistance(distance);
 	communicationAPI.send(callForProposal.getSender(), proposal);
-	LOGGER.info(callForProposal.getSender() + " <- PROPOSAL <- " + this);
+	LOGGER.info("{} <- PROPOSAL <- {}", callForProposal.getSender(), this);
     }
 
     private void handleAcceptedProposal(ContractNetMessage acceptedProposal) {
@@ -117,7 +117,7 @@ public class TruckAgent extends AbstractTruckAgent implements CommunicationUser 
 
 	    setPath(new LinkedList<Point>(getTruck().getRoadModel().getShortestPathTo(getTruck(),
 		    assignedProposal.getPosition())));
-	    LOGGER.info(this + " : starting path to " + assignedProposal.getSender());
+	    LOGGER.info("{} : starting path to {}", this, assignedProposal.getSender());
 	} else {
 	    sendFailure(acceptedProposal);
 	}
@@ -126,12 +126,12 @@ public class TruckAgent extends AbstractTruckAgent implements CommunicationUser 
     private void sendFailure(ContractNetMessage acceptedProposal) {
 	ContractNetMessage failure = new ContractNetMessage(this, ContractNetMessageType.FAILURE);
 	communicationAPI.send(acceptedProposal.getSender(), failure);
-	LOGGER.info(acceptedProposal.getSender() + " <- FAILURE <- " + this);
+	LOGGER.info("{} <- FAILURE <- {}", acceptedProposal.getSender(), this);
     }
 
     private void tryPickup() {
 	if (getTruck().tryPickup()) {
-	    LOGGER.info(this + " picked up " + getTruck().getLoad());
+	    LOGGER.info("{} picked up {}", this, getTruck().getLoad());
 	    setPath(new LinkedList<Point>(getTruck().getRoadModel().getShortestPathTo(getTruck(),
 		    getTruck().getLoad().getDeliveryLocation())));
 	}
@@ -141,7 +141,7 @@ public class TruckAgent extends AbstractTruckAgent implements CommunicationUser 
 	Package pkg = getTruck().getLoad();
 	if (getTruck().tryDelivery()) {
 	    assignedProposal = null;
-	    LOGGER.info(this + " delivered " + pkg);
+	    LOGGER.info("{} delivered {}", this, pkg);
 	}
     }
 

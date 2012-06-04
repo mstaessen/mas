@@ -22,7 +22,14 @@ public class Package implements SimulatorUser, RoadUser, Events {
     private boolean pickedUp = false;
     private boolean delivered = false;
     private SimulatorAPI simulator;
-    private Priority priority = Priority.LOW;
+
+    private long pickupDeadline = 2 * 24 * 60 * 60 * 1000;
+    private long deliveryDeadline = 3 * 24 * 60 * 60 * 1000;
+
+    // Less than a day is considered High Priority
+    public static final long HIGH_PRIO = 24 * 60 * 60 * 1000;
+    // More than three days is considered Low Priority
+    public static final long LOW_PRIO = 3 * 24 * 60 * 60 * 1000;
 
     public enum EventType {
 	PACKAGE_CREATION, PACKAGE_PICKUP, PACKAGE_DELIVERY;
@@ -36,6 +43,13 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	this.id = counter++;
 	this.pickupLocation = pickupLocation;
 	this.deliveryLocation = deliveryLocation;
+    }
+
+    public Package(Point pickupLocation, Point deliveryLocation, long pickupDeadline, long deliveryDeadline) {
+	this(pickupLocation, deliveryLocation);
+
+	this.pickupDeadline = pickupDeadline;
+	this.deliveryDeadline = deliveryDeadline;
     }
 
     public boolean isPickedUp() {
@@ -99,17 +113,21 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	this.simulator = api;
     }
 
-    public void setPriority(Priority priority) {
-	this.priority = priority;
-    }
-
     @Override
     public void initRoadUser(RoadModel model) {
 	model.addObjectAt(this, pickupLocation);
     }
 
-    public Priority getPriority() {
-	return priority;
+    public long getPickupDeadline() {
+	return pickupDeadline;
+    }
+
+    public long getDeliveryDeadline() {
+	return deliveryDeadline;
+    }
+
+    protected SimulatorAPI getSimulator() {
+	return simulator;
     }
 
     @Override
@@ -125,5 +143,23 @@ public class Package implements SimulatorUser, RoadUser, Events {
     @Override
     public boolean containsListener(Listener l, Enum<?> eventType) {
 	return events.containsListener(l, eventType);
+    }
+
+    void decreasePickupDeadline(long timeStep) {
+	this.pickupDeadline -= timeStep;
+    }
+
+    void decreaseDeliveryDeadline(long timeStep) {
+	this.deliveryDeadline -= timeStep;
+    }
+
+    public double getPriority() {
+	// Less then half a day!
+	if (getPickupDeadline() <= HIGH_PRIO) {
+	    return Priority.maxPriority();
+	} else {
+	    return Math.max(Priority.minPriority(), (Priority.minPriority() - Priority.maxPriority())
+		    / (LOW_PRIO - HIGH_PRIO) * (getPickupDeadline() - HIGH_PRIO) + Priority.maxPriority());
+	}
     }
 }

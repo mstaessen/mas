@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
 import project.common.packages.Package;
+import project.common.packages.Priority;
 import rinde.sim.core.model.RoadModel;
 
 public class PackageRenderer extends AbstractRenderer {
@@ -51,10 +52,11 @@ public class PackageRenderer extends AbstractRenderer {
 
 	gc.drawImage(getImage(p), x, y);
 	gc.drawText(String.valueOf(p.getId()), x + 18, y);
+	// gc.drawText(String.valueOf(p.getPriority()), x + 18, y);
     }
 
     private Image getImage(Package p) {
-	switch (p.getPriority()) {
+	switch (Priority.valueOf(p.getPriority())) {
 	    case LOW:
 		return greenFlagImage;
 	    case MEDIUM:

@@ -43,7 +43,7 @@ public class PackageAgent extends AbstractPackageAgent implements VirtualEntity 
 	return new FieldData() {
 	    @Override
 	    public double getStrength() {
-		return 1000 * getPackage().getPriority().getValue();
+		return 1000 * getPackage().getPriority();
 	    }
 	};
     }

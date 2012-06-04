@@ -1,5 +1,6 @@
 package project.strategies.gradientfield;
 
+import project.common.controller.AbstractController;
 import rinde.sim.event.pdp.StandardType;
 import rinde.sim.scenario.Scenario;
 import rinde.sim.scenario.ScenarioBuilder;
@@ -11,12 +12,12 @@ import rinde.sim.scenario.TimedEvent;
 public class GradientFieldDemo {
 
     // Leuven
-    private static final String MAP_DIR = "../core/files/maps/";
-    private static final String MAP = "leuven-simple.dot";
+    // private static final String MAP_DIR = "../core/files/maps/";
+    // private static final String MAP = "leuven-simple.dot";
 
     // Manhattan
-    // private static final String MAP_DIR = "files/maps/";
-    // private static final String MAP = "grid-10x10.dot";
+    private static final String MAP_DIR = "files/maps/";
+    private static final String MAP = "grid-10x10.dot";
 
     private static final String MAP_URI = MAP_DIR + MAP;
 
@@ -34,7 +35,7 @@ public class GradientFieldDemo {
 
 	Scenario scenario = builder.build();
 
-	GradientFieldController controller = new GradientFieldController(scenario, -1, MAP_URI);
+	AbstractController controller = new GradientFieldController(scenario, -1, MAP_URI);
 
 	// dispatch the controller with an initial speed of 3
 	controller.dispatch(3);

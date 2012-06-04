@@ -3,12 +3,16 @@ package project.common.controller;
 import org.apache.commons.math.random.MersenneTwister;
 
 import project.common.listeners.PackageListener;
+import project.common.packages.Package;
 import project.common.renderers.AbstractRenderer;
 import project.common.renderers.PackageRenderer;
 import project.common.renderers.TruckRenderer;
+import project.common.trucks.Truck;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
+import rinde.sim.core.graph.Graphs;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
+import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.RoadModel;
 import rinde.sim.event.Event;
 import rinde.sim.scenario.ConfigurationException;
@@ -34,6 +38,15 @@ public abstract class AbstractController extends ScenarioController {
 	this.map = map;
 
 	initialize();
+    }
+    
+    @Override
+    protected boolean handleCustomEvent(Event e) {
+	System.out.println(e);
+	if (e.getEventType() == ScenarioController.Type.SCENARIO_FINISHED) {
+	    throw new IllegalArgumentException();
+	}
+	return false;
     }
 
     @Override
@@ -79,6 +92,22 @@ public abstract class AbstractController extends ScenarioController {
 
     protected PackageListener getPackageListener() {
 	return packageListener;
+    }
+
+    protected Package createPackage() {
+	Point pl = getGraph().getRandomNode(getSimulator().getRandomGenerator());
+	Point dl = getGraph().getRandomNode(getSimulator().getRandomGenerator());
+
+	long pickupDeadline = (long) (getSimulator().getRandomGenerator().nextDouble() * 0.75
+		* (Package.LOW_PRIO - Package.HIGH_PRIO) + Package.LOW_PRIO);
+
+	long deliveryDeadline = (long) (pickupDeadline + (getSimulator().getRandomGenerator().nextDouble() + 1)
+		* Graphs.pathLength(getRoadModel().getShortestPathTo(pl, dl)) / Truck.SPEED);
+
+	Package pkg = new Package(pl, dl, pickupDeadline, deliveryDeadline);
+	pkg.addListener(getPackageListener(), Package.EventType.values());
+	pkg.events.dispatchEvent(new Event(Package.EventType.PACKAGE_CREATION, pkg));
+	return pkg;
     }
 
     @Override

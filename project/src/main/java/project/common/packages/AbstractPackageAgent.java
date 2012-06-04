@@ -8,6 +8,7 @@ public abstract class AbstractPackageAgent implements SimulatorUser, TickListene
 
     private SimulatorAPI simulator;
     private final Package pkg;
+    private double priority;
 
     public AbstractPackageAgent(Package pkg) {
 	this.pkg = pkg;
@@ -26,11 +27,22 @@ public abstract class AbstractPackageAgent implements SimulatorUser, TickListene
 	return simulator;
     }
 
+    public double getPriority() {
+	return priority;
+    }
+
     @Override
     public void tick(long currentTime, long timeStep) {
     }
 
     @Override
     public void afterTick(long currentTime, long timeStep) {
+	if (!getPackage().isPickedUp()) {
+	    getPackage().decreasePickupDeadline(timeStep);
+	}
+
+	if (!getPackage().isDelivered()) {
+	    getPackage().decreaseDeliveryDeadline(timeStep);
+	}
     }
 }

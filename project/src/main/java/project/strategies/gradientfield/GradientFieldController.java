@@ -2,12 +2,10 @@ package project.strategies.gradientfield;
 
 import project.common.controller.AbstractController;
 import project.common.packages.Package;
-import project.common.packages.Priority;
 import project.common.trucks.Truck;
 import project.strategies.gradientfield.agents.PackageAgent;
 import project.strategies.gradientfield.agents.TruckAgent;
 import rinde.sim.core.Simulator;
-import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.virtual.GradientFieldModel;
 import rinde.sim.event.Event;
 import rinde.sim.scenario.ConfigurationException;
@@ -42,14 +40,7 @@ public class GradientFieldController extends AbstractController {
 
     @Override
     protected boolean handleAddPackage(Event e) {
-	Point pl = getGraph().getRandomNode(getSimulator().getRandomGenerator());
-	Point dl = getGraph().getRandomNode(getSimulator().getRandomGenerator());
-
-	Package p = new Package(pl, dl);
-	p.setPriority(Priority.random(getSimulator().getRandomGenerator()));
-	p.addListener(getPackageListener(), Package.EventType.values());
-	// TODO: this is kinda ugly
-	p.events.dispatchEvent(new Event(Package.EventType.PACKAGE_CREATION, p));
+	Package p = createPackage();
 	getSimulator().register(p);
 
 	PackageAgent agent = new PackageAgent(p);

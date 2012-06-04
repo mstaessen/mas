@@ -15,7 +15,8 @@ public class Truck implements MovingRoadUser {
     /**
      * Average speed of 30km/h = 30000m / 3600s ~ 7
      */
-    private double speed = 7d;
+    public static final double SPEED = 7d;
+    private double speed = SPEED;
     private int id;
     private Point startLocation;
     private Package load = null;
