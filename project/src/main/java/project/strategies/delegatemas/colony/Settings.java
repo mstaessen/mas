@@ -11,6 +11,7 @@ public class Settings {
 	public static final int MAX_HOPS_EXPLORATION_ANT = 3;
 	
 	public static final double MIN_PHEROMONE_PATH = 0.1;
+	public static final double MAX_PHEROMONE_PATH = 10;
 	public static final double START_PHEROMONE_PATH = 1;
 	
 	public static final double DEFAULT_INITIAL_PHEROMONE = 0.2;

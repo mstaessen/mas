@@ -1,5 +1,6 @@
 package project.strategies.delegatemas.colony.renderers;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.GC;
@@ -30,9 +31,11 @@ public class TruckAgentRenderer extends AbstractRenderer {
 		final int radius = 4;
 		
 		Set<TickListener> objects = simulator.getTickListeners();
-		synchronized (objects) {
-			
-			for (TickListener entry : objects) {
+		Set<TickListener> objects2 = new HashSet<TickListener>();
+		objects2.addAll(objects);
+		synchronized (objects2) {
+			int index = 0;
+			for (TickListener entry : objects2) {
 				
 				// Package Agent
 				if (entry.getClass().equals(TruckAgent.class)) {
@@ -54,7 +57,11 @@ public class TruckAgentRenderer extends AbstractRenderer {
 					int offsetY = y - image.getBounds().height / 2;
 					
 					gc.drawImage(image, offsetX, offsetY);
-					gc.drawText(agent.getId()+"", offsetX+10, offsetY-10);					
+					gc.drawText(agent.getId()+"", offsetX+10, offsetY-10);
+					
+					
+					gc.drawText(agent.toString(), 800 + (index % 7) * 110, 460+(index / 7) * 230);
+					index++;
 				}
 				
 			}

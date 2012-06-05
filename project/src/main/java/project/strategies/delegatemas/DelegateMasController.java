@@ -49,7 +49,7 @@ public class DelegateMasController extends ScenarioController {
 	    throw new ConfigurationException("e:", e);
 	}
 	roadModel = new RoadModel(graph);
-	MersenneTwister rand = new MersenneTwister(169);
+	MersenneTwister rand = new MersenneTwister(120);
 	communicationModel = new CommunicationModel();
 	Simulator s = new Simulator(rand, 1000); // timestep
 	s.register(roadModel);
@@ -66,6 +66,7 @@ public class DelegateMasController extends ScenarioController {
     @Override
     protected boolean handleAddTruck(Event e) {
 	Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
+	truck.setSpeed(500);
 	getSimulator().register(truck);
 	TruckAgent agent = new TruckAgent(truck);
 	getSimulator().register(agent);	
@@ -85,6 +86,8 @@ public class DelegateMasController extends ScenarioController {
 	Package p = new Package(pl, dl);
 	PackageAgent agent = new PackageAgent(p.getId(),p);
 	PackageDestination destination = agent.getDestination();
+	
+	getSimulator().register(p);
 	getSimulator().register(agent);
 	getSimulator().register(destination);
 	
@@ -98,8 +101,8 @@ public class DelegateMasController extends ScenarioController {
     @Override
     protected boolean doTest(Event e) {
 	
-	System.out.println("Sent an exploration ant ...");
-	tempAgent.sendExplorationAnt();
+	System.out.println("Sent an exploration ant ...\n");
+	tempAgent.sendExplorationAnts();
 	
 	return true;
     }
