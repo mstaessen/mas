@@ -23,16 +23,23 @@ public class GradientFieldDemo {
 
     public static void main(String[] args) throws Exception {
 
-	ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_TRUCK, StandardType.ADD_PACKAGE);
-
+	int timeStep = 24 * 60 * 60 * 1000;
+	ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_PACKAGE, StandardType.ADD_TRUCK,
+		StandardType.STOP_SIMULATION);
 	// Add 3 trucks at time 0
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 10,
-		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
-
-	// Add 10 packages at time 0
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 20,
-		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 3, new ScenarioBuilder.EventTypeFunction(
+		StandardType.ADD_TRUCK)));
+	// Add 2 packages at time 0
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 2, new ScenarioBuilder.EventTypeFunction(
+		StandardType.ADD_PACKAGE)));
+	// Add 2 Packages every timeStep
+	for (int i = 0; i < 2; i++) {
+	    builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(0, 10 * timeStep, timeStep,
+		    new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
+	}
+	// End the simulation after 10 * timeStep
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(10 * timeStep, 1,
+		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
 	Scenario scenario = builder.build();
 
 	AbstractController controller = new GradientFieldController(scenario, -1, MAP_URI);
