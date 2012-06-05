@@ -103,5 +103,4 @@ public class DelegateMasController extends ScenarioController {
 	
 	return true;
     }
-
 }

@@ -1,7 +1,6 @@
 package project.strategies.delegatemas.colony;
 
 
-import project.common.packages.DeliveryLocation;
 import project.common.packages.Package;
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
@@ -195,6 +194,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     public String toString() {
 	String string = "ID: " + getId();
 	string += pathTable.toString();
+	
 	return string;
     }
     

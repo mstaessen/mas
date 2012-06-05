@@ -7,10 +7,8 @@ import project.common.packages.Package;
 import project.common.renderers.AbstractRenderer;
 import project.common.renderers.PackageRenderer;
 import project.common.renderers.TruckRenderer;
-import project.common.trucks.Truck;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
-import rinde.sim.core.graph.Graphs;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.RoadModel;
@@ -32,6 +30,8 @@ public abstract class AbstractController extends ScenarioController {
 
     private AbstractRenderer truckRenderer;
     private PackageRenderer packageRenderer;
+
+    private static final long DAYLENGTH = 24 * 60 * 60 * 1000;
 
     public AbstractController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
 	super(scen, numberOfTicks);
@@ -89,26 +89,17 @@ public abstract class AbstractController extends ScenarioController {
 	Point pl = getGraph().getRandomNode(getSimulator().getRandomGenerator());
 	Point dl = getGraph().getRandomNode(getSimulator().getRandomGenerator());
 
-	long pickupDeadline = (long) (getSimulator().getRandomGenerator().nextDouble() * 0.75
-		* (Package.LOW_PRIO - Package.HIGH_PRIO) + Package.LOW_PRIO);
+	long deadline = (long) (DAYLENGTH + getSimulator().getRandomGenerator().nextDouble() * 2 * DAYLENGTH);
 
-	long deliveryDeadline = (long) (pickupDeadline + (getSimulator().getRandomGenerator().nextDouble() + 1)
-		* Graphs.pathLength(getRoadModel().getShortestPathTo(pl, dl)) / Truck.SPEED);
-
-	Package pkg = new Package(pl, dl, pickupDeadline, deliveryDeadline);
+	Package pkg = new Package(pl, dl, deadline);
 	pkg.addListener(getPackageListener(), Package.EventType.values());
 	pkg.events.dispatchEvent(new Event(Package.EventType.PACKAGE_CREATION, pkg));
 	return pkg;
     }
 
     @Override
-    protected abstract boolean handleAddTruck(Event e);
-
-    @Override
-    protected abstract boolean handleAddPackage(Event e);
-
-    @Override
-    protected boolean handleStopSimulation() {
+    protected boolean handleStopSimulation(Event e) {
+	System.out.println("Stopping the simulation");
 	stop();
 	return true;
     }
@@ -117,4 +108,10 @@ public abstract class AbstractController extends ScenarioController {
     public void stop() {
 	getSimulator().stop();
     }
+
+    @Override
+    protected abstract boolean handleAddTruck(Event e);
+
+    @Override
+    protected abstract boolean handleAddPackage(Event e);
 }

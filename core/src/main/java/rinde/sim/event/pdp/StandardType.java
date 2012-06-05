@@ -7,5 +7,5 @@ import rinde.sim.scenario.ScenarioController;
  * @author Bartosz Michalik <bartosz.michalik@cs.kuleuven.be>
  */
 public enum StandardType {
-	ADD_TRUCK, ADD_PACKAGE, REMOVE_TRUCK, REMOVE_PACKAGE, DO_TEST, STOP_SCENARIO;
+	ADD_TRUCK, ADD_PACKAGE, REMOVE_TRUCK, REMOVE_PACKAGE, DO_TEST, STOP_SIMULATION;
 }

@@ -55,7 +55,7 @@ public abstract class ScenarioController implements TickListener, Listener {
 	 */
 	public ScenarioController(final Scenario scen, int numberOfTicks) throws ConfigurationException {
 		if (scen == null)
-			throw new ConfigurationException("scenarion cannot be null");
+			throw new ConfigurationException("scenario cannot be null");
 		ticks = numberOfTicks;
 		scenario = new Scenario(scen);
 		disp = new EventDispatcher(merge(scenario.getPossibleEventTypes(), Type.values()));
@@ -73,7 +73,7 @@ public abstract class ScenarioController implements TickListener, Listener {
 		try {
 			simulator = createSimulator();
 		} catch (Exception e) {
-			LOGGER.warn("exceptioin thrown during createSimulator()", e);
+			LOGGER.warn("exception thrown during createSimulator()", e);
 			throw new ConfigurationException("unexpected", e);
 		}
 		checkSimulator();
@@ -216,6 +216,7 @@ public abstract class ScenarioController implements TickListener, Listener {
 		// not needed
 	}
 
+	@Override
 	public void handleEvent(Event e) {
 		if (e.getEventType() instanceof StandardType) {
 			boolean handled = handleStandard(e);
@@ -252,22 +253,22 @@ public abstract class ScenarioController implements TickListener, Listener {
 			return handleRemoveTruck(e);
 		case DO_TEST:
 			return doTest(e);
-		case STOP_SCENARIO:
-			return handleStopSimulation();
+		case STOP_SIMULATION:
+			return handleStopSimulation(e);
 		default:
 			return false;
 		}
 	}
 
-	protected boolean handleStopSimulation() {
-		return false;
-	}
-
-	protected boolean handleRemoveTruck(Event e) {
+	protected boolean handleStopSimulation(Event e) {
 		return false;
 	}
 
 	protected boolean handleAddTruck(Event e) {
+		return false;
+	}
+
+	protected boolean handleRemoveTruck(Event e) {
 		return false;
 	}
 

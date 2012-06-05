@@ -6,11 +6,15 @@ public enum Priority {
     LOW, MEDIUM, HIGH;
 
     public static Priority valueOf(double input) {
-	return values()[(int) Math.log10(input)];
+	if(input < 0 || input > 1) {
+	    throw new IllegalArgumentException("Priority must be between 0 and 1.");
+	}
+	
+	return values()[(int) Math.round(2 * input)];
     }
 
     public double getValue() {
-	return Math.pow(10, ordinal());
+	return ordinal() * 0.5;
     }
 
     public static Priority random(RandomGenerator random) {
