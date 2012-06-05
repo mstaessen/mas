@@ -101,6 +101,5 @@ public class CommunicationModel implements Model<CommunicationUser>, Communicati
 	for (Entry<CommunicationUser, Message> entry : cache) {
 	    entry.getKey().receive(entry.getValue());
 	}
-	sendQueue.clear();
     }
 }
