@@ -22,14 +22,14 @@ import rinde.sim.ui.View;
 
 public abstract class AbstractController extends ScenarioController {
 
-    String map;
-    private RoadModel roadModel;
-    private Graph<MultiAttributeEdgeData> graph;
+    protected String map;
+    protected RoadModel roadModel;
+    protected Graph<MultiAttributeEdgeData> graph;
 
-    private PackageListener packageListener;
+    protected PackageListener packageListener;
 
-    private AbstractRenderer truckRenderer;
-    private PackageRenderer packageRenderer;
+    protected AbstractRenderer truckRenderer;
+    protected PackageRenderer packageRenderer;
 
     private static final long DAYLENGTH = 24 * 60 * 60 * 1000;
 
