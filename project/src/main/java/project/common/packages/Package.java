@@ -24,13 +24,8 @@ public class Package implements SimulatorUser, RoadUser, Events {
     private SimulatorAPI simulator;
     private RoadModel roadModel;
 
-    private long pickupDeadline = 2 * 24 * 60 * 60 * 1000;
-    private long deliveryDeadline = 3 * 24 * 60 * 60 * 1000;
-
-    // Less than a day is considered High Priority
-    public static final long HIGH_PRIO = 24 * 60 * 60 * 1000;
-    // More than three days is considered Low Priority
-    public static final long LOW_PRIO = 3 * 24 * 60 * 60 * 1000;
+    private long deadline = 2 * 24 * 60 * 60 * 1000;
+    public static final long OFFSET = 3 * 24 * 60 * 60 * 1000;
 
     public enum EventType {
 	PACKAGE_CREATION, PACKAGE_PICKUP, PACKAGE_DELIVERY;
@@ -46,11 +41,10 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	this.deliveryLocation = deliveryLocation;
     }
 
-    public Package(Point pickupLocation, Point deliveryLocation, long pickupDeadline, long deliveryDeadline) {
+    public Package(Point pickupLocation, Point deliveryLocation, long deadline) {
 	this(pickupLocation, deliveryLocation);
 
-	this.pickupDeadline = pickupDeadline;
-	this.deliveryDeadline = deliveryDeadline;
+	this.deadline = deadline;
     }
 
     public boolean isPickedUp() {
@@ -124,12 +118,8 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	return roadModel;
     }
 
-    public long getPickupDeadline() {
-	return pickupDeadline;
-    }
-
-    public long getDeliveryDeadline() {
-	return deliveryDeadline;
+    public long getDeadline() {
+	return deadline;
     }
 
     protected SimulatorAPI getSimulator() {
@@ -151,21 +141,18 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	return events.containsListener(l, eventType);
     }
 
-    void decreasePickupDeadline(long timeStep) {
-	this.pickupDeadline -= timeStep;
-    }
-
-    void decreaseDeliveryDeadline(long timeStep) {
-	this.deliveryDeadline -= timeStep;
+    void decreaseDeadline(long timeStep) {
+	this.deadline -= timeStep;
     }
 
     public double getPriority() {
 	// Less then half a day!
-	if (getPickupDeadline() <= HIGH_PRIO) {
+	if (getDeadline() <= 0) {
 	    return Priority.maxPriority();
+	} else if (getDeadline() >= OFFSET ) {
+	    return Priority.minPriority();
 	} else {
-	    return Math.max(Priority.minPriority(), (Priority.minPriority() - Priority.maxPriority())
-		    / (LOW_PRIO - HIGH_PRIO) * (getPickupDeadline() - HIGH_PRIO) + Priority.maxPriority());
+	    return Math.pow(getDeadline() - OFFSET, 2) / Math.pow(259200000, 2);
 	}
     }
 }

@@ -1,7 +1,6 @@
 package project.strategies.delegatemas.colony;
 
 
-import project.common.packages.DeliveryLocation;
 import project.common.packages.Package;
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
@@ -113,9 +112,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	    return;
 	}
 
-	// Evaluate pheromones
-	System.out.println("Updating pheromones in "+getId()+" "+" of evalpath "+bAnt.getPathToEval()+" to go "+bAnt.getPathToDo());
-	
+
 	pathTable.updatePheromones(bAnt.getPathToEval(), 
 		myPackage.getDeliveryLocation(), myPackage.getRoadModel());
 
@@ -134,8 +131,6 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     }
 
     private void receiveForwardExplorationAnt(ForwardExplorationAnt eAnt) {
-
-	System.out.println("Got eAnt in "+getId());
 	
 	if (eAnt.getHopsLeft() - 1 > 0) {
 
@@ -203,6 +198,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     public String toString() {
 	String string = "ID: " + getId();
 	string += pathTable.toString();
+	
 	return string;
     }
 }

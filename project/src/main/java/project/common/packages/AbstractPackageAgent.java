@@ -37,12 +37,8 @@ public abstract class AbstractPackageAgent implements SimulatorUser, TickListene
 
     @Override
     public void afterTick(long currentTime, long timeStep) {
-	if (!getPackage().isPickedUp()) {
-	    getPackage().decreasePickupDeadline(timeStep);
-	}
-
 	if (!getPackage().isDelivered()) {
-	    getPackage().decreaseDeliveryDeadline(timeStep);
+	    getPackage().decreaseDeadline(timeStep);
 	}
     }
 }

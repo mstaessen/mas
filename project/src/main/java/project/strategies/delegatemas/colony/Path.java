@@ -132,9 +132,8 @@ public class Path implements Iterable<PackageAgent> {
 	    
 	    double ratio = Math.max(uselessLength/Settings.BROADCAST_RANGE, 0.1);
 	    
-	    double bonusTerm = agent.getPackage().getPriority()/(10d*ratio);
+	    double bonusTerm = 10*agent.getPackage().getPriority()/(ratio);
 	    bonus += bonusTerm;
-	    System.out.println("Bonusterm is: "+bonusTerm+" -> prio: "+agent.getPackage().getPriority()+" ratio: "+ratio);
 	}
 
 	return bonus;

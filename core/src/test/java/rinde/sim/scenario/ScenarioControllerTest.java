@@ -23,8 +23,8 @@ public class ScenarioControllerTest {
 		scenario.add(new TimedEvent(StandardType.ADD_TRUCK, 0));
 		scenario.add(new TimedEvent(StandardType.ADD_TRUCK, 0));
 		scenario.add(new TimedEvent(StandardType.ADD_PACKAGE, 1));
-		scenario.add(new TimedEvent(StandardType.REMOVE_TRUCK, 5));
-		scenario.add(new TimedEvent(StandardType.REMOVE_TRUCK, 100));
+		scenario.add(new TimedEvent(StandardType.STOP_SIMULATION, 5));
+		scenario.add(new TimedEvent(StandardType.STOP_SIMULATION, 100));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -92,7 +92,7 @@ public class ScenarioControllerTest {
 			}
 
 			@Override
-			protected boolean handleRemoveTruck(Event e) {
+			protected boolean handleStopSimulation(Event e) {
 				return true;
 			}			
 		};

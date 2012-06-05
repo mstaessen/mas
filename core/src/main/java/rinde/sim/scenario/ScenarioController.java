@@ -26,17 +26,15 @@ public abstract class ScenarioController implements TickListener, Listener {
 	public enum Type {
 		SCENARIO_STARTED, SCENARIO_FINISHED;
 	}
-	
-	protected static final Logger LOGGER = LoggerFactory
-			.getLogger(ScenarioController.class);
+
+	protected static final Logger LOGGER = LoggerFactory.getLogger(ScenarioController.class);
 
 	protected final Scenario scenario;
 	private int ticks;
 	private final EventDispatcher disp;
 
-	
-	private  Simulator simulator;
-	
+	private Simulator simulator;
+
 	private Type status = null;
 
 	/**
@@ -50,17 +48,14 @@ public abstract class ScenarioController implements TickListener, Listener {
 	 * simulator will run until the {@link Simulator#stop()} method is called.
 	 * TODO refine documentation
 	 * 
-	 * @param scen
-	 *            to realize
-	 * @param numberOfTicks
-	 *            when negative the number of tick is infinite
-	 * @throws ConfigurationException
-	 *             on multiple problems that might occur during configuration
+	 * @param scen to realize
+	 * @param numberOfTicks when negative the number of tick is infinite
+	 * @throws ConfigurationException on multiple problems that might occur
+	 *             during configuration
 	 */
-	public ScenarioController(final Scenario scen, int numberOfTicks)
-			throws ConfigurationException {
+	public ScenarioController(final Scenario scen, int numberOfTicks) throws ConfigurationException {
 		if (scen == null)
-			throw new ConfigurationException("scenarion cannot be null");
+			throw new ConfigurationException("scenario cannot be null");
 		ticks = numberOfTicks;
 		scenario = new Scenario(scen);
 		disp = new EventDispatcher(merge(scenario.getPossibleEventTypes(), Type.values()));
@@ -68,16 +63,17 @@ public abstract class ScenarioController implements TickListener, Listener {
 	}
 
 	/**
-	 * Method that initializes the simulator using {@link ScenarioController#createSimulator()}
-	 * and user interface (if defined) using {@link ScenarioController#createUserInterface()}. 
-	 * Must be called from within a constructor of specialized class.
+	 * Method that initializes the simulator using
+	 * {@link ScenarioController#createSimulator()} and user interface (if
+	 * defined) using {@link ScenarioController#createUserInterface()}. Must be
+	 * called from within a constructor of specialized class.
 	 * @throws ConfigurationException
 	 */
 	final protected void initialize() throws ConfigurationException {
-		try{
-			simulator = createSimulator();			
-		} catch(Exception e) {
-			LOGGER.warn("exceptioin thrown during createSimulator()", e);
+		try {
+			simulator = createSimulator();
+		} catch (Exception e) {
+			LOGGER.warn("exception thrown during createSimulator()", e);
 			throw new ConfigurationException("unexpected", e);
 		}
 		checkSimulator();
@@ -88,16 +84,16 @@ public abstract class ScenarioController implements TickListener, Listener {
 
 		uiMode = createUserInterface();
 	}
-	
+
 	/**
-	 * Access the simulator from the subclasses. Method returns simulator only after calling {@link ScenarioController#initialize()}.
+	 * Access the simulator from the subclasses. Method returns simulator only
+	 * after calling {@link ScenarioController#initialize()}.
 	 * @return simulator or <code>null</code>
 	 */
 	public Simulator getSimulator() {
 		return simulator;
 	}
 
-	
 	private static Enum<?>[] merge(Enum<?>[]... enums) {
 		LinkedList<Enum<?>> list = new LinkedList<Enum<?>>();
 		for (Enum<?>[] e : enums) {
@@ -108,8 +104,7 @@ public abstract class ScenarioController implements TickListener, Listener {
 
 	private final void checkSimulator() throws ConfigurationException {
 		if (simulator == null)
-			throw new ConfigurationException(
-					"use createSimulator() to define simulator");
+			throw new ConfigurationException("use createSimulator() to define simulator");
 	}
 
 	/**
@@ -140,15 +135,14 @@ public abstract class ScenarioController implements TickListener, Listener {
 		disp.addListener(l, merge(scenario.getPossibleEventTypes(), Type.values()));
 	}
 
-	
 	/**
 	 * Add listener for all possible scenario events
 	 * @param l
 	 */
-	public void addListener(Listener l,  Enum<?>... eventTypes) {
+	public void addListener(Listener l, Enum<?>... eventTypes) {
 		disp.addListener(l, eventTypes);
 	}
-	
+
 	/**
 	 * Remove event listener
 	 * @param l
@@ -163,14 +157,14 @@ public abstract class ScenarioController implements TickListener, Listener {
 			simulator.stop();
 		}
 	}
-	
+
 	public void start() throws ConfigurationException {
 		checkSimulator();
 		if (!uiMode) {
-			new Thread(){
+			new Thread() {
 				@Override
 				public void run() {
-					simulator.start();					
+					simulator.start();
 				}
 			}.start();
 		}
@@ -191,14 +185,15 @@ public abstract class ScenarioController implements TickListener, Listener {
 			LOGGER.info("scenario finished at virtual time:" + currentTime);
 			simulator.stop();
 		}
-		if(LOGGER.isDebugEnabled() && ticks >= 0) {
-			LOGGER.debug("ticks to end: " + ticks);			
-		} 
-		if(ticks > -1) ticks--;
+		if (LOGGER.isDebugEnabled() && ticks >= 0) {
+			LOGGER.debug("ticks to end: " + ticks);
+		}
+		if (ticks > -1)
+			ticks--;
 		TimedEvent e = null;
 		while ((e = scenario.peek()) != null && e.time <= currentTime) {
 			scenario.poll();
-			if(status == null) {
+			if (status == null) {
 				LOGGER.info("scenario started at virtual time:" + currentTime);
 				status = Type.SCENARIO_STARTED;
 				disp.dispatchEvent(new Event(status, this));
@@ -206,8 +201,8 @@ public abstract class ScenarioController implements TickListener, Listener {
 			e.setIssuer(this);
 			disp.dispatchEvent(e);
 		}
-		
-		if(e == null && status != Type.SCENARIO_FINISHED) {
+
+		if (e == null && status != Type.SCENARIO_FINISHED) {
 			LOGGER.info("scenario finished at virtual time:" + currentTime);
 			status = Type.SCENARIO_FINISHED;
 			simulator.removeTickListener(this);
@@ -220,21 +215,24 @@ public abstract class ScenarioController implements TickListener, Listener {
 	public void afterTick(long currentTime, long timeStep) {
 		// not needed
 	}
-	
+
+	@Override
 	public void handleEvent(Event e) {
-		if(e.getEventType() instanceof StandardType) {
+		if (e.getEventType() instanceof StandardType) {
 			boolean handled = handleStandard(e);
-			if(handled) return;
+			if (handled)
+				return;
 		}
-		if(!handleCustomEvent(e)) {
+		if (!handleCustomEvent(e)) {
 			LOGGER.warn("event not handled: " + e.toString());
 			throw new IllegalArgumentException("event not handled: " + e.toString());
 		}
 	}
 
 	/**
-	 * Can be used to handle additional events not supported by default.
-	 * Default implementation lead to the {@link IllegalArgumentException} during event handling {@link ScenarioController#handleEvent(Event)}
+	 * Can be used to handle additional events not supported by default. Default
+	 * implementation lead to the {@link IllegalArgumentException} during event
+	 * handling {@link ScenarioController#handleEvent(Event)}
 	 * @param e
 	 * @return <code>false</code> by default.
 	 */
@@ -255,16 +253,22 @@ public abstract class ScenarioController implements TickListener, Listener {
 			return handleRemoveTruck(e);
 		case DO_TEST:
 			return doTest(e);
+		case STOP_SIMULATION:
+			return handleStopSimulation(e);
 		default:
 			return false;
 		}
 	}
 
-	protected boolean handleRemoveTruck(Event e) {
+	protected boolean handleStopSimulation(Event e) {
 		return false;
 	}
 
 	protected boolean handleAddTruck(Event e) {
+		return false;
+	}
+
+	protected boolean handleRemoveTruck(Event e) {
 		return false;
 	}
 
@@ -275,9 +279,9 @@ public abstract class ScenarioController implements TickListener, Listener {
 	protected boolean handleAddPackage(Event e) {
 		return false;
 	}
-	
+
 	protected boolean doTest(Event e) {
 		return false;
 	}
-	
+
 }

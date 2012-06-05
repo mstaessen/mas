@@ -81,22 +81,22 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 
 	pathTable.evaporate();
 	
-//	sendExplorationAnts();
-//
-//	checkForBestIntentions();
-//
-//	if (driveRandom) {
-//	    /*
-//	     * Drive random
-//	     */
-//	    driveRandom(timeStep);
-//	} else {
-//	    /*
-//	     * Drive to packages
-//	     */
-//	    sendIntentionAnts();
-//	    driveToTargetedPackage(timeStep);
-//	}
+	sendExplorationAnts();
+
+	checkForBestIntentions();
+
+	if (driveRandom) {
+	    /*
+	     * Drive random
+	     */
+	    driveRandom(timeStep);
+	} else {
+	    /*
+	     * Drive to packages
+	     */
+	    sendIntentionAnts();
+	    driveToTargetedPackage(timeStep);
+	}
 
     }
     

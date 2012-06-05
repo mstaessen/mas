@@ -39,7 +39,7 @@ public class ScenarioControllerTemplate extends ScenarioController{
 	
 	// Optional
 	@Override
-	protected boolean handleRemoveTruck(Event e) {
+	protected boolean handleStopSimulation(Event e) {
 		//TODO logic to remove truck
 		return false;
 	}
