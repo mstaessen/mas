@@ -26,7 +26,8 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 	public Collection<Field> getFields(Point point) {
 		Collection<Field> fields = new HashSet<Field>(entities.size());
 
-		for (VirtualEntity entity : entities) {
+		Collection<VirtualEntity> cache = new HashSet<VirtualEntity>(entities);
+		for (VirtualEntity entity : cache) {
 			if (entity.isEmitting()) {
 				fields.add(new Field(entity.getFieldData(), Graphs.pathLength(rm.getShortestPathTo(point, entity
 						.getPosition()))));
@@ -40,7 +41,8 @@ public class GradientFieldModel implements Model<VirtualEntity>, GradientFieldAP
 	public Collection<Field> getSimpleFields(Point point) {
 		Collection<Field> fields = new HashSet<Field>(entities.size());
 
-		for (VirtualEntity entity : entities) {
+		Collection<VirtualEntity> cache = new HashSet<VirtualEntity>(entities);
+		for (VirtualEntity entity : cache) {
 			if (entity.isEmitting()) {
 				double distance = Point.distance(point, entity.getPosition());
 				fields.add(new Field(entity.getFieldData(), distance));

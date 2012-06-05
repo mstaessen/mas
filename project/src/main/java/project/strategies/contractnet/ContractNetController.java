@@ -3,6 +3,7 @@ package project.strategies.contractnet;
 import project.common.controller.AbstractController;
 import project.common.packages.Package;
 import project.common.trucks.Truck;
+import project.experiments.Experiment;
 import project.strategies.contractnet.agents.PackageAgent;
 import project.strategies.contractnet.agents.TruckAgent;
 import rinde.sim.core.Simulator;
@@ -17,7 +18,12 @@ public class ContractNetController extends AbstractController {
     private CommunicationModel communicationModel;
 
     public ContractNetController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
-	super(scen, numberOfTicks, map);
+	this(null, scen, numberOfTicks, map);
+    }
+
+    public ContractNetController(Experiment experiment, Scenario scen, int numberOfTicks, String map)
+	    throws ConfigurationException {
+	super(experiment, scen, numberOfTicks, map);
     }
 
     @Override
