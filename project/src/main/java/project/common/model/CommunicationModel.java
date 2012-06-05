@@ -1,8 +1,13 @@
 package project.common.model;
 
+import java.util.AbstractMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 
+import rinde.sim.core.TickListener;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.Model;
 import rinde.sim.core.model.communication.CommunicationAPI;
@@ -16,30 +21,31 @@ import rinde.sim.core.model.communication.Message;
  * @author Michiel Staessen
  * 
  */
-public class CommunicationModel implements Model<CommunicationUser>, CommunicationAPI {
+public class CommunicationModel implements Model<CommunicationUser>, CommunicationAPI, TickListener {
 
     Set<CommunicationUser> users = new HashSet<CommunicationUser>();
+    Queue<Entry<CommunicationUser, Message>> sendQueue = new LinkedList<Entry<CommunicationUser, Message>>();
 
     @Override
     public void send(CommunicationUser recipient, Message message) {
-	recipient.receive(message);
+	sendQueue.add(new AbstractMap.SimpleEntry<CommunicationUser, Message>(recipient, message));
     }
 
     @Override
     public void broadcast(Message message) {
-	for (CommunicationUser user : users) {
-	    if (user != message.getSender() && canCommunicate(message.getSender(), user)) {
-		send(user, message);
+	for (CommunicationUser recipient : users) {
+	    if (recipient != message.getSender() && canCommunicate(message.getSender(), recipient)) {
+		send(recipient, message);
 	    }
 	}
     }
 
     @Override
     public void broadcast(Message message, Class<? extends CommunicationUser> type) {
-	for (CommunicationUser user : users) {
-	    if (user != message.getSender() && user.getClass().equals(type)
-		    && canCommunicate(message.getSender(), user)) {
-		send(user, message);
+	for (CommunicationUser recipient : users) {
+	    if (recipient != message.getSender() && recipient.getClass().equals(type)
+		    && canCommunicate(message.getSender(), recipient)) {
+		send(recipient, message);
 	    }
 	}
     }
@@ -83,4 +89,16 @@ public class CommunicationModel implements Model<CommunicationUser>, Communicati
 	return CommunicationUser.class;
     }
 
+    @Override
+    public void tick(long currentTime, long timeStep) {
+	// Don't send in the tick
+    }
+
+    @Override
+    public void afterTick(long currentTime, long timeStep) {
+	for (Entry<CommunicationUser, Message> entry : sendQueue) {
+	    entry.getKey().receive(entry.getValue());
+	}
+	sendQueue.clear();
+    }
 }
