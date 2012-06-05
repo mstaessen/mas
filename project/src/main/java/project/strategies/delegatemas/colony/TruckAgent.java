@@ -67,6 +67,9 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	    BackwardExplorationAnt bAnt = (BackwardExplorationAnt) message;
 	    pathTable.addPath(bAnt.getPathToEval());
 	    pathTable.updatePheromones(bAnt.getPathToEval(), truck.getPosition(), truck.getRoadModel());
+	} else if (message instanceof IntentionAnt) {
+	    IntentionAnt iAnt = (IntentionAnt) message;
+	    pathTable.updatePheromones(iAnt.getPathDone(), truck.getPosition(), truck.getRoadModel());
 	}
 
     }
@@ -94,7 +97,7 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	    /*
 	     * Drive to packages
 	     */
-	    sendIntentionAnts();
+	    sendIntentionAnt();
 	    driveToTargetedPackage(timeStep);
 	}
 
@@ -163,7 +166,7 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	} else {
 	    targetedPackage = currentIntentions.getFirst();
 	    planDirections(targetedPackage.getPackage().getPickupLocation());
-	    currentIntentions = currentIntentions.removeFirst();
+	    currentIntentions = currentIntentions.getPathWithoutFirst();
 	    System.out.println("targetting package " + targetedPackage.getId() + " intentions " + currentIntentions);
 	}
     }
@@ -177,8 +180,11 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	communicationAPI.broadcast(eAnt, PackageAgent.class);
     }
 
-    private void sendIntentionAnts() {
-
+    private void sendIntentionAnt() {
+	if (currentIntentions != null && currentIntentions.length() != 0) {
+	    IntentionAnt iAnt = new IntentionAnt(this, new Path(), new Path(currentIntentions));
+		communicationAPI.send(currentIntentions.getFirst(),iAnt);
+	}
     }
     
     @Override

@@ -46,6 +46,15 @@ public class PathTable {
 	totPheromones += Settings.START_PHEROMONE_PATH;
     }
 
+    public void penaltyPheromones(Path path) {
+	for (int index=0; index < paths.size(); index++) {
+	    Path commonPart = path.getCommonPart(paths.get(index));
+	    if (commonPart.length() > 0) {
+		pheromones.set(index, 3*Settings.MIN_PHEROMONE_PATH);
+	    }
+	}
+    }
+    
     public void updatePheromones(Path path, Point start, RoadModel model) {
 	
 	for (int index=0; index < paths.size(); index++) {

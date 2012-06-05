@@ -29,9 +29,11 @@ public class DelegateMasDemo {
 
 	Scenario scenario = builder.build();
 
-	final String MAP_DIR = "./files/maps/";
-
-	new DelegateMasController(scenario, -1, MAP_DIR + "grid-10x10.dot");
+//	final String MAP_DIR = "./files/maps/";
+//	new DelegateMasController(scenario, -1, MAP_DIR + "grid-10x10.dot");
+	
+	final String MAP_DIR = "../core/files/maps/";
+	new DelegateMasController(scenario, -1, MAP_DIR + "leuven-simple.dot");
     }
 
 }

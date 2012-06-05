@@ -3,7 +3,8 @@ package project.strategies.delegatemas.colony;
 public class Settings {
 
 	
-    	public static final double BROADCAST_RANGE = 150;
+//    	public static final double BROADCAST_RANGE = 150; // grid 10x10
+    	public static final double BROADCAST_RANGE = 10000; // leuven
     
     
 	public static final int TIMESTEPS_WAIT_BEFORE_SENDING_FEASIBILITY_ANTS = 50;

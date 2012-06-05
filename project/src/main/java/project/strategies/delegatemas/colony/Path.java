@@ -68,13 +68,13 @@ public class Path implements Iterable<PackageAgent> {
 	return packageAgents.size();
     }
 
-    public Path removeLast() {
+    public Path getPathWithoutLast() {
 	Path newPath = new Path(this);
 	newPath.packageAgents.remove(this.getLast());
 	return newPath;
     }
     
-    public Path removeFirst() {
+    public Path getPathWithoutFirst() {
 	Path newPath = new Path(this);
 	newPath.packageAgents.remove(this.getFirst());
 	return newPath;

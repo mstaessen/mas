@@ -13,6 +13,15 @@ public class BackwardExplorationAnt extends Message {
 	
 	public BackwardExplorationAnt(CommunicationUser sender, Path pathToDo, Path pathToEval) {
 	    super(sender);
+	    
+	    if (sender == null || !(sender instanceof TruckAgent)) {
+		throw new IllegalArgumentException("Sender has to be a truck agent");
+	    }
+	    
+	    if (pathToDo == null || pathToEval == null) {
+		throw new IllegalArgumentException("pathToDo and pathToEval may not be null");
+	    }
+	    
 	    this.pathToEval = pathToEval;
 	    this.pathToDo = pathToDo;
 	}
