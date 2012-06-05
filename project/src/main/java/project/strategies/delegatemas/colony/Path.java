@@ -1,8 +1,17 @@
 package project.strategies.delegatemas.colony;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-public class Path {
+import project.common.packages.Package;
+import project.common.packages.Priority;
+import rinde.sim.core.graph.Graphs;
+import rinde.sim.core.graph.Point;
+import rinde.sim.core.model.RoadModel;
+import rinde.sim.core.model.RoadUser;
+
+public class Path implements Iterable<PackageAgent> {
 	
 	private ArrayList<PackageAgent> packageAgents;
 	
@@ -39,6 +48,20 @@ public class Path {
 		return false;
 	}
 	
+	public PackageAgent getLast() {
+	    return packageAgents.get(packageAgents.size()-1);
+	}
+	
+	public int length() {
+	    return packageAgents.size();
+	}
+	
+	public Path removeLast() {
+	    Path newPath = new Path(this);
+	    newPath.packageAgents.remove(this.getLast());
+	    return newPath;
+	}
+	
 	@Override
 	public boolean equals(Object object) {
 		
@@ -69,4 +92,58 @@ public class Path {
 	    return string;
 	}
 
+	@Override
+	public Iterator<PackageAgent> iterator() {
+	    return packageAgents.iterator();
+	}
+	
+	
+	public double getPheromoneBonusForPath(Point start, RoadModel model) {
+	    	    
+	    if (packageAgents.size() == 0) {
+		return 0;
+	    }
+	    
+	    double bonus = 0;
+	    Point startPoint = start;
+	    for (PackageAgent agent: packageAgents) {
+		
+		Point pickup = agent.getPackage().getPickupLocation();
+		Point dellivery = agent.getPackage().getDeliveryLocation();
+		double uselessLength = Graphs.pathLength(model.getShortestPathTo(startPoint, pickup));
+		double usefullLength = Graphs.pathLength(model.getShortestPathTo(pickup, dellivery));
+		startPoint = dellivery;
+		
+		double ratio = Math.min(usefullLength/uselessLength, 5);
+		ratio /= 5; // ratio has to be in [0,1]
+		bonus += ratio*agent.getPackage().getPriority();
+	    }
+	    
+	    return bonus/packageAgents.size();
+	}
+
+	
+	public boolean isSubPath(Path path) {
+
+	    if (length() == 0 || path.length() == 0)
+		return false;
+	    
+	    if (length() > path.length()) {
+		List<PackageAgent> otherpackageAgents = path.getListPackageAgents();
+		for (int i =0; i < path.length(); i++) {
+		    if (!otherpackageAgents.get(i).equals(packageAgents.get(i))) {
+			return false;
+		    }
+		}
+		return true;
+	    } else {
+		List<PackageAgent> otherpackageAgents = path.getListPackageAgents();
+		for (int i =0; i < length(); i++) {
+		    if (!otherpackageAgents.get(i).equals(packageAgents.get(i))) {
+			return false;
+		    }
+		}
+		return true;
+	    }
+	}
 }

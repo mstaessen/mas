@@ -2,18 +2,19 @@ package project.strategies.delegatemas;
 
 import org.apache.commons.math.random.MersenneTwister;
 
+import project.common.model.CommunicationModel;
 import project.common.packages.Package;
 import project.common.trucks.Truck;
 import project.strategies.delegatemas.colony.PackageAgent;
 import project.strategies.delegatemas.colony.PackageDestination;
 import project.strategies.delegatemas.colony.TruckAgent;
 import project.strategies.delegatemas.colony.renderers.PackageAgentRenderer;
+import project.strategies.delegatemas.colony.renderers.TruckAgentRenderer;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.RoadModel;
-import rinde.sim.core.model.communication.CommunicationModel;
 import rinde.sim.event.Event;
 import rinde.sim.scenario.ConfigurationException;
 import rinde.sim.scenario.Scenario;
@@ -49,8 +50,8 @@ public class DelegateMasController extends ScenarioController {
 	}
 	roadModel = new RoadModel(graph);
 	MersenneTwister rand = new MersenneTwister(169);
-	communicationModel = new CommunicationModel(rand, false);
-	Simulator s = new Simulator(rand, 1000000); // timestep
+	communicationModel = new CommunicationModel();
+	Simulator s = new Simulator(rand, 1000); // timestep
 	s.register(roadModel);
 	s.register(communicationModel);
 	return s;
@@ -58,7 +59,7 @@ public class DelegateMasController extends ScenarioController {
 
     @Override
     protected boolean createUserInterface() {
-	View.startGui(getSimulator(), 3, new PackageAgentRenderer(getSimulator()));
+	View.startGui(getSimulator(), 3, new PackageAgentRenderer(getSimulator()), new TruckAgentRenderer(getSimulator()));
 	return true;
     }
 
@@ -67,7 +68,12 @@ public class DelegateMasController extends ScenarioController {
 	Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
 	getSimulator().register(truck);
 	TruckAgent agent = new TruckAgent(truck);
-	getSimulator().register(agent);
+	getSimulator().register(agent);	
+	
+	
+	if (tempAgent == null)
+	    tempAgent = agent;
+	
 	return true;
     }
 
@@ -80,7 +86,21 @@ public class DelegateMasController extends ScenarioController {
 	PackageAgent agent = new PackageAgent(p.getId(),p);
 	PackageDestination destination = agent.getDestination();
 	getSimulator().register(agent);
-	getSimulator().register(destination);	
+	getSimulator().register(destination);
+	
+	return true;
+    }
+    
+    
+    
+    TruckAgent tempAgent;
+    
+    @Override
+    protected boolean doTest(Event e) {
+	
+	System.out.println("Sent an exploration ant ...");
+	tempAgent.sendExplorationAnt();
+	
 	return true;
     }
 

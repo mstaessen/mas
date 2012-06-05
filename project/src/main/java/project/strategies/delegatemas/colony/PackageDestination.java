@@ -14,6 +14,8 @@ public class PackageDestination implements CommunicationUser, SimulatorUser {
 	private PackageAgent agent;
 	private SimulatorAPI simulatorAPI;
 	
+	private boolean packagePickedUp = false;
+	
 	public PackageDestination(PackageAgent agent, Point destination) {
 		this.destination = destination;
 		this.agent = agent;
@@ -31,7 +33,7 @@ public class PackageDestination implements CommunicationUser, SimulatorUser {
 
 	@Override
 	public double getRadius() {
-		return Double.MAX_VALUE;
+		return Settings.BROADCAST_RANGE;
 	}
 
 	@Override
@@ -41,19 +43,25 @@ public class PackageDestination implements CommunicationUser, SimulatorUser {
 
 	@Override
 	public void receive(Message message) {
+	    if (!packagePickedUp) {
 		if (message instanceof FeasibilityAnt) {
 			FeasibilityAnt fAnt = (FeasibilityAnt) message;
 			if(!fAnt.getSender().equals(agent)) {
 			    api.send(agent, fAnt);
-			    System.out.println(agent.getId()+": forwarding");
+//			    agent.receiveFeasibilityAnt(fAnt);
 			}
 		}
-		
+	    }
 	}
 
 	@Override
 	public void setSimulator(SimulatorAPI api) {
 	    this.simulatorAPI = api;
+	}
+	
+	
+	public void setPackagePickedUp() {
+	    packagePickedUp = true;
 	}
 
 }

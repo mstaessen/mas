@@ -50,7 +50,7 @@ public class PackageAgentRenderer extends AbstractRenderer {
 					
 					gc.drawImage(packageImage, offsetX, offsetY);
 					gc.drawText(packageAgent.getId()+"", offsetX-10, offsetY-10);
-					gc.drawText(packageAgent.toString(),800+(index%7)*55, (index/7)*230);
+					gc.drawText(packageAgent.toString(),800+(index%7)*70, (index/7)*230);
 					index++;
 					
 					// draw the destination.

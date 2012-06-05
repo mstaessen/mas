@@ -22,6 +22,7 @@ public class Package implements SimulatorUser, RoadUser, Events {
     private boolean pickedUp = false;
     private boolean delivered = false;
     private SimulatorAPI simulator;
+    private RoadModel roadModel;
 
     private long pickupDeadline = 2 * 24 * 60 * 60 * 1000;
     private long deliveryDeadline = 3 * 24 * 60 * 60 * 1000;
@@ -116,6 +117,11 @@ public class Package implements SimulatorUser, RoadUser, Events {
     @Override
     public void initRoadUser(RoadModel model) {
 	model.addObjectAt(this, pickupLocation);
+	this.roadModel = model;
+    }
+    
+    public RoadModel getRoadModel() {
+	return roadModel;
     }
 
     public long getPickupDeadline() {

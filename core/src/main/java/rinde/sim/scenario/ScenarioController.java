@@ -253,6 +253,8 @@ public abstract class ScenarioController implements TickListener, Listener {
 			return handleAddTruck(e);
 		case REMOVE_TRUCK:
 			return handleRemoveTruck(e);
+		case DO_TEST:
+			return doTest(e);
 		default:
 			return false;
 		}
@@ -273,4 +275,9 @@ public abstract class ScenarioController implements TickListener, Listener {
 	protected boolean handleAddPackage(Event e) {
 		return false;
 	}
+	
+	protected boolean doTest(Event e) {
+		return false;
+	}
+	
 }

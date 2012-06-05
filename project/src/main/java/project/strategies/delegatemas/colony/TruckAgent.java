@@ -15,11 +15,21 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 
     private SimulatorAPI simulatorAPI;
     private CommunicationAPI communicationAPI;
+    private PathTable pathTable;
 
     public TruckAgent(Truck truck) {
 	this.truck = truck;
+	this.pathTable = new PathTable();
     }
 
+    public Truck getTruck() {
+	return truck;
+    }
+    
+    public int getId() {
+	return truck.getId();
+    }
+    
     @Override
     public void setCommunicationAPI(CommunicationAPI api) {
 	this.communicationAPI = api;
@@ -42,7 +52,15 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 
     @Override
     public void receive(Message message) {
-	// TODO Auto-generated method stub
+	
+	if (message instanceof BackwardExplorationAnt) {
+	    BackwardExplorationAnt bAnt = (BackwardExplorationAnt) message;
+	    System.out.println("Received Backwards Exploration Ant with path: "+bAnt.getPathToEval().toString());
+	    
+	    
+	    
+	    
+	}
 
     }
 
@@ -53,11 +71,12 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 
     @Override
     public void tick(long currentTime, long timeStep) {
-	sendExplorationAnt();
+//	sendExplorationAnt();
     }
 
-    private void sendExplorationAnt() {
-	
+    public void sendExplorationAnt() {
+	ForwardExplorationAnt eAnt = new ForwardExplorationAnt(this, Settings.MAX_HOPS_EXPLORATION_ANT);
+	communicationAPI.broadcast(eAnt, PackageAgent.class);
     }
 
     @Override

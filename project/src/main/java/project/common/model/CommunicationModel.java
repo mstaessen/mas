@@ -63,7 +63,7 @@ public class CommunicationModel implements Model<CommunicationUser>, Communicati
 	    return false;
 	}
 
-	return Point.distance(sender.getPosition(), receiver.getPosition()) < Math.max(sender.getRadius(),
+	return Point.distance(sender.getPosition(), receiver.getPosition()) <= Math.max(sender.getRadius(),
 		receiver.getRadius());
     }
 
