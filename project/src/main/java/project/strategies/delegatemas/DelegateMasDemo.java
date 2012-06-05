@@ -13,13 +13,13 @@ public class DelegateMasDemo {
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, // at
 									      // time
 									      // 0
-		1, // amount of trucks to be added
+		2, // amount of trucks to be added
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
 
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, // at
 									      // time
 									      // 0
-		14, // amount of packages to be added
+		5, // amount of packages to be added
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 
 	

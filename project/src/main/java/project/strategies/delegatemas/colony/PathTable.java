@@ -4,6 +4,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math.random.RandomGenerator;
+
+import rinde.sim.core.graph.Point;
+import rinde.sim.core.model.RoadModel;
+
 public class PathTable {
 
     private List<Path> paths;
@@ -41,14 +46,17 @@ public class PathTable {
 	totPheromones += Settings.START_PHEROMONE_PATH;
     }
 
-    public void updatePheromone(Path path, double pheromone) {
+    public void updatePheromones(Path path, Point start, RoadModel model) {
 	
 	for (int index=0; index < paths.size(); index++) {
-	    if (paths.get(index).isSubPath(path)) {
-		double newPheromone = Math.min(pheromones.get(index) + pheromone,5);
-		double added = newPheromone- pheromones.get(index);
-		pheromones.set(index, newPheromone);
-		totPheromones += added;
+	    Path commonPart = path.getCommonPart(paths.get(index));
+	    if (commonPart.length() > 0) {
+		
+		double pheromoneBonus = commonPart.getPheromoneBonusForPath(start, model);
+		double newPheromoneLevel = Math.min(pheromones.get(index) + pheromoneBonus,Settings.MAX_PHEROMONE_PATH);
+		double pheromoneAdded = newPheromoneLevel - pheromones.get(index);
+		totPheromones += pheromoneAdded;
+		pheromones.set(index, newPheromoneLevel);
 	    }
 	}
 	
@@ -73,18 +81,19 @@ public class PathTable {
 	}
     }
 
-    public Path chosePath() {
+    public Path chosePath(RandomGenerator gen) {
 
 	if (paths.size() == 0) {
 	    return null;
 	}
 
-	double chance = Math.random() * totPheromones;
+	double chance = gen.nextDouble()* totPheromones;
 	int i = -1;
-	while (chance > 0) {
+	while (chance >= 0) {
 	    i++;
 	    chance -= pheromones.get(i);
 	}
+	
 	return paths.get(i);
     }
 
@@ -92,12 +101,33 @@ public class PathTable {
 	return paths;
     }
     
+    public Path getBestPath() {
+	
+	if (paths.size() == 0)
+	    return null;
+	
+	double best = 0;
+	int index = 0;
+	for (int i=0;i<pheromones.size();i++) {
+	    if (pheromones.get(i) > best) {
+		best = pheromones.get(i);
+		index = i;
+	    }
+	}
+	return paths.get(index);
+    }
+    
     @Override
     public String toString() {
 	String string = "";
 	DecimalFormat df = new DecimalFormat("#.##");
 	for (int i = 0; i < paths.size(); i++) {
-	    string += "\n" + paths.get(i).toString()+"::"+df.format(pheromones.get(i));
+	    try {
+		string += "\n" + paths.get(i).toString()+"::"+df.format(pheromones.get(i));
+	    } catch (IndexOutOfBoundsException e) {
+		//
+	    }
+	    
 	}
 	return string;
     }

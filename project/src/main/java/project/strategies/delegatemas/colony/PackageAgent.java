@@ -92,7 +92,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     @Override
     public void receive(Message message) {
 	
-	if (!packagePickedUp) {    
+	if (!myPackage.isPickedUp()) {    
 	    if (message instanceof FeasibilityAnt) {
 		    FeasibilityAnt fAnt = (FeasibilityAnt) message;
 		    receiveFeasibilityAnt(fAnt);
@@ -107,7 +107,6 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     }
 
     private void receiveBackwardEplorationAnt(BackwardExplorationAnt bAnt) {
-	System.out.println(getId() + ": Received backward Exploration Ant");
 
 	if (!bAnt.getPathToDo().contains(this)) {
 	    // if we are not in the path of the ant, do nothing
@@ -115,46 +114,58 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	}
 
 	// Evaluate pheromones
-	double pheromone = bAnt.getPathToEval().getPheromoneBonusForPath(
-		myPackage.getDeliveryLocation(),myPackage.getRoadModel());
-//	pathTable.addPheromone(bAnt.getPathToEval(), pheromone);
+	System.out.println("Updating pheromones in "+getId()+" "+" of evalpath "+bAnt.getPathToEval()+" to go "+bAnt.getPathToDo());
+	
+	pathTable.updatePheromones(bAnt.getPathToEval(), 
+		myPackage.getDeliveryLocation(), myPackage.getRoadModel());
 
 	CommunicationUser receiver;
-	if (bAnt.getPathToDo().length() == 0) {
+	Path newToDo = bAnt.getPathToDo().removeLast();
+	if (newToDo.length() == 0) {
 	    receiver = bAnt.getSender();
 	} else {
-	    receiver = bAnt.getPathToDo().getLast();
+	    receiver = newToDo.getLast();
 	}
-	BackwardExplorationAnt newAnt = new BackwardExplorationAnt(bAnt.getSender(), bAnt.getPathToDo().removeLast(),
-		new Path(bAnt.getPathToEval(), this));
+	
+	BackwardExplorationAnt newAnt = new BackwardExplorationAnt(bAnt.getSender(), newToDo,
+		new Path(this, bAnt.getPathToEval()));
+	
 	communicationAPI.send(receiver, newAnt);
-
     }
 
     private void receiveForwardExplorationAnt(ForwardExplorationAnt eAnt) {
 
-	System.out.println(getId() + ": Received forward Exploration Ant");
-
+	System.out.println("Got eAnt in "+getId());
+	
 	if (eAnt.getHopsLeft() - 1 > 0) {
 
 	    // Forward the ant.
-	    Path pathToGo = pathTable.chosePath();
-	    if (pathToGo == null) {
+	    Path pathToGo = pathTable.chosePath(simulatorAPI.getRandomGenerator());
+	    if (pathToGo == null || pathToGo.length() == 0) {
 		// No paths available yet.
-		System.out.println(getId() + ": No paths available yet");
+		sendExplorationAntBack(eAnt);
 		return;
 	    }
 	    PackageAgent agent = pathToGo.getListPackageAgents().get(0);
-	    communicationAPI.send(agent, new ForwardExplorationAnt(eAnt.getSender(), new Path(eAnt.getPath(), this),
-		    eAnt.getHopsLeft() - 1));
-
-	    System.out.println(getId() + ": sent to " + agent.getId());
-
+	    
+	    if (!eAnt.getPath().contains(agent)) {
+		communicationAPI.send(agent, new ForwardExplorationAnt(eAnt.getSender(), new Path(eAnt.getPath(), this),
+			    eAnt.getHopsLeft() - 1));
+		return;
+	    } else {
+		sendExplorationAntBack(eAnt);
+		return;
+	    }
 	} else {
-	    // transform to backward exploration ant.
+	    sendExplorationAntBack(eAnt);
+	}
+    }
+    
+    private void sendExplorationAntBack(ForwardExplorationAnt eAnt) {
+	
+	 // transform to backward exploration ant.
 	    BackwardExplorationAnt bAnt = new BackwardExplorationAnt(eAnt.getSender(), new Path(eAnt.getPath()),
 		    new Path(this));
-
 	    CommunicationUser receiver = null;
 	    if (eAnt.getPath().length() == 0) {
 		// return to sender
@@ -164,9 +175,6 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 		receiver = eAnt.getPath().getLast();
 	    }
 	    communicationAPI.send(receiver, bAnt);
-
-	}
-
     }
 
     public void receiveFeasibilityAnt(FeasibilityAnt fAnt) {
@@ -196,10 +204,5 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	String string = "ID: " + getId();
 	string += pathTable.toString();
 	return string;
-    }
-    
-    
-    public void setPackagePickedUp() {
-	destination.setPackagePickedUp();
     }
 }
