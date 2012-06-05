@@ -3,8 +3,8 @@ package project.common.model;
 import java.util.AbstractMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
 
 import rinde.sim.core.TickListener;
@@ -24,7 +24,7 @@ import rinde.sim.core.model.communication.Message;
 public class CommunicationModel implements Model<CommunicationUser>, CommunicationAPI, TickListener {
 
     Set<CommunicationUser> users = new HashSet<CommunicationUser>();
-    Queue<Entry<CommunicationUser, Message>> sendQueue = new LinkedList<Entry<CommunicationUser, Message>>();
+    List<Entry<CommunicationUser, Message>> sendQueue = new LinkedList<Entry<CommunicationUser, Message>>();
 
     @Override
     public void send(CommunicationUser recipient, Message message) {
@@ -96,7 +96,9 @@ public class CommunicationModel implements Model<CommunicationUser>, Communicati
 
     @Override
     public void afterTick(long currentTime, long timeStep) {
-	for (Entry<CommunicationUser, Message> entry : sendQueue) {
+	List<Entry<CommunicationUser, Message>> cache = sendQueue;
+	sendQueue = new LinkedList<Entry<CommunicationUser, Message>>();
+	for (Entry<CommunicationUser, Message> entry : cache) {
 	    entry.getKey().receive(entry.getValue());
 	}
 	sendQueue.clear();
