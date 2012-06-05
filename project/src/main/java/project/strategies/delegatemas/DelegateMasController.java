@@ -50,7 +50,7 @@ public class DelegateMasController extends AbstractController {
     protected boolean handleAddTruck(Event e) {
 	Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
 	getSimulator().register(truck);
-	
+
 	TruckAgent agent = new TruckAgent(truck);
 	getSimulator().register(agent);
 

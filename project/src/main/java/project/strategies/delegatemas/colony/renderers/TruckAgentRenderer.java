@@ -13,60 +13,57 @@ import rinde.sim.core.graph.Point;
 
 public class TruckAgentRenderer extends AbstractRenderer {
 
-	protected Simulator simulator;
+    protected Simulator simulator;
 
-	public TruckAgentRenderer(Simulator simulator) {
-		this.simulator = simulator;
-	}
+    public TruckAgentRenderer(Simulator simulator) {
+	this.simulator = simulator;
+    }
 
-	@Override
-	public void render(GC gc, double xOrigin, double yOrigin, double minX, double minY, double m) {
+    @Override
+    public void render(GC gc, double xOrigin, double yOrigin, double minX, double minY, double m) {
 
-		super.render(gc, xOrigin, yOrigin, minX, minY, m);
+	super.render(gc, xOrigin, yOrigin, minX, minY, m);
 
-		if (!initialized)
-			super.initializeImages();
-		
-		
-		final int radius = 4;
-		
-		Set<TickListener> objects = simulator.getTickListeners();
-		Set<TickListener> objects2 = new HashSet<TickListener>();
-		objects2.addAll(objects);
-		synchronized (objects2) {
-			int index = 0;
-			for (TickListener entry : objects2) {
-				
-				// Package Agent
-				if (entry.getClass().equals(TruckAgent.class)) {
-					
-					// draw the agent
-					TruckAgent agent = (TruckAgent) entry;
-					Point p = agent.getPosition();
-					Image image;
-					if (agent.getTruck().hasLoad()) {
-					    image = loadedTruckImage;
-					} else {
-					    image = emptyTruckImage;
-					}
-					
-					
-					int x = (int) (xOrigin + (p.x - minX) * m) - radius;
-					int y = (int) (yOrigin + (p.y - minY) * m) - radius;
-					int offsetX = x - image.getBounds().width / 2;
-					int offsetY = y - image.getBounds().height / 2;
-					
-					gc.drawImage(image, offsetX, offsetY);
-					gc.drawText(agent.getId()+"", offsetX+10, offsetY-10);
-					
-					
-					gc.drawText(agent.toString(), 800 + (index % 7) * 110, 460+(index / 7) * 230);
-					index++;
-				}
-				
-			}
+	if (!initialized)
+	    super.initializeImages();
+
+	final int radius = 4;
+
+	Set<TickListener> objects = simulator.getTickListeners();
+	Set<TickListener> objects2 = new HashSet<TickListener>();
+	objects2.addAll(objects);
+	synchronized (objects2) {
+	    int index = 0;
+	    for (TickListener entry : objects2) {
+
+		// Package Agent
+		if (entry.getClass().equals(TruckAgent.class)) {
+
+		    // draw the agent
+		    TruckAgent agent = (TruckAgent) entry;
+		    Point p = agent.getPosition();
+		    Image image;
+		    if (agent.getTruck().hasLoad()) {
+			image = loadedTruckImage;
+		    } else {
+			image = emptyTruckImage;
+		    }
+
+		    int x = (int) (xOrigin + (p.x - minX) * m) - radius;
+		    int y = (int) (yOrigin + (p.y - minY) * m) - radius;
+		    int offsetX = x - image.getBounds().width / 2;
+		    int offsetY = y - image.getBounds().height / 2;
+
+		    gc.drawImage(image, offsetX, offsetY);
+		    gc.drawText(agent.getId() + "", offsetX + 10, offsetY - 10);
+
+		    gc.drawText(agent.toString(), 800 + (index % 7) * 110, 460 + (index / 7) * 230);
+		    index++;
 		}
 
+	    }
 	}
-    
+
+    }
+
 }

@@ -19,8 +19,6 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     private CommunicationAPI communicationAPI;
     private long lastFeasibilityCheck;
 
-    private boolean packagePickedUp = false;
-
     public PackageAgent(Package myPackage) {
 	this.myPackage = myPackage;
 	this.lastFeasibilityCheck = Integer.MAX_VALUE;
@@ -98,8 +96,38 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	    } else if (message instanceof BackwardExplorationAnt) {
 		BackwardExplorationAnt bAnt = (BackwardExplorationAnt) message;
 		receiveBackwardEplorationAnt(bAnt);
+	    } else if (message instanceof IntentionAnt) {
+		IntentionAnt iAnt = (IntentionAnt) message;
+		receiveIntentionAnt(iAnt);
 	    }
 	}
+    }
+
+    private void receiveIntentionAnt(IntentionAnt iAnt) {
+	if (iAnt.getPathAhead().length() == 0) {
+	    throw new IllegalArgumentException("Should not be receiving this ant");
+	} else {
+
+	    if (!iAnt.getPathAhead().getFirst().equals(this)) {
+		throw new IllegalArgumentException("Should not be receiving this ant");
+	    }
+
+	    if (iAnt.getPathAhead().length() == 1) {
+		// send it back
+		Path newPathDone = new Path(iAnt.getPathDone(), this);
+		communicationAPI.send(iAnt.getSender(), new IntentionAnt(iAnt.getSender(), newPathDone, new Path()));
+	    } else {
+		// apply penalty
+		pathTable.penaltyPheromones(iAnt.getPathAhead());
+
+		// forward it to next agent.
+		Path newPathDone = new Path(iAnt.getPathDone(), this);
+		Path newPathAhead = iAnt.getPathAhead().getPathWithoutFirst();
+		PackageAgent receiver = newPathAhead.getFirst();
+		communicationAPI.send(receiver, new IntentionAnt(iAnt.getSender(), newPathDone, newPathAhead));
+	    }
+	}
+
     }
 
     private void receiveBackwardEplorationAnt(BackwardExplorationAnt bAnt) {
@@ -112,7 +140,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	pathTable.updatePheromones(bAnt.getPathToEval(), myPackage.getDeliveryLocation(), myPackage.getRoadModel());
 
 	CommunicationUser receiver;
-	Path newToDo = bAnt.getPathToDo().removeLast();
+	Path newToDo = bAnt.getPathToDo().getPathWithoutLast();
 	if (newToDo.length() == 0) {
 	    receiver = bAnt.getSender();
 	} else {

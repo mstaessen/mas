@@ -113,7 +113,7 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	model.addObjectAt(this, pickupLocation);
 	this.roadModel = model;
     }
-    
+
     public RoadModel getRoadModel() {
 	return roadModel;
     }
@@ -149,7 +149,7 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	// Less then half a day!
 	if (getDeadline() <= 0) {
 	    return Priority.maxPriority();
-	} else if (getDeadline() >= OFFSET ) {
+	} else if (getDeadline() >= OFFSET) {
 	    return Priority.minPriority();
 	} else {
 	    return Math.pow(getDeadline() - OFFSET, 2) / Math.pow(259200000, 2);

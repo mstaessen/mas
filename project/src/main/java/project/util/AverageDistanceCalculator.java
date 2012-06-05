@@ -19,8 +19,8 @@ public class AverageDistanceCalculator {
     private double accumulatedDistance = 0d;
     private long nbRoutes = 0;
 
-//    private static final String MAP_DIR = "../core/files/maps/";
-//    private static final String MAP = "leuven-simple.dot";
+    // private static final String MAP_DIR = "../core/files/maps/";
+    // private static final String MAP = "leuven-simple.dot";
     private static final String MAP_DIR = "files/maps/";
     private static final String MAP = "grid-16x9.dot";
     private static final String MAP_URI = MAP_DIR + MAP;

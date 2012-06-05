@@ -9,59 +9,58 @@ import rinde.sim.core.model.communication.Message;
 
 public class PackageDestination implements CommunicationUser, SimulatorUser {
 
-	private Point destination;
-	private CommunicationAPI api;
-	private PackageAgent agent;
-	private SimulatorAPI simulatorAPI;
-	
-	private boolean packagePickedUp = false;
-	
-	public PackageDestination(PackageAgent agent, Point destination) {
-		this.destination = destination;
-		this.agent = agent;
-	}
-	
-	@Override
-	public void setCommunicationAPI(CommunicationAPI api) {
-		this.api = api;
-	}
+    private Point destination;
+    private CommunicationAPI api;
+    private PackageAgent agent;
+    private SimulatorAPI simulatorAPI;
 
-	@Override
-	public Point getPosition() {
-		return destination;
-	}
+    private boolean packagePickedUp = false;
 
-	@Override
-	public double getRadius() {
-		return Settings.BROADCAST_RANGE;
-	}
+    public PackageDestination(PackageAgent agent, Point destination) {
+	this.destination = destination;
+	this.agent = agent;
+    }
 
-	@Override
-	public double getReliability() {
-		return 1;
-	}
+    @Override
+    public void setCommunicationAPI(CommunicationAPI api) {
+	this.api = api;
+    }
 
-	@Override
-	public void receive(Message message) {
-	    if (!packagePickedUp) {
-		if (message instanceof FeasibilityAnt) {
-			FeasibilityAnt fAnt = (FeasibilityAnt) message;
-			if(!fAnt.getSender().equals(agent)) {
-			    api.send(agent, fAnt);
-//			    agent.receiveFeasibilityAnt(fAnt);
-			}
+    @Override
+    public Point getPosition() {
+	return destination;
+    }
+
+    @Override
+    public double getRadius() {
+	return Settings.BROADCAST_RANGE;
+    }
+
+    @Override
+    public double getReliability() {
+	return 1;
+    }
+
+    @Override
+    public void receive(Message message) {
+	if (!packagePickedUp) {
+	    if (message instanceof FeasibilityAnt) {
+		FeasibilityAnt fAnt = (FeasibilityAnt) message;
+		if (!fAnt.getSender().equals(agent)) {
+		    api.send(agent, fAnt);
+		    // agent.receiveFeasibilityAnt(fAnt);
 		}
 	    }
 	}
+    }
 
-	@Override
-	public void setSimulator(SimulatorAPI api) {
-	    this.simulatorAPI = api;
-	}
-	
-	
-	public void setPackagePickedUp() {
-	    packagePickedUp = true;
-	}
+    @Override
+    public void setSimulator(SimulatorAPI api) {
+	this.simulatorAPI = api;
+    }
+
+    public void setPackagePickedUp() {
+	packagePickedUp = true;
+    }
 
 }

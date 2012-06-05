@@ -67,6 +67,9 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	    BackwardExplorationAnt bAnt = (BackwardExplorationAnt) message;
 	    pathTable.addPath(bAnt.getPathToEval());
 	    pathTable.updatePheromones(bAnt.getPathToEval(), truck.getPosition(), truck.getRoadModel());
+	} else if (message instanceof IntentionAnt) {
+	    IntentionAnt iAnt = (IntentionAnt) message;
+	    pathTable.updatePheromones(iAnt.getPathDone(), truck.getPosition(), truck.getRoadModel());
 	}
 
     }
@@ -80,7 +83,7 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
     public void tick(long currentTime, long timeStep) {
 
 	pathTable.evaporate();
-	
+
 	sendExplorationAnts();
 
 	checkForBestIntentions();
@@ -94,26 +97,24 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	    /*
 	     * Drive to packages
 	     */
-	    sendIntentionAnts();
+	    sendIntentionAnt();
 	    driveToTargetedPackage(timeStep);
 	}
 
     }
-    
+
     @Override
     public void afterTick(long currentTime, long timeStep) {
     }
 
     private void checkForBestIntentions() {
 	currentIntentions = pathTable.getBestPath();
-	
+
 	if (targetedPackage == null && currentIntentions != null) {
 	    driveRandom = false;
 	    startOnNewPackage();
 	}
     }
-
-
 
     private void driveRandom(long timeStep) {
 	if (!directions.isEmpty()) {
@@ -142,11 +143,11 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 		    startOnNewPackage();
 		} else {
 		    if (truck.tryPickup()) {
-			    System.out.println("Truck " + getId() + " picked up package " + targetedPackage.getId());
-			    planDirections(targetedPackage.getPackage().getDeliveryLocation());
-			} else {
-			    startOnNewPackage();
-			}
+			System.out.println("Truck " + getId() + " picked up package " + targetedPackage.getId());
+			planDirections(targetedPackage.getPackage().getDeliveryLocation());
+		    } else {
+			startOnNewPackage();
+		    }
 		}
 	    }
 	}
@@ -163,7 +164,7 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	} else {
 	    targetedPackage = currentIntentions.getFirst();
 	    planDirections(targetedPackage.getPackage().getPickupLocation());
-	    currentIntentions = currentIntentions.removeFirst();
+	    currentIntentions = currentIntentions.getPathWithoutFirst();
 	    System.out.println("targetting package " + targetedPackage.getId() + " intentions " + currentIntentions);
 	}
     }
@@ -177,17 +178,20 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	communicationAPI.broadcast(eAnt, PackageAgent.class);
     }
 
-    private void sendIntentionAnts() {
-
+    private void sendIntentionAnt() {
+	if (currentIntentions != null && currentIntentions.length() != 0) {
+	    IntentionAnt iAnt = new IntentionAnt(this, new Path(), new Path(currentIntentions));
+	    communicationAPI.send(currentIntentions.getFirst(), iAnt);
+	}
     }
-    
+
     @Override
     public String toString() {
-	String str = "Truck"+getId();
+	String str = "Truck" + getId();
 	if (targetedPackage != null) {
-	    str += "\n\n "+targetedPackage.getId()+" -> "+currentIntentions+"\n";
+	    str += "\n\n " + targetedPackage.getId() + " -> " + currentIntentions + "\n";
 	} else {
-	    str += "\n\n null -> "+currentIntentions+"\n";
+	    str += "\n\n null -> " + currentIntentions + "\n";
 	}
 	str += pathTable.toString();
 	return str;

@@ -122,7 +122,7 @@ public class PackageAgent extends AbstractPackageAgent implements CommunicationU
 	broadcastMessage.setPosition(getPosition());
 	broadcastMessage.setPriority(getPackage().getPriority());
 	communicationAPI.broadcast(broadcastMessage, TruckAgent.class);
-	//LOGGER.info("{} -> CALL_FOR_PROPOSAL", this);
+	// LOGGER.info("{} -> CALL_FOR_PROPOSAL", this);
     }
 
     private void handleProposal(ContractNetMessage proposal) {
@@ -142,17 +142,20 @@ public class PackageAgent extends AbstractPackageAgent implements CommunicationU
     }
 
     private void acceptProposal(ContractNetMessage proposal) {
-	ContractNetMessage acceptProposal = new ContractNetMessage(this, ContractNetMessageType.ACCEPT_PROPOSAL, proposal);
+	ContractNetMessage acceptProposal = new ContractNetMessage(this, ContractNetMessageType.ACCEPT_PROPOSAL,
+		proposal);
 	// update priority
 	acceptProposal.setPriority(getPackage().getPriority());
 	communicationAPI.send(proposal.getSender(), acceptProposal);
-	//LOGGER.info("{} -> ACCEPT_PROPOSAL -> {}", this, proposal.getSender());
+	// LOGGER.info("{} -> ACCEPT_PROPOSAL -> {}", this,
+	// proposal.getSender());
     }
 
     private void rejectProposal(ContractNetMessage proposal) {
 	ContractNetMessage rejectProposal = new ContractNetMessage(this, ContractNetMessageType.REJECT_PROPOSAL);
 	communicationAPI.send(proposal.getSender(), rejectProposal);
-	//LOGGER.info("{} -> REJECT_PROPOSAL -> {}", this, proposal.getSender());
+	// LOGGER.info("{} -> REJECT_PROPOSAL -> {}", this,
+	// proposal.getSender());
     }
 
     @Override
