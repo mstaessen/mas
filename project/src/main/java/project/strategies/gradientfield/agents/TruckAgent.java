@@ -1,6 +1,9 @@
 package project.strategies.gradientfield.agents;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import project.common.trucks.AbstractTruckAgent;
 import project.common.trucks.Truck;
@@ -13,7 +16,6 @@ import rinde.sim.core.model.virtual.VirtualEntity;
 public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
 
     private GradientFieldAPI gradientFieldModel;
-    private boolean emitting = true;
 
     public TruckAgent(Truck truck) {
 	super(truck);
@@ -43,7 +45,6 @@ public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
 
     private void tryPickup() {
 	if (getTruck().tryPickup()) {
-	    setEmitting(false);
 	    setPathToDeliveryLocation();
 	} else {
 	    // Try next node
@@ -53,7 +54,6 @@ public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
 
     private void tryDelivery() {
 	if (getTruck().tryDelivery()) {
-	    setEmitting(true);
 	    setPathToBestNode();
 	} else {
 	    setPathToDeliveryLocation();
@@ -67,10 +67,10 @@ public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
     private void setPathToBestNode() {
 	double maxStrength = Double.NEGATIVE_INFINITY;
 	Point highestStrengthNode = null;
-	for (Point node : getTruck().getRoadModel().getGraph().getOutgoingConnections(getTruck().getPosition())) {
-	    double strength = calculateFieldStrength(node);
-	    if (strength > maxStrength) {
-		maxStrength = strength;
+	Map<Point, Double> options = getNodes();
+	for (Point node : options.keySet()) {
+	    if (options.get(node) > maxStrength) {
+		maxStrength = options.get(node);
 		highestStrengthNode = node;
 	    }
 	}
@@ -84,14 +84,10 @@ public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
 		getTruck().getLoad().getDeliveryLocation())));
     }
 
-    private void setEmitting(boolean b) {
-	this.emitting = b;
-    }
-
     protected double calculateFieldStrength(Point node) {
 	double value = 0;
 	for (Field field : gradientFieldModel.getFields(node)) {
-	    value += field.getFieldData().getStrength() / field.getDistance();
+	    value += field.getFieldData().getStrength() / (1 + field.getDistance());
 	}
 	return value;
     }
@@ -104,6 +100,16 @@ public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
 	setPathToBestNode();
     }
 
+    public Map<Point, Double> getNodes() {
+	Collection<Point> outgoingConnections = getTruck().getRoadModel().getGraph()
+		.getOutgoingConnections(getPosition());
+	Map<Point, Double> result = new HashMap<Point, Double>(outgoingConnections.size());
+	for (Point node : outgoingConnections) {
+	    result.put(node, calculateFieldStrength(node));
+	}
+	return result;
+    }
+
     @Override
     public void afterTick(long currentTime, long timeStep) {
 	// unused
@@ -111,7 +117,7 @@ public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
 
     @Override
     public boolean isEmitting() {
-	return emitting;
+	return !getTruck().hasLoad();
     }
 
     @Override

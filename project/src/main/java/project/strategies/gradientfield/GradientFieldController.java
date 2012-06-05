@@ -2,6 +2,9 @@ package project.strategies.gradientfield;
 
 import project.common.controller.AbstractController;
 import project.common.packages.Package;
+import project.common.renderers.GradientFieldRenderer;
+import project.common.renderers.PackageRenderer;
+import project.common.renderers.TruckRenderer;
 import project.common.trucks.Truck;
 import project.strategies.gradientfield.agents.PackageAgent;
 import project.strategies.gradientfield.agents.TruckAgent;
@@ -10,8 +13,12 @@ import rinde.sim.core.model.virtual.GradientFieldModel;
 import rinde.sim.event.Event;
 import rinde.sim.scenario.ConfigurationException;
 import rinde.sim.scenario.Scenario;
+import rinde.sim.ui.View;
 
 public class GradientFieldController extends AbstractController {
+
+    private GradientFieldModel gradientFieldModel;
+    private GradientFieldRenderer gradientFieldRenderer;
 
     public GradientFieldController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
 	super(scen, numberOfTicks, map);
@@ -21,8 +28,8 @@ public class GradientFieldController extends AbstractController {
     protected Simulator createSimulator() throws Exception {
 	Simulator simulator = super.createSimulator();
 
-	GradientFieldModel model = new GradientFieldModel(getRoadModel());
-	simulator.register(model);
+	gradientFieldModel = new GradientFieldModel(getRoadModel());
+	simulator.register(gradientFieldModel);
 
 	return simulator;
     }
@@ -40,12 +47,26 @@ public class GradientFieldController extends AbstractController {
 
     @Override
     protected boolean handleAddPackage(Event e) {
-	Package p = createPackage();
-	getSimulator().register(p);
+	Package pkg = createPackage();
+	getSimulator().register(pkg);
 
-	PackageAgent agent = new PackageAgent(p);
+	PackageAgent agent = new PackageAgent(pkg);
 	getSimulator().register(agent);
 
 	return true;
+    }
+
+    @Override
+    protected boolean createUserInterface() {
+	truckRenderer = new TruckRenderer(roadModel);
+	packageRenderer = new PackageRenderer(roadModel);
+	gradientFieldRenderer = new GradientFieldRenderer(roadModel, gradientFieldModel);
+
+	return true;
+    }
+
+    @Override
+    public void dispatch(int speed) {
+	View.startGui(getSimulator(), speed, gradientFieldRenderer, packageRenderer, truckRenderer);
     }
 }
