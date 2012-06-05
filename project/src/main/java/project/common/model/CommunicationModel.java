@@ -28,6 +28,14 @@ public class CommunicationModel implements Model<CommunicationUser>, Communicati
 
     @Override
     public void send(CommunicationUser recipient, Message message) {
+	if (recipient == null) {
+	    throw new IllegalArgumentException("Recipient cannot be null.");
+	}
+
+	if (message == null) {
+	    throw new IllegalArgumentException("Message cannot be null.");
+	}
+
 	sendQueue.add(new AbstractMap.SimpleEntry<CommunicationUser, Message>(recipient, message));
     }
 
@@ -63,7 +71,7 @@ public class CommunicationModel implements Model<CommunicationUser>, Communicati
 	    return false;
 	}
 
-	return Point.distance(sender.getPosition(), receiver.getPosition()) < Math.max(sender.getRadius(),
+	return Point.distance(sender.getPosition(), receiver.getPosition()) <= Math.max(sender.getRadius(),
 		receiver.getRadius());
     }
 
