@@ -39,7 +39,7 @@ public class ContractNetDemo {
 	}
 	// End the simulation after 10 * timeStep
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(10 * timeStep, 1,
-		new ScenarioBuilder.EventTypeFunction(ScenarioController.Type.SCENARIO_FINISHED)));
+		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SCENARIO)));
 	Scenario scenario = builder.build();
 
 	ContractNetController controller = new ContractNetController(scenario, 20 * 24 * 60, MAP_URI);

@@ -39,15 +39,6 @@ public abstract class AbstractController extends ScenarioController {
 
 	initialize();
     }
-    
-    @Override
-    protected boolean handleCustomEvent(Event e) {
-	System.out.println(e);
-	if (e.getEventType() == ScenarioController.Type.SCENARIO_FINISHED) {
-	    throw new IllegalArgumentException();
-	}
-	return false;
-    }
 
     @Override
     protected Simulator createSimulator() throws Exception {
@@ -115,4 +106,15 @@ public abstract class AbstractController extends ScenarioController {
 
     @Override
     protected abstract boolean handleAddPackage(Event e);
+
+    @Override
+    protected boolean handleStopSimulation() {
+	stop();
+	return true;
+    }
+
+    @Override
+    public void stop() {
+	getSimulator().stop();
+    }
 }
