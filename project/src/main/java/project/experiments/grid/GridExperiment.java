@@ -46,19 +46,19 @@ public abstract class GridExperiment extends Experiment {
     public static void main(String[] args) {
 	try {
 	    String fileName = "./files/results/grid.csv";
-	    
+
 	    Settings.MAX_HOPS_EXPLORATION_ANT = 3;
 	    Settings.MAX_HOPS_FEASIBILITY_ANT = 1;
 	    Settings.BROADCAST_RANGE = 60;
-	    
+
 	    Experiment gfExperiment = new GFExperiment(fileName);
-	    gfExperiment.runMultiple(TIMES, true, false, false, "Gradient Field");
+	    gfExperiment.runMultiple(TIMES, true, false, "Gradient Field");
 
 	    Experiment cnetExperiment = new CNetExperiment(fileName);
-	    cnetExperiment.runMultiple(TIMES, true, false, true, "Contract Net");
+	    cnetExperiment.runMultiple(TIMES, true, false, "Contract Net");
 
 	    Experiment dmasExperiment = new DMASExperiment(fileName);
-	    dmasExperiment.runMultiple(TIMES, true, false, true, "Delegate MAS");
+	    dmasExperiment.runMultiple(TIMES, true, false, "Delegate MAS");
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
