@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  6 JUN 2012 00:53
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  6 JUN 2012 07:10
 entering extended mode
  %&-line parsing enabled.
 **wrapper.tex
@@ -357,22 +357,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 5--12
 
  []
 
-) [1] (./DMAS_algorithm.tex <./feasibility.png, id=15, 2489.3pt x 3521.155pt>
-File: ./feasibility.png Graphic file (type png)
+) [1] (./approach.tex <./images/feasibility.png, id=15, 2489.3pt x 3521.155pt>
+File: ./images/feasibility.png Graphic file (type png)
 
-<use ./feasibility.png>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<./exploration.png, id=16, 2489.3pt x 3521.155pt>
-File: ./exploration.png Graphic file (type png)
- <use ./exploration.png>
+<use ./images/feasibility.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<./intention.png, id=17, 2489.3pt x 3521.155pt>
-File: ./intention.png Graphic file (type png)
- <use ./intention.png>
+<./images/exploration.png, id=16, 2489.3pt x 3521.155pt>
+File: ./images/exploration.png Graphic file (type png)
+
+<use ./images/exploration.png>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<./images/intention.png, id=17, 2489.3pt x 3521.155pt>
+File: ./images/intention.png Graphic file (type png)
+
+<use ./images/intention.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -380,25 +382,37 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 LaTeX Warning: Text page 3 contains only floats.
 
-[3 <./feasibility.png (PNG copy)>]
+[3 <./images/feasibility.png (PNG copy)>]
 
 LaTeX Warning: Text page 4 contains only floats.
 
-[4 <./exploration.png (PNG copy)>]
+[4 <./images/exploration.png (PNG copy)>]
 
 LaTeX Warning: Text page 5 contains only floats.
 
-[5 <./intention.png (PNG copy)>] (./approach.tex) [6] (./development.tex)
-[7] (./evaluation.tex) [8] (./conclusion.tex) [9] (./wrapper.aux)
+[5 <./images/intention.png (PNG copy)>] (./development.tex
+<./diagrams/DomainModel.pdf, id=30, 473.77pt x 348.50201pt>
+File: ./diagrams/DomainModel.pdf Graphic file (type pdf)
+
+<use ./diagrams/DomainModel.pdf> [6 <./diagrams/DomainModel.pdf>]
+<./diagrams/ClassDiagram.pdf, id=516, 615.09799pt x 815.84799pt>
+File: ./diagrams/ClassDiagram.pdf Graphic file (type pdf)
+
+<use ./diagrams/ClassDiagram.pdf> [7 <./diagrams/ClassDiagram.pdf>]
+<./diagrams/ClassDiagram2.pdf, id=1986, 582.97798pt x 366.16798pt>
+File: ./diagrams/ClassDiagram2.pdf Graphic file (type pdf)
+
+<use ./diagrams/ClassDiagram2.pdf>) [8 <./diagrams/ClassDiagram2.pdf>]
+(./evaluation.tex) [9] (./conclusion.tex) [10] (./wrapper.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 1811 strings out of 495069
- 21447 string characters out of 1182887
- 71642 words of memory out of 3000000
- 4957 multiletter control sequences out of 15000+50000
+ 1828 strings out of 495069
+ 21975 string characters out of 1182887
+ 71666 words of memory out of 3000000
+ 4972 multiletter control sequences out of 15000+50000
  11694 words of font info for 43 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  25i,6n,24p,394b,269s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -408,9 +422,9 @@ exlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts
 /type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/publi
 c/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
 cm/cmti12.pfb>
-Output written on wrapper.pdf (10 pages, 4372190 bytes).
+Output written on wrapper.pdf (11 pages, 4846880 bytes).
 PDF statistics:
- 63 PDF objects out of 1000 (max. 8388607)
+ 2506 PDF objects out of 2984 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 36 words of extra memory for PDF output out of 10000 (max. 10000000)
 
