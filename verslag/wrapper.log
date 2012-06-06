@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  6 JUN 2012 11:35
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  6 JUN 2012 13:45
 entering extended mode
  %&-line parsing enabled.
 **wrapper.tex
@@ -302,9 +302,6 @@ Package babel Info: Making " an active character on input line 132.
 
 LaTeX Warning: Label `Fig:Radios' multiply defined.
 
-
-LaTeX Warning: Label `Fig:Radios' multiply defined.
-
 )
 \openout1 = `wrapper.aux'.
 
@@ -348,7 +345,15 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./figs/logo.png (PNG copy)
 >]) (./intro.tex)
-[1] (./approach.tex <./figs/feasibility.png, id=15, 2489.3pt x 3521.155pt>
+[1] (./approach.tex
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 13.
+ (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 13.
+
+<./figs/feasibility.png, id=15, 2489.3pt x 3521.155pt>
 File: ./figs/feasibility.png Graphic file (type png)
 
 <use ./figs/feasibility.png>
@@ -382,15 +387,15 @@ LaTeX Warning: Text page 4 contains only floats.
 LaTeX Warning: Text page 5 contains only floats.
 
 [5 <./figs/intention.png (PNG copy)>] (./development.tex
-<./diagrams/DomainModel.pdf, id=30, 473.77pt x 348.50201pt>
+<./diagrams/DomainModel.pdf, id=32, 473.77pt x 348.50201pt>
 File: ./diagrams/DomainModel.pdf Graphic file (type pdf)
 
 <use ./diagrams/DomainModel.pdf> [6 <./diagrams/DomainModel.pdf>]
-<./diagrams/ClassDiagram.pdf, id=516, 615.09799pt x 815.84799pt>
+<./diagrams/ClassDiagram.pdf, id=518, 615.09799pt x 815.84799pt>
 File: ./diagrams/ClassDiagram.pdf Graphic file (type pdf)
 
 <use ./diagrams/ClassDiagram.pdf> [7 <./diagrams/ClassDiagram.pdf>]
-<./diagrams/ClassDiagram2.pdf, id=1986, 582.97798pt x 366.16798pt>
+<./diagrams/ClassDiagram2.pdf, id=1988, 582.97798pt x 366.16798pt>
 File: ./diagrams/ClassDiagram2.pdf Graphic file (type pdf)
 
 <use ./diagrams/ClassDiagram2.pdf>) [8 <./diagrams/ClassDiagram2.pdf>]
@@ -408,23 +413,23 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 1833 strings out of 495069
- 22032 string characters out of 1182887
- 73700 words of memory out of 3000000
- 4976 multiletter control sequences out of 15000+50000
+ 1861 strings out of 495069
+ 22471 string characters out of 1182887
+ 74716 words of memory out of 3000000
+ 5001 multiletter control sequences out of 15000+50000
  12309 words of font info for 45 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 25i,6n,24p,256b,267s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 25i,6n,24p,726b,271s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
 re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
 xlive/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texmf-texlive/font
 s/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/publ
 ic/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
-cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti12.p
-fb>
-Output written on wrapper.pdf (12 pages, 4864248 bytes).
+cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.p
+fb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on wrapper.pdf (12 pages, 4880063 bytes).
 PDF statistics:
- 2513 PDF objects out of 2984 (max. 8388607)
+ 2517 PDF objects out of 2984 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  36 words of extra memory for PDF output out of 10000 (max. 10000000)
 

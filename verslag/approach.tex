@@ -1,11 +1,33 @@
 \section{Approach}
 \label{sec:approach}
 
-There are many possible ways of using a \textit{Delegate Ant MAS (DMAS)} to solve the \textit{General Pickup and Dellivery Problem (PDP)}. This section will outline a solution that defines two agents: 
+The DMAS solution we developped defines two agents, \textit{Package Agents} and \textit{Truck Agents}. All Package Agents have a corresponding package and are located on their pickup location. Truck Agents have a corresponding truck and move along with the truck. Both agents also own a \textit{pheromon table}. These tables can hold multiple paths (list of Package Agents in a certain order) and a corresponding pheromon (heuristic value).
 
-These 
+\npar Package Agents and Truck Agents communicate with each other by sending ants. These are a sort of smart messages.
 
-In real life situations will 
+\npar There is also a \textit{"forwarder"} placed in each delivery location of a package. These \textit{"forwarders"} will send all received ants to the Package Agent corresponding with the package for the local delivery location. Because of their limited intelligence, forwarders are not considered to be agents.
+
+\npar Like most DMAS based on ACO, three type of ants will be used, they will be used in the following way:
+\begin{itemize}
+
+\item \textbf{Feasability Ants}, these ants will be periodically broadcasted over a certain radius from the Package Agents to the forwarders. Their main purpose is to inform other Package Agents wich Package Agents are in a certain radius near their dellivery location.
+
+\item \textbf{Exploration Ants}, these ants will be send from the Truck Agents to discover and evaluate a path of Package Agents. They will update the pheromons table in the Package Agents during their return over the discovered path.
+
+\item \textbf{Intention Ants}, these ants will be send from the Truck Agents over the path of Package Agents that they are planning to do. These ants will decrease the pheromon values for that path in the visited Package Agents.
+
+\end{itemize}
+
+\npar How agents find an optimal path by using the pheromones and communication over ants is further explained by the following scenarios.
+
+\subsection*{Scenario I: Broadcasting of Feasibility Ants}
+\label{subsec:scenario1}
+
+When Package Agent A (depicted as a brown box 'A' in Figure \ref{Fig:scenario1}) is added to the simulation it will broadcast a Feasibility Ant with origin \textit{"A"} in a certain radius to all forwarders (depicted as a yellow flags in Figure \ref{Fig:scenario1}). Forwarders C' and B' receive the feasibility ant and send it to their corresponding Package Agents C and B. These Package Agents now know that after they are delivered the package A is near. After C and B have added path \textit{"A"} to their tables with a default pheromon value, they will change the origin of the Feasibility Ant to "CA" and "BA" respectively and broadcast it again. This time, on
+
+This process goes on until the max number of hops (= number of times broadcasts
+
+\npar The max number of hops for Feasibility ants is in our application 1, i.e. only
 
 
 \begin{figure}[!h]
@@ -15,8 +37,8 @@ In real life situations will
 				\setlength\fboxrule{0.5pt}
                 \fbox{\includegraphics[width = 0.90\textwidth]{./figs/feasibility.png}}
 		\end{center}
-		\caption{Feasibility Ants (example scenario 1)}
-		\label{Fig:Radios}
+		\caption{Example Scenario I (\ref{subsec:scenario1})}
+		\label{Fig:scenario1}
         \vspace{0.5pt}
 \end{figure}
 
