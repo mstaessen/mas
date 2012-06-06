@@ -78,7 +78,6 @@ public class PackageAgentRenderer extends AbstractRenderer {
 
 			gc.drawImage(image, offsetX, offsetY);
 			gc.drawText(packageAgent.getId() + "", offsetX - 10, offsetY + 10);
-			gc.drawText(packageAgent.getPackage().getPriority() + "", offsetX + 10, offsetY + 10);
 		    }
 		}
 	    }

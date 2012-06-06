@@ -124,16 +124,16 @@ public class Path implements Iterable<PackageAgent> {
 
 	    Point pickup = agent.getPackage().getPickupLocation();
 
-	    double uselessLength = Graphs.pathLength(model.getShortestPathTo(prevDellivery, pickup));
+	    double uselessLength = Point.distance(prevDellivery, pickup);
 	    prevDellivery = agent.getPackage().getDeliveryLocation();
 
 	    double ratio = Math.max(uselessLength / Settings.BROADCAST_RANGE, 0.1);
 
-	    double bonusTerm = 10 * agent.getPackage().getPriority() / (ratio);
+	    double bonusTerm = agent.getPackage().getPriority() / (ratio);
 	    bonus += bonusTerm;
 	}
 
-	return bonus;
+	return bonus/Settings.MAX_HOPS_EXPLORATION_ANT;
     }
 
     public Path getCommonPart(Path path) {

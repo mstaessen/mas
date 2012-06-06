@@ -57,7 +57,7 @@ public class TruckAgentRenderer extends AbstractRenderer {
 		    gc.drawImage(image, offsetX, offsetY);
 		    gc.drawText(agent.getId() + "", offsetX + 10, offsetY - 10);
 
-		    gc.drawText(agent.toString(), 800 + (index % 7) * 110, 460 + (index / 7) * 230);
+		    gc.drawText(agent.toString(), 800 + (index % 7) * 150, 400 + (index / 7) * 230);
 		    index++;
 		}
 

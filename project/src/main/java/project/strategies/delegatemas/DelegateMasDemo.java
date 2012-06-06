@@ -1,5 +1,6 @@
 package project.strategies.delegatemas;
 
+import project.strategies.delegatemas.colony.Settings;
 import rinde.sim.event.pdp.StandardType;
 import rinde.sim.scenario.Scenario;
 import rinde.sim.scenario.ScenarioBuilder;
@@ -32,7 +33,8 @@ public class DelegateMasDemo {
 		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
 	Scenario scenario = builder.build();
 
+	Settings.MAX_HOPS_EXPLORATION_ANT = 5;
 	DelegateMasController controller = new DelegateMasController(scenario, -1, MAP_URI);
-	controller.startUi(0);
+	controller.startUi(148);
     }
 }
