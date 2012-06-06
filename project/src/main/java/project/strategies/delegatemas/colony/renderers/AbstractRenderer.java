@@ -5,6 +5,11 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
+import project.common.packages.DeliveryLocation;
+import project.common.packages.Package;
+import project.common.packages.Priority;
+import project.strategies.delegatemas.colony.PackageDestination;
+
 import rinde.sim.ui.renderers.Renderer;
 
 public abstract class AbstractRenderer implements Renderer {
@@ -42,4 +47,17 @@ public abstract class AbstractRenderer implements Renderer {
 			initializeImages();
 		}
 	}
+	
+	
+	protected Image getFlagImage(Package p) {
+		switch (Priority.valueOf(p.getPriority())) {
+		    case LOW:
+			return greenFlagImage;
+		    case MEDIUM:
+			return yellowFlagImage;
+		    case HIGH:
+			return redFlagImage;
+		}
+		return null;
+	    }
 }

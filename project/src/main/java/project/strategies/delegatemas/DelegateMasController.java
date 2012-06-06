@@ -49,7 +49,7 @@ public class DelegateMasController extends ScenarioController {
 	    throw new ConfigurationException("e:", e);
 	}
 	roadModel = new RoadModel(graph);
-	MersenneTwister rand = new MersenneTwister(120);
+	MersenneTwister rand = new MersenneTwister(123);
 	communicationModel = new CommunicationModel();
 	Simulator s = new Simulator(rand, 1000); // timestep
 	s.register(roadModel);

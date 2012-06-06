@@ -13,13 +13,13 @@ public class DelegateMasDemo {
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, // at
 									      // time
 									      // 0
-		2, // amount of trucks to be added
+		3, // amount of trucks to be added
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
 
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, // at
 									      // time
 									      // 0
-		14, // amount of packages to be added
+		12, // amount of packages to be added
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 
 	
@@ -29,11 +29,11 @@ public class DelegateMasDemo {
 
 	Scenario scenario = builder.build();
 
-//	final String MAP_DIR = "./files/maps/";
-//	new DelegateMasController(scenario, -1, MAP_DIR + "grid-10x10.dot");
+	final String MAP_DIR = "./files/maps/";
+	new DelegateMasController(scenario, -1, MAP_DIR + "grid-10x10.dot");
 	
-	final String MAP_DIR = "../core/files/maps/";
-	new DelegateMasController(scenario, -1, MAP_DIR + "leuven-simple.dot");
+//	final String MAP_DIR = "../core/files/maps/";
+//	new DelegateMasController(scenario, -1, MAP_DIR + "leuven-simple.dot");
     }
 
 }

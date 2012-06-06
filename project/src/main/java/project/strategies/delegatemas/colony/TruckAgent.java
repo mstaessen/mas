@@ -138,15 +138,15 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 		    simulatorAPI.unregister(targetedPackage);
 		    startOnNewPackage();
 		} else {
-		    planDirections(targetedPackage.getPackage().getDeliveryLocation());
+		    planDirections(truck.getLoad().getDeliveryLocation());
 		}
 	    } else {
 		if (targetedPackage == null) {
 		    startOnNewPackage();
 		} else {
-		    if (truck.tryPickup()) {
+		    if (truck.tryPickup(targetedPackage.getPackage())) {
 			    System.out.println("Truck " + getId() + " picked up package " + targetedPackage.getId());
-			    planDirections(targetedPackage.getPackage().getDeliveryLocation());
+			    planDirections(truck.getLoad().getDeliveryLocation());
 			} else {
 			    startOnNewPackage();
 			}
