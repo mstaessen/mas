@@ -132,19 +132,28 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	} else {
 	    if (truck.hasLoad()) {
 		if (truck.tryDelivery()) {
-		    System.out.println("Truck " + getId() + " delivered package " + targetedPackage.getId());
+		    // System.out.println("Truck " + getId() +
+		    // " delivered package " + targetedPackage.getId());
 		    simulatorAPI.unregister(targetedPackage);
 		    startOnNewPackage();
 		} else {
-		    planDirections(targetedPackage.getPackage().getDeliveryLocation());
+		    System.out.println("FAILED TO DELIVER!");
+		    if (!getTruck().getLoad().getDeliveryLocation().equals(getPosition())) {
+			System.out.println("CarriedPackage: " + getTruck().getLoad());
+			System.out.println("Truck: " + getPosition());
+			System.out.println("DL: " + getTruck().getLoad().getDeliveryLocation());
+			System.out.println("WRONG POSITION!");
+		    }
+		    planDirections(getTruck().getLoad().getDeliveryLocation());
 		}
 	    } else {
 		if (targetedPackage == null) {
 		    startOnNewPackage();
 		} else {
-		    if (truck.tryPickup()) {
-			System.out.println("Truck " + getId() + " picked up package " + targetedPackage.getId());
-			planDirections(targetedPackage.getPackage().getDeliveryLocation());
+		    if (truck.tryPickup(targetedPackage.getPackage())) {
+			// System.out.println("Truck " + getId() +
+			// " picked up package " + targetedPackage.getId());
+			planDirections(getTruck().getLoad().getDeliveryLocation());
 		    } else {
 			startOnNewPackage();
 		    }
@@ -160,12 +169,13 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 	    driveRandom = true;
 	    currentIntentions = null;
 	    targetedPackage = null;
-	    System.out.println("DRiving RANDOM AGAIN");
+	    // System.out.println("DRiving RANDOM AGAIN");
 	} else {
 	    targetedPackage = currentIntentions.getFirst();
 	    planDirections(targetedPackage.getPackage().getPickupLocation());
 	    currentIntentions = currentIntentions.getPathWithoutFirst();
-	    System.out.println("targetting package " + targetedPackage.getId() + " intentions " + currentIntentions);
+	    // System.out.println("targetting package " +
+	    // targetedPackage.getId() + " intentions " + currentIntentions);
 	}
     }
 

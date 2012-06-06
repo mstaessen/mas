@@ -19,6 +19,8 @@ import rinde.sim.ui.View;
 public class DelegateMasController extends AbstractController {
 
     private CommunicationModel communicationModel;
+    private PackageAgentRenderer packageAgentRenderer;
+    private TruckAgentRenderer truckAgentRenderer;
 
     public DelegateMasController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
 	this(null, scen, numberOfTicks, map);
@@ -41,14 +43,14 @@ public class DelegateMasController extends AbstractController {
 
     @Override
     protected boolean createUserInterface() {
-	View.startGui(getSimulator(), 3, new PackageAgentRenderer(getSimulator()), new TruckAgentRenderer(
-		getSimulator()));
-	return true;
+	packageAgentRenderer = new PackageAgentRenderer(getSimulator());
+	truckAgentRenderer = new TruckAgentRenderer(getSimulator());
+	return false;
     }
 
     @Override
     protected boolean handleAddTruck(Event e) {
-	Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
+	Truck truck = createTruck();
 	getSimulator().register(truck);
 
 	TruckAgent agent = new TruckAgent(truck);
@@ -69,5 +71,11 @@ public class DelegateMasController extends AbstractController {
 	getSimulator().register(destination);
 
 	return true;
+    }
+
+    @Override
+    public void startUi(int seed) {
+	random.setSeed(seed);
+	View.startGui(getSimulator(), SPEED, packageAgentRenderer, truckAgentRenderer);
     }
 }

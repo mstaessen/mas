@@ -5,6 +5,7 @@ public class Report {
     private double avgPickupLateness;
     private double avgDeliveryLateness;
     private double avgCompletionTime;
+    private double avgDistance;
 
     public int getDeliveredPackages() {
 	return deliveredPackages;
@@ -36,5 +37,13 @@ public class Report {
 
     public void setAvgCompletionTime(double avgCompletionTime) {
 	this.avgCompletionTime = avgCompletionTime;
+    }
+
+    public double getAvgDistance() {
+	return avgDistance;
+    }
+
+    public void setAvgDistance(double avgDistance) {
+	this.avgDistance = avgDistance;
     }
 }

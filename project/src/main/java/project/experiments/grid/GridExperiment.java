@@ -20,6 +20,9 @@ public abstract class GridExperiment extends Experiment {
     protected static final long TIMESTEP = 24 * 60 * 60 * 1000;
     protected static final long END = 20 * TIMESTEP;
 
+    protected static final int NB_TRUCKS = 3;
+    protected static final int NB_PACKAGES = 3 * NB_TRUCKS;
+
     public GridExperiment(String reportFile) throws IOException {
 	super(reportFile);
     }
@@ -29,26 +32,27 @@ public abstract class GridExperiment extends Experiment {
 	ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_PACKAGE, StandardType.ADD_TRUCK,
 		StandardType.STOP_SIMULATION);
 	// Add 3 trucks at time 0
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 3,
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, NB_TRUCKS,
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
-	// Add 2 packages at time 0
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 2,
+	// Add 12 packages at time 0
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, NB_PACKAGES,
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-	// Add 2 Packages every timeStep
-	for (int i = 0; i < 2; i++) {
-	    builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(START, END, TIMESTEP,
-		    new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-	}
-	// End the simulation after 10 * timeStep
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(END, 1,
-		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
-	return builder.build();
+	Scenario scenario = builder.build();
+	scenario.add(new TimedEvent(StandardType.STOP_SIMULATION, END));
+	return scenario;
     }
 
     public static void main(String[] args) {
 	try {
-	    Experiment gfExperiment = new GFExperiment("./files/results/grid.gradient");
-	    gfExperiment.runMultiple(TIMES);
+	    String fileName = "./files/results/grid.csv";
+	    Experiment gfExperiment = new GFExperiment(fileName);
+	    gfExperiment.runMultiple(TIMES, true, false, false, "Gradient Field");
+
+	    Experiment cnetExperiment = new CNetExperiment(fileName);
+	    cnetExperiment.runMultiple(TIMES, true, false, true, "Contract Net");
+
+	    Experiment dmasExperiment = new DMASExperiment(fileName);
+	    dmasExperiment.runMultiple(TIMES, true, false, true, "Delegate MAS");
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();

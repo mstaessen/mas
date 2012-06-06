@@ -31,25 +31,21 @@ public class ContractNetDemo {
 	// Add 3 trucks at time 0
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 3,
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
-	// Add 2 packages at time 0
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 2,
+	// Add 6 packages at time 0
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 6,
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 	// Add 2 Packages every timeStep
-	for (int i = 0; i < 2; i++) {
-	    builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(START, END, TIMESTEP,
-		    new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-	}
-	// End the simulation after 10 * timeStep
+//	for (int i = 0; i < 2; i++) {
+//	    builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(START, END, TIMESTEP,
+//		    new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
+//	}
+	// End the simulation after some time
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(END, 1,
 		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
 	Scenario scenario = builder.build();
 
 	// Create a controller and dispatch it with an initial speed of 3
 	ContractNetController controller = new ContractNetController(scenario, -1, MAP_URI);
-	controller.startUi(3);
-
-	// Create a controller and dispatch it with an initial speed of 3
-	controller = new ContractNetController(scenario, -1, LEUVEN_MAP_URI);
 	controller.startUi(3);
     }
 }

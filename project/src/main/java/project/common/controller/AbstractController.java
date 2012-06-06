@@ -1,5 +1,8 @@
 package project.common.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.math.random.MersenneTwister;
 import org.apache.commons.math.random.RandomGenerator;
 
@@ -9,6 +12,7 @@ import project.common.packages.Package;
 import project.common.renderers.AbstractRenderer;
 import project.common.renderers.PackageRenderer;
 import project.common.renderers.TruckRenderer;
+import project.common.trucks.Truck;
 import project.experiments.Experiment;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
@@ -40,6 +44,7 @@ public abstract class AbstractController extends ScenarioController {
     protected static final int SPEED = 3;
 
     protected final RandomGenerator random = new MersenneTwister();
+    private Set<Truck> trucks = new HashSet<Truck>();
 
     public AbstractController(Scenario scen, int numberOfTicks, String map) throws ConfigurationException {
 	this(null, scen, numberOfTicks, map);
@@ -74,11 +79,8 @@ public abstract class AbstractController extends ScenarioController {
 
     @Override
     protected boolean createUserInterface() {
-	if (experiment == null) {
-	    truckRenderer = new TruckRenderer(roadModel);
-	    packageRenderer = new PackageRenderer(roadModel);
-	    return true;
-	}
+	truckRenderer = new TruckRenderer(roadModel);
+	packageRenderer = new PackageRenderer(roadModel);
 
 	return false;
     }
@@ -108,8 +110,15 @@ public abstract class AbstractController extends ScenarioController {
 
 	Package pkg = new Package(pl, dl, deadline);
 	pkg.addListener(getPackageListener(), Package.EventType.values());
+	pkg.addListener(this, Package.EventType.PACKAGE_DELIVERY);
 	pkg.events.dispatchEvent(new Event(Package.EventType.PACKAGE_CREATION, pkg));
 	return pkg;
+    }
+
+    protected Truck createTruck() {
+	Truck truck = new Truck(graph.getRandomNode(getSimulator().getRandomGenerator()));
+	trucks.add(truck);
+	return truck;
     }
 
     @Override
@@ -120,8 +129,15 @@ public abstract class AbstractController extends ScenarioController {
 
     @Override
     public void stop() {
-	super.stop();
+	getSimulator().removeTickListener(this);
+	getSimulator().stop();
+
 	Report report = getPackageListener().generateReport();
+	double averageDistance = 0;
+	for (Truck truck : trucks) {
+	    averageDistance += truck.getAccumulatedDistance();
+	}
+	report.setAvgDistance(averageDistance / trucks.size());
 
 	if (experiment != null) {
 	    experiment.receiveReport(report);
@@ -131,6 +147,14 @@ public abstract class AbstractController extends ScenarioController {
     public void start(int seed) throws ConfigurationException {
 	random.setSeed(seed);
 	super.start();
+    }
+
+    @Override
+    protected boolean handleCustomEvent(Event e) {
+	if (e.getEventType() == Package.EventType.PACKAGE_DELIVERY) {
+	    return handleAddPackage(e);
+	}
+	return false;
     }
 
     @Override

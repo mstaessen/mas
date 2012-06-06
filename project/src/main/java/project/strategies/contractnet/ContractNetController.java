@@ -38,7 +38,7 @@ public class ContractNetController extends AbstractController {
 
     @Override
     protected boolean handleAddTruck(Event e) {
-	Truck truck = new Truck(getGraph().getRandomNode(getSimulator().getRandomGenerator()));
+	Truck truck = createTruck();
 	getSimulator().register(truck);
 
 	TruckAgent agent = new TruckAgent(truck, -1, 1);

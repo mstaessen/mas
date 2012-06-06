@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import project.common.controller.AbstractController;
 import project.common.listeners.Report;
@@ -13,6 +14,7 @@ import rinde.sim.scenario.Scenario;
 
 public abstract class Experiment {
 
+    private static final int STATIC_SEED = 123;
     protected List<Report> reports = new ArrayList<Report>();
 
     protected abstract AbstractController createController(Scenario scenario);
@@ -20,11 +22,14 @@ public abstract class Experiment {
     protected abstract Scenario createScenario();
 
     protected FileWriter writer;
-
     private int runs;
+    private Random random = new Random(123);
+    private String reportFile;
+    private boolean append = false;
+    private String testName = "";
 
-    public Experiment(String reportFile) throws IOException {
-	writer = new FileWriter(new File(reportFile + ".csv"));
+    public Experiment(String reportUri) throws IOException {
+	this.reportFile = reportUri;
     }
 
     public void receiveReport(Report report) {
@@ -40,7 +45,9 @@ public abstract class Experiment {
 	}
     }
 
-    private void showResults() throws IOException {
+    public void showResults() throws IOException {
+	writer = new FileWriter(new File(reportFile), append);
+	writeTestName();
 	writeHeader();
 	int id = 0;
 	for (Report report : reports) {
@@ -66,7 +73,7 @@ public abstract class Experiment {
 	    avgPULateness += report.getAvgPickupLateness();
 	    avgDLLateness += report.getAvgDeliveryLateness();
 	    avgCompTime += report.getAvgCompletionTime();
-	    // avgDistance += report.getAvgDistance();
+	    avgDistance += report.getAvgDistance();
 	}
 	writer.write(avgDeliveries / reports.size() + "");
 	writer.write(";");
@@ -81,7 +88,7 @@ public abstract class Experiment {
     }
 
     private void writeLine(int runId, Report report) throws IOException {
-	writer.write(runId + "");
+	writer.write((runId + 1) + "");
 	writer.write(";");
 	writer.write(report.getDeliveredPackages() + "");
 	writer.write(";");
@@ -91,7 +98,7 @@ public abstract class Experiment {
 	writer.write(";");
 	writer.write(report.getAvgCompletionTime() + "");
 	writer.write(";");
-	writer.write("TODO! AVG Distance Travelled");
+	writer.write(report.getAvgDistance() + "");
 	writer.write("\n");
     }
 
@@ -106,27 +113,59 @@ public abstract class Experiment {
 	writer.write(";");
 	writer.write("AVG Completion Time");
 	writer.write(";");
-	writer.write("AVG Distance Travelled");
+	writer.write("AVG Total Distance Travelled");
 	writer.write("\n");
     }
 
-    public void run(int seed) {
+    protected void writeTestName() throws IOException {
+	if (!testName.trim().equals("")) {
+	    writer.write("---" + testName + "---");
+	}
+	testName = "";
+    }
+
+    public void run(boolean randomSeed, boolean ui) {
+	run(0, randomSeed, ui);
+    }
+
+    public void run(int runId, boolean randomSeed, boolean ui) {
 	AbstractController controller = createController(createScenario());
+	preRun(runId);
+
+	int seed = randomSeed ? random.nextInt() : STATIC_SEED;
+
 	try {
-	    controller.start(seed);
+	    if (ui) {
+		controller.startUi(seed);
+	    } else {
+		controller.start(seed);
+	    }
 	} catch (ConfigurationException e) {
 	    e.printStackTrace();
 	}
+
+	postRun(runId);
     }
 
-    public void runMultiple(int times) {
+    public void runMultiple(int times, boolean randomSeed, boolean ui, boolean append, String testName) {
+	this.append = append;
 	this.runs = times;
+	this.testName = testName;
+
 	if (times < 1) {
 	    throw new IllegalArgumentException("You have to run it at least one time.");
 	}
 
-	for (int i = 0; i < times; i++) {
-	    run(7 * i);
+	for (int run = 0; run < times; run++) {
+	    run(randomSeed, ui);
 	}
+    }
+
+    protected void preRun(int run) {
+
+    }
+
+    protected void postRun(int run) {
+
     }
 }
