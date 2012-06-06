@@ -9,8 +9,13 @@ import rinde.sim.scenario.TimedEvent;
 public class DelegateMasDemo {
 
     // Manhattan
-    private static final String MAP_DIR = "files/maps/";
-    private static final String MAP = "grid-10x10.dot";
+//    private static final String MAP_DIR = "files/maps/";
+//    private static final String MAP = "grid-10x10.dot";
+    
+    private static final String MAP_DIR = "../core/files/maps/";
+    private static final String MAP = "leuven-simple.dot";
+    
+    
     private static final String MAP_URI = MAP_DIR + MAP;
 
     private static final long START = 0;
@@ -33,7 +38,6 @@ public class DelegateMasDemo {
 		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
 	Scenario scenario = builder.build();
 
-	Settings.MAX_HOPS_EXPLORATION_ANT = 5;
 	DelegateMasController controller = new DelegateMasController(scenario, -1, MAP_URI);
 	controller.startUi(148);
     }
