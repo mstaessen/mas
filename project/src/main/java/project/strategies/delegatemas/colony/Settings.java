@@ -2,12 +2,12 @@ package project.strategies.delegatemas.colony;
 
 public class Settings {
 
-//    public static double BROADCAST_RANGE = 60; // grid 10x10
-     public static double BROADCAST_RANGE = 13000; // leuven
+    public static double BROADCAST_RANGE = 60; // grid 10x10
+//     public static double BROADCAST_RANGE = 13000; // leuven
 
     public static final int TIMESTEPS_WAIT_BEFORE_SENDING_FEASIBILITY_ANTS = 30;
-    public static int MAX_HOPS_FEASIBILITY_ANT = 1;
-    public static int MAX_HOPS_EXPLORATION_ANT = 3;
+    public static int MAX_HOPS_FEASIBILITY_ANT = 2;
+    public static int MAX_HOPS_EXPLORATION_ANT = 4;
 
     public static final double MIN_PHEROMONE_PATH = 0.1;
     public static final double MAX_PACKAGE_PHEROMONE_PATH = 10;

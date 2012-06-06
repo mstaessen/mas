@@ -186,7 +186,7 @@ public class PathTable {
 	DecimalFormat df = new DecimalFormat("#.##");
 	HashMap<Path,Double> pheromones2 = new HashMap<Path,Double>();
 	pheromones2.putAll(pheromones);
-	for (Path p: pheromones.keySet()) {
+	for (Path p: pheromones2.keySet()) {
 	    try {
 		string += "\n" + p.toString() + "::" + df.format(pheromones2.get(p));
 	    } catch (IndexOutOfBoundsException e) {
