@@ -35,10 +35,11 @@ public class ContractNetDemo {
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 6,
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 	// Add 2 Packages every timeStep
-//	for (int i = 0; i < 2; i++) {
-//	    builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(START, END, TIMESTEP,
-//		    new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-//	}
+	// for (int i = 0; i < 2; i++) {
+	// builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(START, END,
+	// TIMESTEP,
+	// new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
+	// }
 	// End the simulation after some time
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(END, 1,
 		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));

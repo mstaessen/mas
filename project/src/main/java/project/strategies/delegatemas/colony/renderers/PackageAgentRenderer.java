@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 
+import project.common.packages.DeliveryLocation;
 import project.strategies.delegatemas.colony.PackageAgent;
 import project.strategies.delegatemas.colony.PackageDestination;
 import rinde.sim.core.Simulator;
@@ -69,13 +71,15 @@ public class PackageAgentRenderer extends AbstractRenderer {
 			PackageDestination destination = packageAgent.getDestination();
 			p = destination.getPosition();
 
+			Image image = super.getFlagImage(packageAgent.getPackage());
 			x = (int) (xOrigin + (p.x - minX) * m) - radius;
 			y = (int) (yOrigin + (p.y - minY) * m) - radius;
-			offsetX = x - greenFlagImage.getBounds().width / 2;
-			offsetY = y - greenFlagImage.getBounds().height / 2;
+			offsetX = x - image.getBounds().width / 2;
+			offsetY = y - image.getBounds().height / 2;
 
-			gc.drawImage(greenFlagImage, offsetX, offsetY);
+			gc.drawImage(image, offsetX, offsetY);
 			gc.drawText(packageAgent.getId() + "", offsetX - 10, offsetY + 10);
+			gc.drawText(packageAgent.getPackage().getPriority() + "", offsetX + 10, offsetY + 10);
 		    }
 		}
 

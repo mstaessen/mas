@@ -48,6 +48,9 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 
     @Override
     public void afterTick(long currentTime, long timeStep) {
+	if (!getPackage().isDelivered()) {
+	    getPackage().decreaseDeadline(timeStep);
+	}
     }
 
     @Override

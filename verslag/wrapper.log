@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.4.10)  4 JUN 2012 23:22
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.4.10)  6 JUN 2012 06:02
 entering extended mode
 **wrapper.tex
 (M:\src\kuleuven\mas\RinSimProject\verslag\wrapper.tex
@@ -315,7 +315,14 @@ File: babel.def 2008/07/08 v3.8m Babel common definitions
 )
 Package babel Info: Making " an active character on input line 132.
 ))
-(M:\src\kuleuven\mas\RinSimProject\verslag\wrapper.aux)
+(M:\src\kuleuven\mas\RinSimProject\verslag\wrapper.aux
+
+LaTeX Warning: Label `Fig:Radios' multiply defined.
+
+
+LaTeX Warning: Label `Fig:Radios' multiply defined.
+
+)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
 LaTeX Font Info:    ... okay on input line 8.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
@@ -328,8 +335,7 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
 LaTeX Font Info:    ... okay on input line 8.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
 LaTeX Font Info:    ... okay on input line 8.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+ ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count89
 \scratchdimen=\dimen106
@@ -343,34 +349,13 @@ LaTeX Font Info:    ... okay on input line 8.
 \makeMPintoPDFobject=\count94
 \everyMPtoPDFconversion=\toks19
 ) (M:\src\kuleuven\mas\RinSimProject\verslag\title.tex
-
-! LaTeX Error: File `./logo' not found.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.7 \includegraphics[width=0.40\textwidth]{./logo}
-                                                  \\[1cm]
-I could not locate the file with any of these extensions:
-.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPEG,.JBIG2,.JB2
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-! LaTeX Error: There's no line here to end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.7 ...udegraphics[width=0.40\textwidth]{./logo}\\
-                                                  [1cm]
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
+<./logo.png, id=1, 853.5087pt x 853.5087pt>
+File: ./logo.png Graphic file (type png)
+ <use ./logo.png>
+Package pdftex.def Info: ./logo.png used on input line 7.
+(pdftex.def)             Requested size: 177.05879pt x 177.05417pt.
 LaTeX Font Info:    Try loading font information for U+msa on input line 28.
+
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
@@ -380,30 +365,85 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 28.
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 ) [1
 
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}])
-(M:\src\kuleuven\mas\RinSimProject\verslag\intro.tex) [1]
-(M:\src\kuleuven\mas\RinSimProject\verslag\approach.tex) [2]
-(M:\src\kuleuven\mas\RinSimProject\verslag\development.tex) [3]
-(M:\src\kuleuven\mas\RinSimProject\verslag\evaluation.tex) [4]
-(M:\src\kuleuven\mas\RinSimProject\verslag\conclusion.tex) [5]
-(M:\src\kuleuven\mas\RinSimProject\verslag\wrapper.aux) ) 
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <M:/src/kuleuven/mas/RinSi
+mProject/verslag/logo.png>]) (M:\src\kuleuven\mas\RinSimProject\verslag\intro.t
+ex
+Underfull \hbox (badness 10000) in paragraph at lines 5--12
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5--12
+
+ []
+
+) [1] (M:\src\kuleuven\mas\RinSimProject\verslag\DMAS_algorithm.tex
+<./feasibility.png, id=15, 2489.3pt x 3521.155pt>
+File: ./feasibility.png Graphic file (type png)
+ <use ./feasibility.png>
+Package pdftex.def Info: ./feasibility.png used on input line 17.
+(pdftex.def)             Requested size: 398.38567pt x 563.50378pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<./exploration.png, id=16, 2489.3pt x 3521.155pt>
+File: ./exploration.png Graphic file (type png)
+ <use ./exploration.png>
+Package pdftex.def Info: ./exploration.png used on input line 29.
+(pdftex.def)             Requested size: 398.38567pt x 563.50378pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<./intention.png, id=17, 2489.3pt x 3521.155pt>
+File: ./intention.png Graphic file (type png)
+ <use ./intention.png>
+Package pdftex.def Info: ./intention.png used on input line 41.
+(pdftex.def)             Requested size: 398.38567pt x 563.50378pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+) [2]
+
+LaTeX Warning: Text page 3 contains only floats.
+
+[3 <M:/src/kuleuven/mas/RinSimProject/verslag/feasibility.png>]
+
+LaTeX Warning: Text page 4 contains only floats.
+
+[4 <M:/src/kuleuven/mas/RinSimProject/verslag/exploration.png>]
+
+LaTeX Warning: Text page 5 contains only floats.
+
+[5 <M:/src/kuleuven/mas/RinSimProject/verslag/intention.png>]
+(M:\src\kuleuven\mas\RinSimProject\verslag\approach.tex) [6]
+(M:\src\kuleuven\mas\RinSimProject\verslag\development.tex) [7]
+(M:\src\kuleuven\mas\RinSimProject\verslag\evaluation.tex) [8]
+(M:\src\kuleuven\mas\RinSimProject\verslag\conclusion.tex) [9]
+(M:\src\kuleuven\mas\RinSimProject\verslag\wrapper.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
 Here is how much of TeX's memory you used:
- 2020 strings out of 494045
- 25643 string characters out of 3145972
- 74792 words of memory out of 3000000
- 5271 multiletter control sequences out of 15000+200000
- 11348 words of font info for 42 fonts, out of 3000000 for 9000
+ 2034 strings out of 494045
+ 26134 string characters out of 3145972
+ 75847 words of memory out of 3000000
+ 5289 multiletter control sequences out of 15000+200000
+ 11694 words of font info for 43 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 27i,4n,24p,239b,260s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files (x86
-)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/
-MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Program Files (x86)/M
-iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKT
-eX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 
-2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on wrapper.pdf (6 pages, 71937 bytes).
+ 27i,6n,24p,394b,281s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><
+C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/
+Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Pro
+gram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Progr
+am Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on wrapper.pdf (10 pages, 4339236 bytes).
 PDF statistics:
- 41 PDF objects out of 1000 (max. 8388607)
+ 63 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 21 words of extra memory for PDF output out of 10000 (max. 10000000)
 

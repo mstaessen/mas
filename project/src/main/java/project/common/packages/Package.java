@@ -141,7 +141,7 @@ public class Package implements SimulatorUser, RoadUser, Events {
 	return events.containsListener(l, eventType);
     }
 
-    void decreaseDeadline(long timeStep) {
+    public void decreaseDeadline(long timeStep) {
 	this.deadline -= timeStep;
     }
 

@@ -137,13 +137,6 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 		    simulatorAPI.unregister(targetedPackage);
 		    startOnNewPackage();
 		} else {
-		    System.out.println("FAILED TO DELIVER!");
-		    if (!getTruck().getLoad().getDeliveryLocation().equals(getPosition())) {
-			System.out.println("CarriedPackage: " + getTruck().getLoad());
-			System.out.println("Truck: " + getPosition());
-			System.out.println("DL: " + getTruck().getLoad().getDeliveryLocation());
-			System.out.println("WRONG POSITION!");
-		    }
 		    planDirections(getTruck().getLoad().getDeliveryLocation());
 		}
 	    } else {
@@ -157,6 +150,7 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
 		    } else {
 			startOnNewPackage();
 		    }
+
 		}
 	    }
 	}

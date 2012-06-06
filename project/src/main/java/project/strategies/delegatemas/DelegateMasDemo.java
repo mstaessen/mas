@@ -29,7 +29,8 @@ public class DelegateMasDemo {
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
 	// Add 12 packages at time 0
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 12,
-		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
+
+	new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 	// End the simulation after 10 * timeStep
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(END, 1,
 		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
