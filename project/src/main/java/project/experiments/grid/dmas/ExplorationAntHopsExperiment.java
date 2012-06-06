@@ -17,12 +17,10 @@ public class ExplorationAntHopsExperiment extends DMASExperiment {
 	    Experiment hopsExperiment = new ExplorationAntHopsExperiment(
 		    "./files/results/grid.dmas_explorationHops.csv");
 
-	    Settings.MAX_HOPS_EXPLORATION_ANT = 1;
-	    hopsExperiment.runMultiple(10, true, false, "Max Hops Exploration Ants = "
-		    + Settings.MAX_HOPS_EXPLORATION_ANT);
+	    Settings.BROADCAST_RANGE = 60;
+	    Settings.MAX_HOPS_FEASIBILITY_ANT = 1;
 
-	    for (int i = 0; i < 4; i++) {
-		Settings.MAX_HOPS_EXPLORATION_ANT++;
+	    for (Settings.MAX_HOPS_EXPLORATION_ANT = 1; Settings.MAX_HOPS_EXPLORATION_ANT <= 5; Settings.MAX_HOPS_EXPLORATION_ANT++) {
 		hopsExperiment.runMultiple(10, true, false, "Max Hops Exploration Ants = "
 			+ Settings.MAX_HOPS_EXPLORATION_ANT);
 	    }
