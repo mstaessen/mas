@@ -1,1 +1,71 @@
 \section{Evaluation}
+
+\npar In order to evaluate the DMAS solution, it is compared to two reference
+solutions: Gradient Field and Contract Net. We will describe them in a nutshell.
+
+\npar Gradient Fields are based on electrical fields: packages and trucks have
+opposite charges and will thus attract each other. However, trucks will repel
+other trucks because they are able to move and have equal charges.
+This will make sure that the work is divided among all trucks.
+
+\npar In a Contract Net, package agents will broadcast the position of their
+packages. (Some) Truck agents will receive the broadcasted message and repond
+with an offer to pick up the package. The package agent will then evaluate all
+the offers it received and inform the senders whether they won the offer or not.
+When a truck receives an accepted proposal, it can still decide that there is a
+better alternative. In this case, the package agent is informed of a failure.
+The contract is now broken and the package will again broadcast the position of
+its package.
+
+\subsection{Experiments}
+
+\npar As explained in \ref{sec:dmas_algorithm}, the DMAS solution will try to
+plan an optimal route. As a consequence, we are particularly interested in the
+performance of this system. We test this in a number of ways.
+
+\npar First, the overall performance is measured by counting the number of
+delivered packages in a fixed time window.
+
+\npar Second, we track the time that passes between the creation of a package
+and the pickup. This can serve as an indication for the responsiveness to
+dynamism.
+
+\npar Third, all packages should be delivered within a given time window.
+Therefore, the lateness for every delivery is logged.
+
+\npar Finally, to evaluate the efficiency of the chosen routes, the
+total distance travelled by trucks is also measured. 
+
+\npar All this information is gathered during a fixed-time scenario in which
+a number of trucks start with an initial amount of packages. Every time a
+package is delivered, a new one is added. This will prevent the trucks from
+running out of packages and will not flood the system with too much packages
+either.
+
+\npar  Because of the optimal path planning, we expect to see a high thoughput
+(delivered packages) and a low value for total distance travelled.
+
+\subsection{Comparison}
+
+%TODO
+
+\subsection{Critical Reflection}
+
+\npar First of all, the system manages to get the task done. A huge advantage
+to this system is that it can plan ahead, whereas the Contract Net and the 
+Gradient Field solution in particular do not/cannot plan ahead. Using
+heuristics, the delegate MAS solution can find an optimal path throughout the
+system.
+
+\npar One of the disadvantages about this system is that it will not always find
+packages at a given moment. Sometimes, it is required to navigate randomly until
+packages nearbycan ``hear'' the truck agent. One way to solve this problem would
+be to periodically increase the broadcast radius of truck agents (up to a
+maximal range) when no packages are found in a certain time window.
+
+\npar Another way to solve this problem could be to combine multiple solutions
+into one hybrid solution. When no packages are found, a Gradient Field could be
+used to spread the agents accross the physical environment. This will increase
+the coverage of the map and hence the chance for packages to be heard by trucks.
+
+\npar %TODO

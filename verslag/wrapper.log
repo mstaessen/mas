@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.5)  6 JUN 2012 06:26
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.5)  6 JUN 2012 10:57
 entering extended mode
  Source specials enabled.
  %&-line parsing enabled.
@@ -310,18 +310,18 @@ LaTeX Warning: Label `Fig:Radios' multiply defined.
 )
 \openout1 = `wrapper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
-LaTeX Font Info:    ... okay on input line 8.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
-LaTeX Font Info:    ... okay on input line 8.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 8.
-LaTeX Font Info:    ... okay on input line 8.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 8.
-LaTeX Font Info:    ... okay on input line 8.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
-LaTeX Font Info:    ... okay on input line 8.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
-LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
  (/usr/share/texmf/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count89
@@ -334,12 +334,12 @@ LaTeX Font Info:    ... okay on input line 8.
 \MPscratchDim=\dimen107
 \MPnumerator=\count93
 \everyMPtoPDFconversion=\toks19
-) (./title.tex <./logo.png, id=1, 853.5087pt x 853.5087pt>
-File: ./logo.png Graphic file (type png)
- <use ./logo.png>
-LaTeX Font Info:    Try loading font information for U+msa on input line 28.
+) (./title.tex <./figs/logo.png, id=1, 853.5087pt x 853.5087pt>
+File: ./figs/logo.png Graphic file (type png)
 
-(/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
+<use ./figs/logo.png>
+LaTeX Font Info:    Try loading font information for U+msa on input line 28.
+ (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
 LaTeX Font Info:    Try loading font information for U+msb on input line 28.
@@ -348,33 +348,27 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 28.
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 ) [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./logo.png (PNG copy)>]) (
-./intro.tex
-Underfull \hbox (badness 10000) in paragraph at lines 5--12
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./figs/logo.png (PNG copy)
+>]) (./intro.tex)
+[1] (./DMAS_algorithm.tex
+<./figs/feasibility.png, id=15, 2489.3pt x 3521.155pt>
+File: ./figs/feasibility.png Graphic file (type png)
 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 5--12
-
- []
-
-) [1] (./DMAS_algorithm.tex <./feasibility.png, id=15, 2489.3pt x 3521.155pt>
-File: ./feasibility.png Graphic file (type png)
-
-<use ./feasibility.png>
+<use ./figs/feasibility.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<./exploration.png, id=16, 2489.3pt x 3521.155pt>
-File: ./exploration.png Graphic file (type png)
- <use ./exploration.png>
+<./figs/exploration.png, id=16, 2489.3pt x 3521.155pt>
+File: ./figs/exploration.png Graphic file (type png)
+
+<use ./figs/exploration.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<./intention.png, id=17, 2489.3pt x 3521.155pt>
-File: ./intention.png Graphic file (type png)
- <use ./intention.png>
+<./figs/intention.png, id=17, 2489.3pt x 3521.155pt>
+File: ./figs/intention.png Graphic file (type png)
+
+<use ./figs/intention.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -382,37 +376,37 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 LaTeX Warning: Text page 3 contains only floats.
 
-[3 <./feasibility.png (PNG copy)>]
+[3 <./figs/feasibility.png (PNG copy)>]
 
 LaTeX Warning: Text page 4 contains only floats.
 
-[4 <./exploration.png (PNG copy)>]
+[4 <./figs/exploration.png (PNG copy)>]
 
 LaTeX Warning: Text page 5 contains only floats.
 
-[5 <./intention.png (PNG copy)>] (./approach.tex) [6] (./development.tex)
-[7] (./evaluation.tex) [8] (./conclusion.tex) [9] (./wrapper.aux)
+[5 <./figs/intention.png (PNG copy)>] (./approach.tex) [6] (./development.tex)
+[7] (./evaluation.tex [8]) [9] (./conclusion.tex) [10] (./wrapper.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 1823 strings out of 494684
- 21684 string characters out of 1174459
- 71799 words of memory out of 3000000
- 5002 multiletter control sequences out of 15000+50000
- 11694 words of font info for 43 fonts, out of 3000000 for 9000
+ 1826 strings out of 494684
+ 21790 string characters out of 1174459
+ 73833 words of memory out of 3000000
+ 5004 multiletter control sequences out of 15000+50000
+ 12001 words of font info for 44 fonts, out of 3000000 for 9000
  260 hyphenation exceptions out of 8191
- 25i,6n,24p,394b,269s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 25i,6n,24p,204b,269s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/sha
 re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texmf-t
 exlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts
 /type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/publi
 c/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
 cm/cmti12.pfb>
-Output written on wrapper.pdf (10 pages, 4372190 bytes).
+Output written on wrapper.pdf (11 pages, 4381339 bytes).
 PDF statistics:
- 63 PDF objects out of 1000 (max. 8388607)
+ 66 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  21 words of extra memory for PDF output out of 10000 (max. 10000000)
 
