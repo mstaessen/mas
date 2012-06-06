@@ -147,14 +147,14 @@ public abstract class Experiment {
 	postRun(runId);
     }
 
-    public void runMultiple(int times, boolean randomSeed, boolean ui, boolean append, String testName) {
-	this.append = append;
-	this.runs = times;
-	this.testName = testName;
-
+    public void runMultiple(int times, boolean randomSeed, boolean ui, boolean appendToFile, String name) {
 	if (times < 1) {
 	    throw new IllegalArgumentException("You have to run it at least one time.");
 	}
+
+	this.append = appendToFile;
+	this.runs = times;
+	this.testName = name;
 
 	for (int run = 0; run < times; run++) {
 	    run(randomSeed, ui);
