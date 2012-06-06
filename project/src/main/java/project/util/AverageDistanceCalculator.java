@@ -1,7 +1,5 @@
 package project.util;
 
-import java.math.BigDecimal;
-
 import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.Graphs;
 import rinde.sim.core.graph.MultiAttributeEdgeData;

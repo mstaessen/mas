@@ -6,7 +6,6 @@ import java.util.Set;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
-import project.common.packages.DeliveryLocation;
 import project.strategies.delegatemas.colony.PackageAgent;
 import project.strategies.delegatemas.colony.PackageDestination;
 import rinde.sim.core.Simulator;
@@ -82,10 +81,7 @@ public class PackageAgentRenderer extends AbstractRenderer {
 			gc.drawText(packageAgent.getPackage().getPriority() + "", offsetX + 10, offsetY + 10);
 		    }
 		}
-
 	    }
 	}
-
     }
-
 }

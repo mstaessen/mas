@@ -6,10 +6,6 @@ import rinde.sim.scenario.ScenarioBuilder;
 import rinde.sim.scenario.TimedEvent;
 
 public class DelegateMasDemo {
-    // Leuven
-    private static final String LEUVEN_MAP_DIR = "../core/files/maps/";
-    private static final String LEUVEN_MAP = "leuven-simple.dot";
-    private static final String LEUVEN_MAP_URI = LEUVEN_MAP_DIR + LEUVEN_MAP;
 
     // Manhattan
     private static final String MAP_DIR = "files/maps/";
