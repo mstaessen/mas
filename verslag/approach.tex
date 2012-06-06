@@ -22,12 +22,11 @@ The DMAS solution we developped defines two agents, \textit{Package Agents} and 
 
 \subsection*{Scenario I: Broadcasting of Feasibility Ants}
 \label{subsec:scenario1}
+\npar \textit{Scenario is illustrated in Figure \ref{Fig:scenario1}.}
 
-When Package Agent A (depicted as a brown box 'A' in Figure \ref{Fig:scenario1}) is added to the simulation it will broadcast a Feasibility Ant with origin \textit{"A"} in a certain radius to all forwarders (depicted as a yellow flags in Figure \ref{Fig:scenario1}). Forwarders C' and B' receive the feasibility ant and send it to their corresponding Package Agents C and B. These Package Agents now know that after they are delivered the package A is near. After C and B have added path \textit{"A"} to their tables with a default pheromon value, they will change the origin of the Feasibility Ant to "CA" and "BA" respectively and broadcast it again. This time, on
+\npar In this scenario Package Agent A (depicted as a brown box 'A') is added to the simulation. It will broadcast a Feasibility Ant \textit{"$\rightarrow A$"} in a certain radius to all forwarders (depicted as yellow flags). Forwarders C' and B' receive the feasibility ant and send it to their corresponding Package Agents C and B. These Package Agents now know in the future that package A is near after they are delivered. C and B will therefore add path \textit{"$\rightarrow A$"} to their tables with a default pheromon value, they will broadcast a new Feasibility Ant \textit{"$\rightarrow CA$"} and \textit{"$\rightarrow BA$"} respectively. Only forwarder F' receives the ant \textit{"$\rightarrow BA$"} this time and sends it to Package Agent F. Package agent F will add \textit{"$\rightarrow BA$"} to its pheromon table and broadcast a new Feasibility Ant again so the whole process can repeat itself. This goes on until the max number of hops (= number of broadcasts) is reached.
 
-This process goes on until the max number of hops (= number of times broadcasts
-
-\npar The max number of hops for Feasibility ants is in our application 1, i.e. only
+\npar For the classic PDP problem, a max number of hops of 1 is fine. Package Agents only need to know which other Package Agents are near their delivery location. Therefore only one broadcast is needed. Nevertheless could some extensions of PDP benefit from multiple hops (obligatory agents etc ...).
 
 
 \begin{figure}[!h]
