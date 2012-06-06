@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  6 JUN 2012 11:29
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.5.7)  6 JUN 2012 11:35
 entering extended mode
  %&-line parsing enabled.
 **wrapper.tex
@@ -348,24 +348,24 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./figs/logo.png (PNG copy)
 >]) (./intro.tex)
-[1] (./approach.tex <./images/feasibility.png, id=15, 2489.3pt x 3521.155pt>
-File: ./images/feasibility.png Graphic file (type png)
+[1] (./approach.tex <./figs/feasibility.png, id=15, 2489.3pt x 3521.155pt>
+File: ./figs/feasibility.png Graphic file (type png)
 
-<use ./images/feasibility.png>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<./images/exploration.png, id=16, 2489.3pt x 3521.155pt>
-File: ./images/exploration.png Graphic file (type png)
-
-<use ./images/exploration.png>
+<use ./figs/feasibility.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<./images/intention.png, id=17, 2489.3pt x 3521.155pt>
-File: ./images/intention.png Graphic file (type png)
+<./figs/exploration.png, id=16, 2489.3pt x 3521.155pt>
+File: ./figs/exploration.png Graphic file (type png)
 
-<use ./images/intention.png>
+<use ./figs/exploration.png>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<./figs/intention.png, id=17, 2489.3pt x 3521.155pt>
+File: ./figs/intention.png Graphic file (type png)
+
+<use ./figs/intention.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -373,15 +373,15 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 LaTeX Warning: Text page 3 contains only floats.
 
-[3 <./images/feasibility.png (PNG copy)>]
+[3 <./figs/feasibility.png (PNG copy)>]
 
 LaTeX Warning: Text page 4 contains only floats.
 
-[4 <./images/exploration.png (PNG copy)>]
+[4 <./figs/exploration.png (PNG copy)>]
 
 LaTeX Warning: Text page 5 contains only floats.
 
-[5 <./images/intention.png (PNG copy)>] (./development.tex
+[5 <./figs/intention.png (PNG copy)>] (./development.tex
 <./diagrams/DomainModel.pdf, id=30, 473.77pt x 348.50201pt>
 File: ./diagrams/DomainModel.pdf Graphic file (type pdf)
 
@@ -408,8 +408,8 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 1834 strings out of 495069
- 22065 string characters out of 1182887
+ 1833 strings out of 495069
+ 22032 string characters out of 1182887
  73700 words of memory out of 3000000
  4976 multiletter control sequences out of 15000+50000
  12309 words of font info for 45 fonts, out of 3000000 for 9000
