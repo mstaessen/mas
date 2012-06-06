@@ -59,6 +59,17 @@ over ants is further explained in the following scenarios.
 \subsection*{Scenario III: Sending of Intention Ants}
 \label{subsec:scenario3}
 \npar \textit{Scenario II is illustrated in Figure \ref{Fig:scenario3}.}
+\npar In this scenario the truck sends an Intention Path over the whole path of Package Agents that its planning to do. This path is the path with the highest corresponding pheromone value. Just as with pheromone tables for Package Agents do these pheromone values \textit{"evaporate"} in time. They get increased by returning Exploration Ants though.
+
+\npar The path the truck is planning to do is \textit{$\rightarrow EGF$}. The truck sends an Intention Ant to Package Agent E. The Intention Ant will mark Package Agent E as "claimed by Truck X for time Y". This means that this Package Agent will no longer contribute pheromones for other trucks in the heuristic function to evaluate a path. If after a time Y no new Intention ant has reclaimed the Package Agent for truck X, the claim will expire and the PackageAgent will again contribute pheromones for other Trucks.
+
+\npar After Package Agent E, the Intention Ant is send to Package Agents G and then F to do the same there. After Package Agent F then Intention Ant is send back to the truck to evaluate the whole path again (in the same way as an Exploration Ant). This is not necessary though.
+
+
+
+
+
+ for  decrease the pheromone value of path \textit{$\rightarrow G$} in E. This way it is less likely that Exploration Ants will visit G from E and therefore it is less likely that other Truc
 
 \begin{figure}[!h]
         \vspace{0.5pt}
