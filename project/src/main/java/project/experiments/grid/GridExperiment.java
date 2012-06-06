@@ -3,6 +3,7 @@ package project.experiments.grid;
 import java.io.IOException;
 
 import project.experiments.Experiment;
+import project.strategies.delegatemas.colony.Settings;
 import rinde.sim.event.pdp.StandardType;
 import rinde.sim.scenario.Scenario;
 import rinde.sim.scenario.ScenarioBuilder;
@@ -45,6 +46,11 @@ public abstract class GridExperiment extends Experiment {
     public static void main(String[] args) {
 	try {
 	    String fileName = "./files/results/grid.csv";
+	    
+	    Settings.MAX_HOPS_EXPLORATION_ANT = 3;
+	    Settings.MAX_HOPS_FEASIBILITY_ANT = 1;
+	    Settings.BROADCAST_RANGE = 60;
+	    
 	    Experiment gfExperiment = new GFExperiment(fileName);
 	    gfExperiment.runMultiple(TIMES, true, false, false, "Gradient Field");
 

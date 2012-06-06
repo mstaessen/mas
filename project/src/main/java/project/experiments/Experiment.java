@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 import project.common.controller.AbstractController;
 import project.common.listeners.Report;
@@ -27,6 +28,8 @@ public abstract class Experiment {
     private String reportFile;
     private boolean append = false;
     private String testName = "";
+
+    private Semaphore sem = new Semaphore(1);
 
     public Experiment(String reportUri) throws IOException {
 	this.reportFile = reportUri;
@@ -54,9 +57,12 @@ public abstract class Experiment {
 	    writeLine(id++, report);
 	}
 	writeTotalAverage();
+	reports.clear();
 
 	writer.flush();
 	writer.close();
+
+	sem.release();
     }
 
     private void writeTotalAverage() throws IOException {
@@ -119,7 +125,9 @@ public abstract class Experiment {
 
     protected void writeTestName() throws IOException {
 	if (!testName.trim().equals("")) {
-	    writer.write("---" + testName + "---");
+	    writer.write("\n");
+	    writer.write(testName);
+	    writer.write("\n");
 	}
 	testName = "";
     }
@@ -150,6 +158,13 @@ public abstract class Experiment {
     public void runMultiple(int times, boolean randomSeed, boolean ui, boolean appendToFile, String name) {
 	if (times < 1) {
 	    throw new IllegalArgumentException("You have to run it at least one time.");
+	}
+
+	try {
+	    sem.acquire();
+	} catch (InterruptedException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
 
 	this.append = appendToFile;
