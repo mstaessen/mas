@@ -1,5 +1,6 @@
 package project.strategies.delegatemas;
 
+import project.strategies.delegatemas.colony.Settings;
 import rinde.sim.event.pdp.StandardType;
 import rinde.sim.scenario.Scenario;
 import rinde.sim.scenario.ScenarioBuilder;
@@ -7,33 +8,33 @@ import rinde.sim.scenario.TimedEvent;
 
 public class DelegateMasDemo {
 
+    // Manhattan
+    private static final String MAP_DIR = "files/maps/";
+    private static final String MAP = "grid-10x10.dot";
+    private static final String MAP_URI = MAP_DIR + MAP;
+
+    private static final long START = 0;
+    private static final long TIMESTEP = 24 * 60 * 60 * 1000;
+    private static final long END = 20 * TIMESTEP;
+
     public static void main(String[] args) throws Exception {
-	ScenarioBuilder builder = new ScenarioBuilder(StandardType.DO_TEST, StandardType.ADD_TRUCK, StandardType.ADD_PACKAGE);
 
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, // at
-									      // time
-									      // 0
-		3, // amount of trucks to be added
+	ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_PACKAGE, StandardType.ADD_TRUCK,
+		StandardType.STOP_SIMULATION);
+	// Add 3 trucks at time 0
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 3,
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
+	// Add 12 packages at time 0
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 12,
 
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, // at
-									      // time
-									      // 0
-		12, // amount of packages to be added
-		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-
-	
-//	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(3000,1
-//		,new ScenarioBuilder.EventTypeFunction(StandardType.DO_TEST)));
-	
-
+	new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
+	// End the simulation after 10 * timeStep
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(END, 1,
+		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
 	Scenario scenario = builder.build();
 
-	final String MAP_DIR = "./files/maps/";
-	new DelegateMasController(scenario, -1, MAP_DIR + "grid-10x10.dot");
-	
-//	final String MAP_DIR = "../core/files/maps/";
-//	new DelegateMasController(scenario, -1, MAP_DIR + "leuven-simple.dot");
+	Settings.MAX_HOPS_EXPLORATION_ANT = 5;
+	DelegateMasController controller = new DelegateMasController(scenario, -1, MAP_URI);
+	controller.startUi(148);
     }
-
 }

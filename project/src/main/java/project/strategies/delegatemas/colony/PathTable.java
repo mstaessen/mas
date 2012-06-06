@@ -2,7 +2,10 @@ package project.strategies.delegatemas.colony;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.math.random.RandomGenerator;
 
@@ -11,18 +14,22 @@ import rinde.sim.core.model.RoadModel;
 
 public class PathTable {
 
-    private List<Path> paths;
-    private List<Double> pheromones;
+    private HashMap<Path,Double> pheromones;
     private double totPheromones;
+    private double maxPheromone;
 
-    public PathTable() {
-	this.paths = new ArrayList<Path>();
-	this.pheromones = new ArrayList<Double>();
+    public PathTable(double maxPheromone) {
+	this.pheromones = new HashMap<Path,Double>();
+	this.maxPheromone = maxPheromone;
     }
 
     public void addPath(Path newPath) {
 
-	for (Path path : paths) {
+	
+	if (newPath == null || newPath.length() == 0)
+	    return;
+	    
+	for (Path path : pheromones.keySet()) {
 
 	    int i = 0;
 	    List<PackageAgent> newNodes = newPath.getListPackageAgents();
@@ -41,103 +48,156 @@ public class PathTable {
 	}
 
 	// Checked all paths for uniqueness.
-	paths.add(newPath);
-	pheromones.add(Settings.START_PHEROMONE_PATH);
+	pheromones.put(newPath,Settings.START_PHEROMONE_PATH);
 	totPheromones += Settings.START_PHEROMONE_PATH;
+    }
+    
+    public void purgeFromTable(PackageAgent agent) {
+	
+	List<Path> toBeRemoved = new ArrayList<Path>();
+	HashMap<Path,Double> toBeAdded = new HashMap<Path,Double>();
+	for (Path path : pheromones.keySet()) {
+	    
+	    if (path.length() == 0) {
+		toBeRemoved.add(path);
+	    } else if (path.getFirst().equals(agent)) {
+		toBeRemoved.add(path);
+		Path newPath = path.getPathWithoutFirst();
+		if (newPath.length() != 0 && !newPath.contains(agent)) {
+		    toBeAdded.put(newPath, pheromones.get(path));
+		}
+	    } else {
+		toBeRemoved.add(path);
+	    }
+	}
+	for (Path p: toBeRemoved) {
+	    pheromones.remove(p);
+	}
+	pheromones.putAll(toBeAdded);
+	
     }
 
     public void penaltyPheromones(Path path) {
-	for (int index=0; index < paths.size(); index++) {
-	    Path commonPart = path.getCommonPart(paths.get(index));
+	for (Path p: pheromones.keySet()) {
+	    Path commonPart = path.getCommonPart(p);
 	    if (commonPart.length() > 0) {
-		pheromones.set(index, 3*Settings.MIN_PHEROMONE_PATH);
+		pheromones.put(p, Settings.START_PHEROMONE_PATH/2);
 	    }
 	}
     }
-    
+
     public void updatePheromones(Path path, Point start, RoadModel model) {
-	
-	for (int index=0; index < paths.size(); index++) {
-	    Path commonPart = path.getCommonPart(paths.get(index));
+
+	for (Path p: pheromones.keySet()) {
+	    Path commonPart = path.getCommonPart(p);
 	    if (commonPart.length() > 0) {
-		
+
 		double pheromoneBonus = commonPart.getPheromoneBonusForPath(start, model);
-		double newPheromoneLevel = Math.min(pheromones.get(index) + pheromoneBonus,Settings.MAX_PHEROMONE_PATH);
-		double pheromoneAdded = newPheromoneLevel - pheromones.get(index);
+		double newPheromoneLevel = Math
+			.min(pheromones.get(p) + pheromoneBonus, maxPheromone);
+		double pheromoneAdded = newPheromoneLevel - pheromones.get(p);
 		totPheromones += pheromoneAdded;
-		pheromones.set(index, newPheromoneLevel);
+		pheromones.put(p, newPheromoneLevel);
 	    }
 	}
-	
+
     }
 
     public void evaporate() {
-	for (int i = 0; i < pheromones.size(); i++) {
-	    
-	    double evaporation = 0.05*Settings.MAX_HOPS_EXPLORATION_ANT*pheromones.get(i)*pheromones.get(i);
-	    
-	    double newPheromone = pheromones.get(i) - evaporation;
-	    
-	    if (newPheromone < Settings.MIN_PHEROMONE_PATH) {
-		totPheromones -= pheromones.get(i);
-		pheromones.remove(i);
-		paths.remove(i);	
-		i--;
+	
+	List<Path> toBeRemoved = new ArrayList<Path>();
+	for (Path p: pheromones.keySet()) {
+
+	    double evaporation = (pheromones.get(p))/Settings.TIMESTEPS_WAIT_BEFORE_SENDING_FEASIBILITY_ANTS;
+
+	    double newPheromone = pheromones.get(p) - evaporation;
+
+	    if (newPheromone <= Settings.MIN_PHEROMONE_PATH) {
+		totPheromones -= pheromones.get(p);
+		toBeRemoved.add(p);
 	    } else {
-		pheromones.set(i, newPheromone);
+		pheromones.put(p, newPheromone);
 		totPheromones -= evaporation;
 	    }
+	}
+	for (Path p: toBeRemoved) {
+	    pheromones.remove(p);
 	}
     }
 
     public Path chosePath(RandomGenerator gen) {
 
-	if (paths.size() == 0) {
+	if (pheromones.size() == 0) {
 	    return null;
 	}
 
-	double chance = gen.nextDouble()* totPheromones;
-	int i = -1;
-	while (chance >= 0) {
-	    i++;
-	    chance -= pheromones.get(i);
-	}
-	
-	return paths.get(i);
-    }
-
-    public List<Path> getPaths() {
-	return paths;
-    }
-    
-    public Path getBestPath() {
-	
-	if (paths.size() == 0)
-	    return null;
-	
-	double best = 0;
-	int index = 0;
-	for (int i=0;i<pheromones.size();i++) {
-	    if (pheromones.get(i) > best) {
-		best = pheromones.get(i);
-		index = i;
+	double chance = gen.nextDouble() * totPheromones;
+	Path r = null;
+	for (Path p: pheromones.keySet()) {
+	    r = p;
+	    chance -= pheromones.get(p);
+	    if (chance < 0) {
+		return p;
 	    }
 	}
-	return paths.get(index);
+	return r;
+    }
+
+    public Set<Path> getPaths() {
+	return pheromones.keySet();
+    }
+
+    public Path getBestPath() {
+
+	if (pheromones.size() == 0)
+	    return null;
+
+	double best = 0;
+	Path r = null;
+	for (Path p: pheromones.keySet()) {
+	    if (pheromones.get(p) > best) {
+		best = pheromones.get(p);
+		r = p;
+	    }
+	}
+	return r;
     }
     
+    
+    public Path getBestPath2() {
+
+	if (pheromones.size() == 0)
+	    return null;
+
+	double best = 0;
+	Path r = null;
+	for (Path p: pheromones.keySet()) {
+	    if (pheromones.get(p) > best) {
+		best = pheromones.get(p);
+		r = p;
+	    }
+	}
+	return r;
+    }
+
     @Override
     public String toString() {
 	String string = "";
 	DecimalFormat df = new DecimalFormat("#.##");
-	for (int i = 0; i < paths.size(); i++) {
+	HashMap<Path,Double> pheromones2 = new HashMap<Path,Double>();
+	pheromones2.putAll(pheromones);
+	for (Path p: pheromones.keySet()) {
 	    try {
-		string += "\n" + paths.get(i).toString()+"::"+df.format(pheromones.get(i));
+		string += "\n" + p.toString() + "::" + df.format(pheromones2.get(p));
 	    } catch (IndexOutOfBoundsException e) {
 		//
 	    }
-	    
+
 	}
 	return string;
+    }
+    
+    public Double getPheromone(Path path) {
+	return pheromones.get(path);
     }
 }

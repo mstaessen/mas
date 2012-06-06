@@ -5,37 +5,36 @@ import rinde.sim.core.model.communication.Message;
 
 public class ForwardExplorationAnt extends Message {
 
-	public Path path;
-	public int hopsLeft;
-	
-	public ForwardExplorationAnt(CommunicationUser sender, Path path, int hopsLeft) {
-		super(sender);
-		if (!(sender instanceof TruckAgent)) {
-			throw new IllegalArgumentException("Only TruckAgents can send A FeasibiltyAnt");
-		} else {
-			this.path = path;
-			this.hopsLeft = hopsLeft;
-		}
+    public Path path;
+    public int hopsLeft;
+
+    public ForwardExplorationAnt(CommunicationUser sender, Path path, int hopsLeft) {
+	super(sender);
+	if (!(sender instanceof TruckAgent)) {
+	    throw new IllegalArgumentException("Only TruckAgents can send A FeasibiltyAnt");
+	} else {
+	    this.path = path;
+	    this.hopsLeft = hopsLeft;
 	}
-	
-	
-	public ForwardExplorationAnt(CommunicationUser sender, int hopsLeft) {
-		super(sender);
-		if (!(sender instanceof TruckAgent)) {
-			throw new IllegalArgumentException("Only TruckAgents can send A FeasibiltyAnt");
-		} else {
-			this.path = new Path();
-			this.hopsLeft = hopsLeft;
-		}
-		
+    }
+
+    public ForwardExplorationAnt(CommunicationUser sender, int hopsLeft) {
+	super(sender);
+	if (!(sender instanceof TruckAgent)) {
+	    throw new IllegalArgumentException("Only TruckAgents can send A FeasibiltyAnt");
+	} else {
+	    this.path = new Path();
+	    this.hopsLeft = hopsLeft;
 	}
-	
-	public Path getPath() {
-		return path;
-	}
-	
-	public int getHopsLeft() {
-		return hopsLeft;
-	}
+
+    }
+
+    public Path getPath() {
+	return path;
+    }
+
+    public int getHopsLeft() {
+	return hopsLeft;
+    }
 
 }

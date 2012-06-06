@@ -32,12 +32,19 @@ public class TruckAgent extends AbstractTruckAgent implements VirtualEntity {
      */
     @Override
     public void tick(long currentTime, long timeStep) {
+	// Drive the remaining path
 	if (!getPath().isEmpty()) {
 	    followPath(timeStep);
-	} else {
+	}
+
+	if (getPath().isEmpty()) {
+	    // If the truck is loaded, unload
 	    if (getTruck().hasLoad()) {
 		tryDelivery();
-	    } else {
+	    }
+	    // Don't use "else"!
+	    // Like his, you can pickup and deliver in the same tick
+	    if (!getTruck().hasLoad()) {
 		tryPickup();
 	    }
 	}

@@ -1,6 +1,8 @@
 package project.common.renderers;
 
 import java.text.DecimalFormat;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.swt.graphics.GC;
 
@@ -25,7 +27,8 @@ public class GradientFieldRenderer extends AbstractRenderer {
     public void render(GC gc, double xOrigin, double yOrigin, double minX, double minY, double scale) {
 	super.render(gc, xOrigin, yOrigin, minX, minY, scale);
 
-	for (Point node : rModel.getGraph().getNodes()) {
+	Set<Point> nodes = new HashSet<Point>(rModel.getGraph().getNodes());
+	for (Point node : nodes) {
 	    final int x = (int) (xOrigin + (node.x - minX) * scale);
 	    final int y = (int) (yOrigin + (node.y - minY) * scale);
 

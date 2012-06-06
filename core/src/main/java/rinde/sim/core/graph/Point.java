@@ -14,6 +14,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class Point implements Serializable {
 
 	private static final long serialVersionUID = -7501053764573661924L;
+	private static final double EPSILON = 0.001d;
 	public final double x;
 	public final double y;
 
@@ -31,13 +32,13 @@ public class Point implements Serializable {
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 
-	//	public static double length(List<Point> path) {
-	//		double length = 0;
-	//		for (int i = 1; i < path.size(); i++) {
-	//			length += Point.distance(path.get(i - 1), path.get(i));
-	//		}
-	//		return length;
-	//	}
+	// public static double length(List<Point> path) {
+	// double length = 0;
+	// for (int i = 1; i < path.size(); i++) {
+	// length += Point.distance(path.get(i - 1), path.get(i));
+	// }
+	// return length;
+	// }
 
 	public static Point diff(Point p1, Point p2) {
 		return new Point(p1.x - p2.x, p1.y - p2.y);
@@ -61,7 +62,8 @@ public class Point implements Serializable {
 		if (p == null) {
 			return false;
 		}
-		return x == p.x && y == p.y; //hashCode() == p.hashCode();
+		return Math.abs(x - p.x) <= EPSILON && Math.abs(y - p.y) <= EPSILON;
+		// hashCode() == p.hashCode();
 	}
 
 	@Override
@@ -71,10 +73,10 @@ public class Point implements Serializable {
 		}
 		return false;
 
-		//		if (p instanceof Point) {
-		//			return this.equals((Point) p);
-		//		}
-		//		return false;
+		// if (p instanceof Point) {
+		// return this.equals((Point) p);
+		// }
+		// return false;
 	}
 
 	@Override

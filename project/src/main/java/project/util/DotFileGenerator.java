@@ -14,7 +14,7 @@ public class DotFileGenerator {
     private static final String BASE_PATH = "files/maps/";
     private static final int DEFAULT_WIDTH = 10;
     private static final int DEFAULT_HEIGHT = 10;
-    private static final int NODE_DISTANCE = 50;
+    private static final int NODE_DISTANCE = 20;
     private static final int EDGE_MAX_SPEED = 3000;
 
     public DotFileGenerator(int width, int height, File outputFile) {

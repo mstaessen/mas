@@ -11,7 +11,6 @@ import rinde.sim.core.model.communication.Message;
 
 public class PackageAgent implements TickListener, SimulatorUser, CommunicationUser {
 
-    private final int id;
     private Package myPackage;
     private PackageDestination destination;
     private PathTable pathTable;
@@ -20,13 +19,10 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     private CommunicationAPI communicationAPI;
     private long lastFeasibilityCheck;
 
-    private boolean packagePickedUp = false;
-
-    public PackageAgent(int id, Package myPackage) {
-	this.id = id;
+    public PackageAgent(Package myPackage) {
 	this.myPackage = myPackage;
 	this.lastFeasibilityCheck = Integer.MAX_VALUE;
-	this.pathTable = new PathTable();
+	this.pathTable = new PathTable(Settings.MAX_PACKAGE_PHEROMONE_PATH);
 	this.destination = new PackageDestination(this, myPackage.getDeliveryLocation());
     }
 
@@ -87,13 +83,13 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     }
 
     public int getId() {
-	return this.id;
+	return this.getPackage().getId();
     }
 
     @Override
     public void receive(Message message) {
 
-	if (!myPackage.isPickedUp()) {
+	if (pickedUpBy == null || (message.getSender().equals(pickedUpBy) && !myPackage.isDelivered())) {
 	    if (message instanceof FeasibilityAnt) {
 		FeasibilityAnt fAnt = (FeasibilityAnt) message;
 		receiveFeasibilityAnt(fAnt);
@@ -114,7 +110,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	if (iAnt.getPathAhead().length() == 0) {
 	    throw new IllegalArgumentException("Should not be receiving this ant");
 	} else {
-	    
+
 	    if (!iAnt.getPathAhead().getFirst().equals(this)) {
 		throw new IllegalArgumentException("Should not be receiving this ant");
 	    }
@@ -124,14 +120,15 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 		Path newPathDone = new Path(iAnt.getPathDone(), this);
 		communicationAPI.send(iAnt.getSender(), new IntentionAnt(iAnt.getSender(), newPathDone, new Path()));
 	    } else {
-		// apply penalty
-		pathTable.penaltyPheromones(iAnt.getPathAhead());
 		
+		// apply penalty
+		pathTable.penaltyPheromones(iAnt.getPathAhead().getPathWithoutFirst());
+
 		// forward it to next agent.
 		Path newPathDone = new Path(iAnt.getPathDone(), this);
 		Path newPathAhead = iAnt.getPathAhead().getPathWithoutFirst();
 		PackageAgent receiver = newPathAhead.getFirst();
-		communicationAPI.send(receiver, new IntentionAnt(iAnt.getSender(),newPathDone,newPathAhead));
+		communicationAPI.send(receiver, new IntentionAnt(iAnt.getSender(), newPathDone, newPathAhead));
 	    }
 	}
 
@@ -231,4 +228,11 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 
 	return string;
     }
+    
+    private CommunicationUser pickedUpBy = null;
+    public void isPickedUpBy(TruckAgent agent) {
+	this.pickedUpBy = agent;
+    }
 }
+
+

@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import project.common.packages.Package;
-import project.common.packages.Priority;
 import rinde.sim.core.graph.Graphs;
 import rinde.sim.core.graph.Point;
 import rinde.sim.core.model.RoadModel;
-import rinde.sim.core.model.RoadUser;
 
 public class Path implements Iterable<PackageAgent> {
 
@@ -32,7 +29,7 @@ public class Path implements Iterable<PackageAgent> {
 	this(path);
 	this.packageAgents.add(agent);
     }
-    
+
     public Path(PackageAgent agent, Path path) {
 	this(path);
 	this.packageAgents.add(0, agent);
@@ -59,7 +56,7 @@ public class Path implements Iterable<PackageAgent> {
     public PackageAgent getLast() {
 	return packageAgents.get(packageAgents.size() - 1);
     }
-    
+
     public PackageAgent getFirst() {
 	return packageAgents.get(0);
     }
@@ -73,7 +70,7 @@ public class Path implements Iterable<PackageAgent> {
 	newPath.packageAgents.remove(this.getLast());
 	return newPath;
     }
-    
+
     public Path getPathWithoutFirst() {
 	Path newPath = new Path(this);
 	newPath.packageAgents.remove(this.getFirst());
@@ -126,17 +123,17 @@ public class Path implements Iterable<PackageAgent> {
 	for (PackageAgent agent : packageAgents) {
 
 	    Point pickup = agent.getPackage().getPickupLocation();
-	    
-	    double uselessLength = Graphs.pathLength(model.getShortestPathTo(prevDellivery, pickup));
+
+	    double uselessLength = Point.distance(prevDellivery, pickup);
 	    prevDellivery = agent.getPackage().getDeliveryLocation();
-	    
-	    double ratio = Math.max(uselessLength/Settings.BROADCAST_RANGE, 0.1);
-	    
-	    double bonusTerm = 10*agent.getPackage().getPriority()/(ratio);
+
+	    double ratio = Math.max(uselessLength / Settings.BROADCAST_RANGE, 0.1);
+
+	    double bonusTerm = agent.getPackage().getPriority() / (ratio);
 	    bonus += bonusTerm;
 	}
 
-	return bonus;
+	return bonus/Settings.MAX_HOPS_EXPLORATION_ANT;
     }
 
     public Path getCommonPart(Path path) {

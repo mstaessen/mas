@@ -11,39 +11,42 @@ import rinde.sim.scenario.TimedEvent;
 public class ContractNetDemo {
 
     // Leuven
-    private static final String MAP_DIR = "../core/files/maps/";
-    private static final String MAP = "leuven-simple.dot";
+    private static final String LEUVEN_MAP_DIR = "../core/files/maps/";
+    private static final String LEUVEN_MAP = "leuven-simple.dot";
+    private static final String LEUVEN_MAP_URI = LEUVEN_MAP_DIR + LEUVEN_MAP;
 
     // Manhattan
-    // private static final String MAP_DIR = "files/maps/";
-    // private static final String MAP = "grid-16x9.dot";
-
+    private static final String MAP_DIR = "files/maps/";
+    private static final String MAP = "grid-10x10.dot";
     private static final String MAP_URI = MAP_DIR + MAP;
+
+    private static final long START = 0;
+    private static final long TIMESTEP = 24 * 60 * 60 * 1000;
+    private static final long END = 20 * TIMESTEP;
 
     public static void main(String[] args) throws Exception {
 
-	int timeStep = 24 * 60 * 60 * 1000;
 	ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_PACKAGE, StandardType.ADD_TRUCK,
 		StandardType.STOP_SIMULATION);
 	// Add 3 trucks at time 0
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 3, new ScenarioBuilder.EventTypeFunction(
-		StandardType.ADD_TRUCK)));
-	// Add 2 packages at time 0
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(0, 2, new ScenarioBuilder.EventTypeFunction(
-		StandardType.ADD_PACKAGE)));
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 3,
+		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));
+	// Add 6 packages at time 0
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 6,
+		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
 	// Add 2 Packages every timeStep
-	for (int i = 0; i < 2; i++) {
-	    builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(0, 10 * timeStep, timeStep,
-		    new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
-	}
-	// End the simulation after 10 * timeStep
-	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(10 * timeStep, 1,
+	// for (int i = 0; i < 2; i++) {
+	// builder.add(new ScenarioBuilder.TimeSeries<TimedEvent>(START, END,
+	// TIMESTEP,
+	// new ScenarioBuilder.EventTypeFunction(StandardType.ADD_PACKAGE)));
+	// }
+	// End the simulation after some time
+	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(END, 1,
 		new ScenarioBuilder.EventTypeFunction(StandardType.STOP_SIMULATION)));
 	Scenario scenario = builder.build();
 
+	// Create a controller and dispatch it with an initial speed of 3
 	ContractNetController controller = new ContractNetController(scenario, -1, MAP_URI);
-
-	// Dispatch the controller with an initial speed of 3
-	controller.dispatch(3);
+	controller.startUi(3);
     }
 }

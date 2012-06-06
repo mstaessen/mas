@@ -22,6 +22,7 @@ public class Truck implements MovingRoadUser {
     private Package load = null;
     private RoadModel rm;
     private static int counter = 0;
+    private double accumulatedDistance = 0;
 
     public Truck(Point startLocation) {
 	this.id = counter++;
@@ -59,7 +60,9 @@ public class Truck implements MovingRoadUser {
     }
 
     public PathProgress drive(Queue<Point> path, long time) {
-	return getRoadModel().followPath(this, path, time);
+	PathProgress progress = getRoadModel().followPath(this, path, time);
+	accumulatedDistance += progress.distance;
+	return progress;
     }
 
     public Point getPosition() {
@@ -125,5 +128,9 @@ public class Truck implements MovingRoadUser {
 	    }
 	}
 	return false;
+    }
+
+    public double getAccumulatedDistance() {
+	return accumulatedDistance;
     }
 }

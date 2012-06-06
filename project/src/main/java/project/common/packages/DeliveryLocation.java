@@ -1,4 +1,3 @@
-
 package project.common.packages;
 
 import rinde.sim.core.graph.Point;

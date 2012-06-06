@@ -6,10 +6,10 @@ public enum Priority {
     LOW, MEDIUM, HIGH;
 
     public static Priority valueOf(double input) {
-	if(input < 0 || input > 1) {
+	if (input < 0 || input > 1) {
 	    throw new IllegalArgumentException("Priority must be between 0 and 1.");
 	}
-	
+
 	return values()[(int) Math.round(2 * input)];
     }
 
