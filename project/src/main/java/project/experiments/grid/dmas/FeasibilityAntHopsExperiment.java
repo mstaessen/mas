@@ -18,12 +18,12 @@ public class FeasibilityAntHopsExperiment extends DMASExperiment {
 		    "./files/results/grid.dmas_feasibilityHops.csv");
 
 	    Settings.MAX_HOPS_FEASIBILITY_ANT = 1;
-	    hopsExperiment.runMultiple(10, true, false, false, "Max Hops Feasibility Ants = "
+	    hopsExperiment.runMultiple(10, true, false, "Max Hops Feasibility Ants = "
 		    + Settings.MAX_HOPS_FEASIBILITY_ANT);
 
 	    for (int i = 0; i < 4; i++) {
 		Settings.MAX_HOPS_FEASIBILITY_ANT++;
-		hopsExperiment.runMultiple(10, true, false, true, "Max Hops Feasibility Ants = "
+		hopsExperiment.runMultiple(10, true, false, "Max Hops Feasibility Ants = "
 			+ Settings.MAX_HOPS_FEASIBILITY_ANT);
 	    }
 

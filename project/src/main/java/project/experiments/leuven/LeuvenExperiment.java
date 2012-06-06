@@ -1,20 +1,22 @@
-package project.experiments.grid;
+package project.experiments.leuven;
 
 import java.io.IOException;
 
 import project.experiments.Experiment;
+import project.experiments.leuven.CNetExperiment;
+import project.experiments.leuven.DMASExperiment;
+import project.experiments.leuven.GFExperiment;
 import project.strategies.delegatemas.colony.Settings;
 import rinde.sim.event.pdp.StandardType;
 import rinde.sim.scenario.Scenario;
 import rinde.sim.scenario.ScenarioBuilder;
 import rinde.sim.scenario.TimedEvent;
 
-public abstract class GridExperiment extends Experiment {
-
+public abstract class LeuvenExperiment extends Experiment {
     private static final int TIMES = 10;
 
-    protected static final String MAP_DIR = "files/maps/";
-    protected static final String MAP = "grid-10x10.dot";
+    protected static final String MAP_DIR = "../core/files/maps/";
+    protected static final String MAP = "leuven-simple.dot";
     protected static final String MAP_URI = MAP_DIR + MAP;
 
     protected static final long START = 0;
@@ -24,7 +26,7 @@ public abstract class GridExperiment extends Experiment {
     protected static final int NB_TRUCKS = 3;
     protected static final int NB_PACKAGES = 3 * NB_TRUCKS;
 
-    public GridExperiment(String reportFile) throws IOException {
+    public LeuvenExperiment(String reportFile) throws IOException {
 	super(reportFile);
     }
 
@@ -45,11 +47,11 @@ public abstract class GridExperiment extends Experiment {
 
     public static void main(String[] args) {
 	try {
-	    String fileName = "./files/results/grid.csv";
+	    String fileName = "./files/results/leuven.csv";
 
 	    Settings.MAX_HOPS_EXPLORATION_ANT = 3;
 	    Settings.MAX_HOPS_FEASIBILITY_ANT = 1;
-	    Settings.BROADCAST_RANGE = 60;
+	    Settings.BROADCAST_RANGE = 8000;
 
 	    Experiment gfExperiment = new GFExperiment(fileName);
 	    gfExperiment.runMultiple(TIMES, true, false, "Gradient Field");
@@ -64,4 +66,5 @@ public abstract class GridExperiment extends Experiment {
 	    e.printStackTrace();
 	}
     }
+
 }

@@ -24,15 +24,23 @@ public abstract class Experiment {
 
     protected FileWriter writer;
     private int runs;
-    private Random random = new Random(123);
+    private Random random = new Random(97);
     private String reportFile;
-    private boolean append = false;
     private String testName = "";
 
     private Semaphore sem = new Semaphore(1);
 
     public Experiment(String reportUri) throws IOException {
 	this.reportFile = reportUri;
+
+	clearFile(reportUri);
+    }
+
+    private void clearFile(String reportUri) throws IOException {
+	FileWriter lwriter = new FileWriter(new File(reportUri));
+	lwriter.write("");
+	lwriter.flush();
+	lwriter.close();
     }
 
     public void receiveReport(Report report) {
@@ -49,7 +57,7 @@ public abstract class Experiment {
     }
 
     public void showResults() throws IOException {
-	writer = new FileWriter(new File(reportFile), append);
+	writer = new FileWriter(new File(reportFile), true);
 	writeTestName();
 	writeHeader();
 	int id = 0;
@@ -119,7 +127,7 @@ public abstract class Experiment {
 	writer.write(";");
 	writer.write("AVG Completion Time");
 	writer.write(";");
-	writer.write("AVG Total Distance Travelled");
+	writer.write("AVG Distance For Delivery");
 	writer.write("\n");
     }
 
@@ -155,7 +163,7 @@ public abstract class Experiment {
 	postRun(runId);
     }
 
-    public void runMultiple(int times, boolean randomSeed, boolean ui, boolean appendToFile, String name) {
+    public void runMultiple(int times, boolean randomSeed, boolean ui, String name) {
 	if (times < 1) {
 	    throw new IllegalArgumentException("You have to run it at least one time.");
 	}
@@ -167,7 +175,6 @@ public abstract class Experiment {
 	    e.printStackTrace();
 	}
 
-	this.append = appendToFile;
 	this.runs = times;
 	this.testName = name;
 

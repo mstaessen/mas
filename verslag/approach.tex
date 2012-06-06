@@ -1,30 +1,61 @@
 \section{Approach}
 \label{sec:approach}
 
-The DMAS solution we developped defines two agents, \textit{Package Agents} and \textit{Truck Agents}. All Package Agents have a corresponding package and are located on their pickup location. Truck Agents have a corresponding truck and move along with the truck. Both agents also own a \textit{pheromon table}. These tables can hold multiple paths (list of Package Agents in a certain order) and a corresponding pheromon (heuristic value).
+The DMAS solution we developped defines two agents, \emph{Package Agents} and
+\emph{Truck Agents}. All Package Agents have a corresponding package and are
+located on the pickup location of that package. Truck Agents control a
+corresponding truck and move along with the truck. Both agents also own a
+\emph{pheromon table}. These tables can hold multiple paths (list of Package
+Agents in a certain order) and a corresponding pheromon (heuristic value).
 
-\npar Package Agents and Truck Agents communicate with each other by sending ants. These are a sort of smart messages.
+\npar Package Agents and Truck Agents communicate with each other by sending
+ants. These are a sort of smart messages.
 
-\npar There is also a \textit{"forwarder"} placed in each delivery location of a package. These \textit{"forwarders"} will send all received ants to the Package Agent corresponding with the package for the local delivery location. Because of their limited intelligence, forwarders are not considered to be agents.
+\npar There is also a \emph{"forwarder"} placed in each delivery location of a
+package. These \emph{"forwarders"} will send all received ants to the Package
+Agent corresponding with the package for the local delivery location. Because of
+their limited intelligence, forwarders are not considered to be agents.
 
-\npar Like most DMAS based on ACO, three type of ants will be used, they will be used in the following way:
-\begin{itemize}
+\npar Like most DMAS based on ACO, three type of ants will be used. They will be
+used in the following way:
 
-\item \textbf{Feasability Ants}, these ants will be periodically broadcasted over a certain radius from the Package Agents to the forwarders. Their main purpose is to inform other Package Agents wich Package Agents are in a certain radius near their dellivery location.
+\begin{description}
+	\item[Feasability Ants] These ants will be periodically broadcasted
+	over a certain radius from the Package Agents to the forwarders (delivery
+	locations). Their main purpose is to inform other Package Agents wich Package
+	Agents are in a certain radius near their delivery location.
 
-\item \textbf{Exploration Ants}, these ants will be send from the Truck Agents to discover and evaluate a path of Package Agents. They will update the pheromons table in the Package Agents during their return over the discovered path.
+	\item[Exploration Ants] These ants will be sent from the Truck Agents
+	to discover and evaluate a path of Package Agents. They will update the
+	pheromons table in the Package Agents during their return over the discovered
+	path.
+	
+	\item[Intention Ants] These ants will be sent from the Truck Agents
+	over the path of Package Agents that they are planning to follow. These ants
+	will decrease the pheromon values for that path in the visited Package Agents
+	in order to discourage other agents to follow this path.
+\end{description}
 
-\item \textbf{Intention Ants}, these ants will be send from the Truck Agents over the path of Package Agents that they are planning to do. These ants will decrease the pheromon values for that path in the visited Package Agents.
-
-\end{itemize}
-
-\npar How agents find an optimal path by using the pheromones and communication over ants is further explained by the following scenarios.
+\npar How agents find an optimal path by using the pheromones and communication
+over ants is further explained in the following scenarios.
 
 \subsection*{Scenario I: Broadcasting of Feasibility Ants}
 \label{subsec:scenario1}
 \npar \textit{Scenario is illustrated in Figure \ref{Fig:scenario1}.}
 
+<<<<<<< HEAD
 \npar In this scenario Package Agent A (depicted as a brown box 'A') is added to the simulation. It will broadcast a Feasibility Ant \textit{"$\rightarrow A$"} in a certain radius to all forwarders (depicted as yellow flags). Forwarders C' and B' receive the feasibility ant and send it to their corresponding Package Agents C and B. These Package Agents now know in the future that package A is near after they are delivered. C and B will therefore add path \textit{"$\rightarrow A$"} to their tables with a default pheromon value, they will broadcast a new Feasibility Ant \textit{"$\rightarrow CA$"} and \textit{"$\rightarrow BA$"} respectively. Only forwarder F' receives the ant \textit{"$\rightarrow BA$"} this time and sends it to Package Agent F. Package agent F will add \textit{"$\rightarrow BA$"} to its pheromon table and broadcast a new Feasibility Ant again so the whole process can repeat itself. This goes on until the max number of hops (= number of broadcasts) is reached.
+=======
+When Package Agent A (depicted as a brown box 'A' in Figure \ref{Fig:scenario1})
+is added to the simulation it will broadcast a Feasibility Ant with origin
+\emph{"A"} in a certain radius to all delivery locations (forwarders, depicted
+as a yellow flags in Figure \ref{Fig:scenario1}). Forwarders C' and B' receive
+the feasibility ant and send it to their corresponding Package Agents C and B.
+These Package Agents now know that after their packages are delivered, package A
+is near. After C and B have added path \emph{"A"} to their tables with a default
+pheromon value, they will change the origin of the Feasibility Ant to "CA" and
+"BA" respectively and broadcast it again. This time, on
+>>>>>>> 96418d662a9812a88f7be2a55705cb521b259ec2
 
 \npar For the classic PDP problem, a max number of hops of 1 is fine. Package Agents only need to know which other Package Agents are near their delivery location. Therefore only one broadcast is needed. Nevertheless could some extensions of PDP benefit from multiple hops (obligatory agents etc ...).
 

@@ -137,7 +137,7 @@ public abstract class AbstractController extends ScenarioController {
 	for (Truck truck : trucks) {
 	    averageDistance += truck.getAccumulatedDistance();
 	}
-	report.setAvgDistance(averageDistance / trucks.size());
+	report.setAvgDistance(averageDistance / report.getDeliveredPackages());
 
 	if (experiment != null) {
 	    experiment.receiveReport(report);
