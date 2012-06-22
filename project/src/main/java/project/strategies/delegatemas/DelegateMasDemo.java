@@ -26,6 +26,7 @@ public class DelegateMasDemo {
 
 	ScenarioBuilder builder = new ScenarioBuilder(StandardType.ADD_PACKAGE, StandardType.ADD_TRUCK,
 		StandardType.STOP_SIMULATION);
+	
 	// Add 3 trucks at time 0
 	builder.add(new ScenarioBuilder.MultipleEventGenerator<TimedEvent>(START, 3,
 		new ScenarioBuilder.EventTypeFunction(StandardType.ADD_TRUCK)));

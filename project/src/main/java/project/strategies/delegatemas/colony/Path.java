@@ -112,7 +112,7 @@ public class Path implements Iterable<PackageAgent> {
 	return packageAgents.iterator();
     }
 
-    public double getPheromoneBonusForPath(Point start, RoadModel model) {
+    public double getPheromoneBonusForPath(Point start, List<Double> intentionValues, RoadModel model) {
 
 	if (packageAgents.size() == 0) {
 	    return 0;
@@ -120,6 +120,7 @@ public class Path implements Iterable<PackageAgent> {
 
 	double bonus = 0;
 	Point prevDellivery = start;
+	int i = 0;
 	for (PackageAgent agent : packageAgents) {
 
 	    Point pickup = agent.getPackage().getPickupLocation();
@@ -128,9 +129,19 @@ public class Path implements Iterable<PackageAgent> {
 	    prevDellivery = agent.getPackage().getDeliveryLocation();
 
 	    double ratio = Math.max(uselessLength / Settings.BROADCAST_RANGE, 0.1);
-
-	    double bonusTerm = agent.getPackage().getPriority() / (ratio);
+	    ratio *= ratio;
+	    
+	    double positionRatio = ((double) (length()-i))/length(); 
+	    positionRatio *= positionRatio;
+	    
+	    double intentionValue = 1;
+	    if (intentionValues != null) {
+		intentionValue = intentionValues.get(intentionValues.size()-i-1);
+	    }
+	    
+	    double bonusTerm = (1 / (ratio))*(intentionValue*positionRatio);
 	    bonus += bonusTerm;
+	    i++;
 	}
 
 	return bonus/Settings.MAX_HOPS_EXPLORATION_ANT;

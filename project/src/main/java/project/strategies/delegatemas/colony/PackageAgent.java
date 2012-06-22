@@ -1,5 +1,8 @@
 package project.strategies.delegatemas.colony;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import project.common.packages.Package;
 import rinde.sim.core.SimulatorAPI;
 import rinde.sim.core.SimulatorUser;
@@ -9,7 +12,7 @@ import rinde.sim.core.model.communication.CommunicationAPI;
 import rinde.sim.core.model.communication.CommunicationUser;
 import rinde.sim.core.model.communication.Message;
 
-public class PackageAgent implements TickListener, SimulatorUser, CommunicationUser {
+public class PackageAgent implements TickListener, SimulatorUser, CommunicationUser, Comparable<PackageAgent> {
 
     private Package myPackage;
     private PackageDestination destination;
@@ -17,12 +20,14 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 
     private SimulatorAPI simulatorAPI;
     private CommunicationAPI communicationAPI;
-    private long lastFeasibilityCheck;
+
+    private static final double PHEROMONE_BONUS_FEASIBILITY = Settings.START_PACKAGE_PHEROMONE_PATH
+	    * Settings.EVAPORATION_RATE;
 
     public PackageAgent(Package myPackage) {
 	this.myPackage = myPackage;
-	this.lastFeasibilityCheck = Integer.MAX_VALUE;
-	this.pathTable = new PathTable(Settings.MAX_PACKAGE_PHEROMONE_PATH);
+	this.pathTable = new PathTable(Settings.MAX_PACKAGE_PHEROMONE_PATH, Settings.MIN_PACKAGE_PHEROMONE_PATH,
+		Settings.START_PACKAGE_PHEROMONE_PATH);
 	this.destination = new PackageDestination(this, myPackage.getDeliveryLocation());
     }
 
@@ -34,16 +39,20 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     @Override
     public void tick(long currentTime, long timeStep) {
 
+	// Send feasibility Ants
+	if (intentionValue > Math.random()) {
+	    sendFeasibilityAnts();
+	} else {
+	    tSinceClaim++;
+	    if (tSinceClaim > Settings.DURATION_CLAIM) {
+		intentionValue = 1;
+		claimer = null;
+	    }
+	}
+
 	// Evoperate pheromones.
 	pathTable.evaporate();
 
-	// Check for feasibibility
-	if (lastFeasibilityCheck > Settings.TIMESTEPS_WAIT_BEFORE_SENDING_FEASIBILITY_ANTS) {
-	    sendFeasibilityAnts();
-	    lastFeasibilityCheck = 0;
-	} else {
-	    lastFeasibilityCheck++;
-	}
     }
 
     @Override
@@ -89,20 +98,30 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     @Override
     public void receive(Message message) {
 
-	if (pickedUpBy == null || (message.getSender().equals(pickedUpBy) && !myPackage.isDelivered())) {
-	    if (message instanceof FeasibilityAnt) {
-		FeasibilityAnt fAnt = (FeasibilityAnt) message;
-		receiveFeasibilityAnt(fAnt);
-	    } else if (message instanceof ForwardExplorationAnt) {
-		ForwardExplorationAnt eAnt = (ForwardExplorationAnt) message;
-		receiveForwardExplorationAnt(eAnt);
-	    } else if (message instanceof BackwardExplorationAnt) {
-		BackwardExplorationAnt bAnt = (BackwardExplorationAnt) message;
-		receiveBackwardEplorationAnt(bAnt);
-	    } else if (message instanceof IntentionAnt) {
-		IntentionAnt iAnt = (IntentionAnt) message;
-		receiveIntentionAnt(iAnt);
-	    }
+	if (myPackage.isDelivered()) {
+	    return;
+	}
+
+	if (message instanceof FeasibilityAnt) {
+
+	    FeasibilityAnt fAnt = (FeasibilityAnt) message;
+	    receiveFeasibilityAnt(fAnt);
+
+	} else if (message instanceof ForwardExplorationAnt) {
+
+	    ForwardExplorationAnt eAnt = (ForwardExplorationAnt) message;
+	    receiveForwardExplorationAnt(eAnt);
+
+	} else if (message instanceof BackwardExplorationAnt) {
+
+	    BackwardExplorationAnt bAnt = (BackwardExplorationAnt) message;
+	    receiveBackwardEplorationAnt(bAnt);
+
+	} else if (message instanceof IntentionAnt) {
+
+	    IntentionAnt iAnt = (IntentionAnt) message;
+	    receiveIntentionAnt(iAnt);
+
 	}
     }
 
@@ -112,23 +131,40 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	} else {
 
 	    if (!iAnt.getPathAhead().getFirst().equals(this)) {
-		throw new IllegalArgumentException("Should not be receiving this ant");
+		throw new IllegalArgumentException("Should not be receiving this ant " + getId() + "  "
+			+ iAnt.getPathAhead());
 	    }
 
-	    if (iAnt.getPathAhead().length() == 1) {
-		// send it back
-		Path newPathDone = new Path(iAnt.getPathDone(), this);
-		communicationAPI.send(iAnt.getSender(), new IntentionAnt(iAnt.getSender(), newPathDone, new Path()));
-	    } else {
-		
-		// apply penalty
-		pathTable.penaltyPheromones(iAnt.getPathAhead().getPathWithoutFirst());
+	    if (iAnt.getPathAhead().length() > 0) {
 
-		// forward it to next agent.
-		Path newPathDone = new Path(iAnt.getPathDone(), this);
-		Path newPathAhead = iAnt.getPathAhead().getPathWithoutFirst();
-		PackageAgent receiver = newPathAhead.getFirst();
-		communicationAPI.send(receiver, new IntentionAnt(iAnt.getSender(), newPathDone, newPathAhead));
+		double iValue = ((double) iAnt.getPathDone().length())
+			/ ((double) (iAnt.getPathAhead().length() + iAnt.getPathDone().length()))-Settings.INTENTION_PENALTY;
+
+		if (claimer != null) {
+		    if (iAnt.getSender().equals(claimer)) {
+			tSinceClaim = 0;
+			intentionValue = iValue;
+		    } else {
+			if (iValue < intentionValue) {
+			    claimer = (TruckAgent) iAnt.getSender();
+			    tSinceClaim = 0;
+			    intentionValue = iValue;
+			}
+		    }
+		} else {
+		    claimer = (TruckAgent) iAnt.getSender();
+		    tSinceClaim = 0;
+		    intentionValue = iValue;
+		}
+
+		if (iAnt.getPathAhead().length() > 1) {
+		    // Forward it to next agent.
+		    Path newPathDone = new Path(iAnt.getPathDone(), this);
+		    Path newPathAhead = iAnt.getPathAhead().getPathWithoutFirst();
+		    PackageAgent receiver = newPathAhead.getFirst();
+		    communicationAPI.send(receiver, new IntentionAnt(iAnt.getSender(), newPathDone, newPathAhead));
+		}
+
 	    }
 	}
 
@@ -136,12 +172,17 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 
     private void receiveBackwardEplorationAnt(BackwardExplorationAnt bAnt) {
 
+	if (myPackage.isPickedUp() && claimer != null && !bAnt.getSender().equals(claimer)) {
+	    return;
+	}
+
 	if (!bAnt.getPathToDo().contains(this)) {
 	    // if we are not in the path of the ant, do nothing
 	    return;
 	}
 
-	pathTable.updatePheromones(bAnt.getPathToEval(), myPackage.getDeliveryLocation(), myPackage.getRoadModel());
+	pathTable.addPheromoneBonus(bAnt.getPathToEval(), myPackage.getDeliveryLocation(), null,
+		myPackage.getRoadModel());
 
 	CommunicationUser receiver;
 	Path newToDo = bAnt.getPathToDo().getPathWithoutLast();
@@ -151,18 +192,29 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	    receiver = newToDo.getLast();
 	}
 
+	List<Double> intentionList = bAnt.getIntentionValues();
+	if (claimer == null || !bAnt.getSender().equals(claimer))
+	    intentionList.add(intentionValue);
+	else {
+	    intentionList.add(1d);
+	}
+
 	BackwardExplorationAnt newAnt = new BackwardExplorationAnt(bAnt.getSender(), newToDo, new Path(this,
-		bAnt.getPathToEval()));
+		bAnt.getPathToEval()), intentionList);
 
 	communicationAPI.send(receiver, newAnt);
     }
 
     private void receiveForwardExplorationAnt(ForwardExplorationAnt eAnt) {
 
+	if (myPackage.isPickedUp() && claimer != null && !eAnt.getSender().equals(claimer)) {
+	    return;
+	}
+
 	if (eAnt.getHopsLeft() - 1 > 0) {
 
 	    // Forward the ant.
-	    Path pathToGo = pathTable.chosePath(simulatorAPI.getRandomGenerator());
+	    Path pathToGo = pathTable.chosePath();
 	    if (pathToGo == null || pathToGo.length() == 0) {
 		// No paths available yet.
 		sendExplorationAntBack(eAnt);
@@ -170,6 +222,12 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	    }
 	    PackageAgent agent = pathToGo.getListPackageAgents().get(0);
 
+
+	    if (Math.random() < Settings.EARLY_RETURN_RATE_EXPLORATION_ANT) {
+		sendExplorationAntBack(eAnt);
+		return;
+	    }
+//	     forward the ant	    
 	    if (!eAnt.getPath().contains(agent)) {
 		communicationAPI.send(agent, new ForwardExplorationAnt(eAnt.getSender(),
 			new Path(eAnt.getPath(), this), eAnt.getHopsLeft() - 1));
@@ -186,8 +244,18 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
     private void sendExplorationAntBack(ForwardExplorationAnt eAnt) {
 
 	// transform to backward exploration ant.
+	List<Double> intentionList = new ArrayList<Double>();
+
+	if (claimer == null || !eAnt.getSender().equals(claimer))
+	    intentionList.add(intentionValue);
+	else {
+	    intentionList.add(1d);
+	}
+
+	intentionList.add(intentionValue);
+
 	BackwardExplorationAnt bAnt = new BackwardExplorationAnt(eAnt.getSender(), new Path(eAnt.getPath()), new Path(
-		this));
+		this), intentionList);
 	CommunicationUser receiver = null;
 	if (eAnt.getPath().length() == 0) {
 	    // return to sender
@@ -206,6 +274,9 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 
 	    // add to table
 	    pathTable.addPath(fAnt.getPath());
+
+	    // Increase the value ...
+	    pathTable.increasePheromones(fAnt.getPath(), PHEROMONE_BONUS_FEASIBILITY);
 
 	    // send to the other agents, if there are hops left.
 	    if (fAnt.getHopsLeft() - 1 > 0) {
@@ -228,11 +299,34 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 
 	return string;
     }
-    
-    private CommunicationUser pickedUpBy = null;
-    public void isPickedUpBy(TruckAgent agent) {
-	this.pickedUpBy = agent;
+
+    public String toString(int maxEntries) {
+	String string = "ID: " + getId();
+	string += pathTable.toString(maxEntries);
+
+	return string;
+    }
+
+    private double intentionValue = 1;
+    private int tSinceClaim = 0;
+    private TruckAgent claimer = null;
+
+    public double getIntentionValue() {
+	return intentionValue;
+    }
+
+    public TruckAgent getClaimer() {
+	return claimer;
+    }
+
+    @Override
+    public int compareTo(PackageAgent o) {
+	if (o.getId() > getId()) {
+	    return -1;
+	} else if (o.getId() < getId()) {
+	    return 1;
+	} else {
+	    return 0;
+	}
     }
 }
-
-

@@ -1,11 +1,15 @@
 package project.strategies.delegatemas.colony.renderers;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 
+import project.strategies.delegatemas.colony.PackageAgent;
 import project.strategies.delegatemas.colony.TruckAgent;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.TickListener;
@@ -33,35 +37,44 @@ public class TruckAgentRenderer extends AbstractRenderer {
 	Set<TickListener> objects2 = new HashSet<TickListener>();
 	objects2.addAll(objects);
 	synchronized (objects2) {
-	    int index = 0;
+
+	    ArrayList<TruckAgent> list1 = new ArrayList<TruckAgent>();
 	    for (TickListener entry : objects2) {
+		if (entry instanceof TruckAgent) {
+		    list1.add((TruckAgent) entry);
+		}
+	    }
 
-		// Package Agent
-		if (entry.getClass().equals(TruckAgent.class)) {
+	    Collections.sort(list1);
+	    
+	    int index = 0;
+	    for (TruckAgent agent : list1) {
 
-		    // draw the agent
-		    TruckAgent agent = (TruckAgent) entry;
-		    Point p = agent.getPosition();
-		    Image image;
-		    if (agent.getTruck().hasLoad()) {
-			image = loadedTruckImage;
-		    } else {
-			image = emptyTruckImage;
-		    }
-
-		    int x = (int) (xOrigin + (p.x - minX) * m) - radius;
-		    int y = (int) (yOrigin + (p.y - minY) * m) - radius;
-		    int offsetX = x - image.getBounds().width / 2;
-		    int offsetY = y - image.getBounds().height / 2;
-
-		    gc.drawImage(image, offsetX, offsetY);
-		    gc.drawText(agent.getId() + "", offsetX + 10, offsetY - 10);
-
-		    gc.drawText(agent.toString(), 800 + (index % 7) * 150, 400 + (index / 7) * 230);
-		    index++;
+		Point p = agent.getPosition();
+		Image image;
+		if (agent.getTruck().hasLoad()) {
+		    image = loadedTruckImage;
+		} else {
+		    image = emptyTruckImage;
 		}
 
+		int x = (int) (xOrigin + (p.x - minX) * m) - radius;
+		int y = (int) (yOrigin + (p.y - minY) * m) - radius;
+		int offsetX = x - image.getBounds().width / 2;
+		int offsetY = y - image.getBounds().height / 2;
+
+		gc.drawImage(image, offsetX, offsetY);
+		gc.drawText(agent.getId() + "", offsetX + 10, offsetY - 10);
+		
+		int w = 800 + (index % 7) * 200;
+		int h = 400 + (index / 7) * 230;
+		gc.drawText(agent.toString(15), w, h);
+		
+		gc.drawRectangle(new Rectangle(w-3, h-3, 194, 374));
+		
+		index++;
 	    }
+
 	}
 
     }
