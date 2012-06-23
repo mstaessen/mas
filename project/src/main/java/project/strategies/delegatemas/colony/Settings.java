@@ -16,7 +16,7 @@ public class Settings {
     public static final double MAX_TRUCK_PHEROMONE_PATH = 300;
     public static final double START_TRUCK_PHEROMONE_PATH = 0.4;
     
-    public static final double EVAPORATION_RATE = 0.0333333;
+    public static final double EVAPORATION_RATE = 0.0066666;
     public static final double EARLY_RETURN_RATE_EXPLORATION_ANT = 0.333;
     public static final int DURATION_CLAIM = 12;
     

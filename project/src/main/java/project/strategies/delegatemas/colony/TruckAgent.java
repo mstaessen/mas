@@ -90,9 +90,9 @@ public class TruckAgent implements TickListener, SimulatorUser, CommunicationUse
     @Override
     public void tick(long currentTime, long timeStep) {
 
-	pathTable.evaporate();
-
 	checkForBestIntentions();
+	
+	pathTable.evaporate();
 
 	sendExplorationAnts();
 

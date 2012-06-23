@@ -209,7 +209,7 @@ public class PathTable {
 	if (pheromones.size() == 0)
 	    return null;
 
-	double best = 0;
+	Double best = new Double(0.0);
 	Path r = null;
 	for (Path p : pheromones.keySet()) {
 	    if (pheromones.get(p) > best) {
