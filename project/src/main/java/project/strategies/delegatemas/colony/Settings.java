@@ -6,7 +6,7 @@ public class Settings {
 //     public static double BROADCAST_RANGE = 13000; // leuven
 
     public static int MAX_HOPS_FEASIBILITY_ANT = 2;
-    public static int MAX_HOPS_EXPLORATION_ANT = 3;
+    public static int MAX_HOPS_EXPLORATION_ANT = 5;
 
     public static final double MIN_PACKAGE_PHEROMONE_PATH = 0.1;
     public static final double MAX_PACKAGE_PHEROMONE_PATH = 10;

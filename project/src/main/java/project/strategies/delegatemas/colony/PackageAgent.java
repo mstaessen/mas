@@ -181,7 +181,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 	    return;
 	}
 
-	pathTable.addPheromoneBonus(bAnt.getPathToEval(), myPackage.getDeliveryLocation(), null,
+	pathTable.addPheromoneBonus(bAnt.getPathToEval(), myPackage.getDeliveryLocation(), bAnt.getIntentionValues(),
 		myPackage.getRoadModel());
 
 	CommunicationUser receiver;
@@ -280,7 +280,7 @@ public class PackageAgent implements TickListener, SimulatorUser, CommunicationU
 
 	    // send to the other agents, if there are hops left.
 	    if (fAnt.getHopsLeft() - 1 > 0) {
-		communicationAPI.broadcast(new FeasibilityAnt(this, new Path(fAnt.getPath(), this),
+		communicationAPI.broadcast(new FeasibilityAnt(this, new Path(this, fAnt.getPath()),
 			fAnt.getHopsLeft() - 1), PackageDestination.class);
 	    }
 	}

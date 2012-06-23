@@ -48,7 +48,6 @@ public class PackageDestination implements CommunicationUser, SimulatorUser {
 		FeasibilityAnt fAnt = (FeasibilityAnt) message;
 		if (!fAnt.getSender().equals(agent)) {
 		    api.send(agent, fAnt);
-		    // agent.receiveFeasibilityAnt(fAnt);
 		}
 	    }
 	}

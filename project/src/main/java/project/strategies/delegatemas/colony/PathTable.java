@@ -3,6 +3,7 @@ package project.strategies.delegatemas.colony;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -246,10 +247,17 @@ public class PathTable {
 	
 	TreeMap<Double, Path> tMap = new TreeMap<Double, Path>(new PheromoneComparator());
 	
-	HashMap<Path,Double> pheromones2 = (HashMap<Path,Double>) pheromones.clone();
-	for (Path p: pheromones2.keySet()) {
-	    tMap.put(pheromones2.get(p), p);
-	}	
+	try {
+	    HashMap<Path,Double> pheromones2 = (HashMap<Path,Double>) pheromones.clone();
+	    for (Path p: pheromones2.keySet()) {
+		if (pheromones.get(p) != null)
+		    tMap.put(pheromones.get(p), p);
+	    }      
+	} catch (ConcurrentModificationException e) {
+	    return "Modification Excp";
+	}
+	  
+		
 	
 	String string = "";
 	DecimalFormat df = new DecimalFormat("#.##");
