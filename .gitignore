@@ -1,3 +1,6 @@
 core/files/test/
 example/src/main/java/rinde/sim/playground/
 .DS_Store
+
+/verslag/wrapper.out
+/verslag/wrapper.synctex.gz
