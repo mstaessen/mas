@@ -1,11 +1,16 @@
 package project.modern.delegatemas;
 
 import org.apache.commons.math.random.MersenneTwister;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 
 import project.common.packages.DeliveryLocation;
 import project.common.packages.Package;
 import project.common.trucks.Truck;
+import project.modern.delegatemas.colony.PackageAgent;
+import project.modern.delegatemas.colony.TruckAgent;
+import project.modern.delegatemas.colony.renderers.PackageAgentRenderer;
 import rinde.sim.core.Simulator;
 import rinde.sim.core.graph.Graph;
 import rinde.sim.core.graph.MultiAttributeEdgeData;
@@ -59,10 +64,16 @@ public class DelegateMasController extends ScenarioController {
 	protected boolean createUserInterface() {
 		UiSchema schema = new UiSchema();
 		schema.add(Truck.class, new RGB(0,0,255));
-		schema.add(Ant.class, new RGB(0,255,0));
-		schema.add(Package.class, new RGB(255,0,0));
+//		schema.add(Package.class, ImageDescriptor.createFromImageData(new ImageData("src/resources/graphics/package.png")));
 		schema.add(DeliveryLocation.class, new RGB(0,255,0));
-		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));		
+//		View.startGui(getSimulator(), 3, new ObjectRenderer(roadModel, schema, false));		
+		View.startGui(getSimulator(), 3, new PackageAgentRenderer(getSimulator()));		
+		
+		
+//		View.startGui(getSimulator(), 3, );		
+
+		
+		
 		return true;
 	}
 
@@ -81,11 +92,12 @@ public class DelegateMasController extends ScenarioController {
 		Point pl = graph.getRandomNode(getSimulator().getRandomGenerator());
 		DeliveryLocation dl = new DeliveryLocation(graph.getRandomNode(getSimulator().getRandomGenerator()));
 		getSimulator().register(pl);
-//		getSimulator().register(dl);
+		getSimulator().register(dl);
 		
 		Package p = new Package("Package-"+packageID++, pl, dl);
 		getSimulator().register(p);
-		PackageAgent agent = new PackageAgent(p);
+		
+		PackageAgent agent = new PackageAgent(packageID,p);
 		getSimulator().register(agent);
 		agent.setSimulator(getSimulator());
 		return true;
